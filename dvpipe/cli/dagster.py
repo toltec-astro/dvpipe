@@ -58,7 +58,7 @@ def make_dagster_command():
             yaml.safe_dump(dagster_config, fo)
         logger.debug(f"generated dagster config filepath: {fname}")
         with open(fname, 'r') as fo:
-            logger.debug(f'config:\n{fo.read()}')
+            logger.info(f'dagster run_config:\n{fo.read()}')
         ctx.find_root()._dagster_config_path = fname
 
     return cmd_dagster

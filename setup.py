@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'Click>=7.0', 'loguru', 'pyyaml', 'pyaml',
     'pydantic', 'python-dotenv', 'pydantic-yaml',
-    'pyDataverse', 'pandas']
+    'pyDataverse', 'pandas', 'astropy']
 
 test_requirements = ['pytest>=3', ]
 
