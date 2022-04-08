@@ -3,6 +3,13 @@
 import click
 import pandas as pd
 from loguru import logger
+
+from astropy.io.misc import yaml
+
+from pyDataverse.models import Dataset as DVDataset
+from pyDataverse.models import Datafile as DVDatafile
+
+
 from ..utils import pformat_resp, pformat_yaml
 
 
@@ -42,7 +49,7 @@ def cmd_dataset_list(ctxobj, parent):
         print(df)
 
 
-@cmd_dataset.command('import')
+@cmd_dataset.command('upload')
 @click.option(
     '--parent', '-p',
     default=':root',
@@ -60,7 +67,7 @@ def cmd_dataset_list(ctxobj, parent):
     help='YAML file path that defines the dataset content.',
     )
 @click.pass_obj
-def cmd_dataset_import(ctxobj, parent, index_file):
+def cmd_dataset_upload(ctxobj, parent, index_file):
     """Create dataset in `parent` according to the content of `index_file`."""
     api = ctxobj.dvpipe.dataverse.api
     # parent info
@@ -68,6 +75,31 @@ def cmd_dataset_import(ctxobj, parent, index_file):
     logger.debug(f'query parent dataverse:\n{pformat_resp(resp)}')
     data = resp.json().pop("data")
     logger.debug(f"parent dataverse metadata:\n{pformat_yaml(data)}")
+
+    with open(index_file, 'r') as fo:
+        dataset_index = yaml.load(fo)
+    logger.info(f"load dataset meta:\n{pformat_yaml(dataset_index['meta'])}")
+    # create ds
+    ds = DVDataset()
+    ds.set(dataset_index['dataset'])
+    assert ds.validate_json()
+
+    # create dataset
+    resp = api.create_dataset(
+        parent, ds.json(), pid=None, publish=False, auth=True)
+    logger.info(f"create dataset:\n{pformat_resp(resp)}")
+    pid = resp.json()["data"]["persistentId"]
+    logger.debug(f"dataset pid: {pid}")
+
+    data_files = list()
+    for data in dataset_index['files']:
+        # update pid to point to the dataset.
+        data['pid'] = pid
+        df = DVDatafile()
+        df.set(data)
+        assert df.validate_json()
+        data_files.append(df)
+
     # TODO
     # implement the conversion between index and json data for dataset
     # creation.

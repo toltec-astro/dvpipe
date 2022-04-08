@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 
-import yaml
 from pathlib import Path
 from dagster import (
     make_values_resource, Field,
@@ -9,6 +8,7 @@ from dagster import (
     OutputContext,
     io_manager, DagsterEventType
     )
+from astropy.io.misc import yaml
 
 
 project_dir = make_values_resource(
@@ -70,7 +70,7 @@ class DatasetIndexIOManager(IOManager):
     def load_input(self, context) -> dict:
         path = self._make_path(context.upstream_output)
         with open(path, 'r') as fo:
-            dataset_index = yaml.safe_load(fo)
+            dataset_index = yaml.load(fo)
         context.log.info(
             f"loaded datset_index meta from {path}:\n{dataset_index['meta']}")
         return dataset_index
