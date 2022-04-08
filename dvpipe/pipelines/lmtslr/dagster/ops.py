@@ -2,12 +2,14 @@
 
 import re
 from pathlib import Path
-from typing import List, Any
 
 from dagster import (
     Out, Output,
     DynamicOut, DynamicOutput, MetadataValue, MetadataEntry,
     op)
+
+from ..data_prod import LmtslrDataProd
+from ..dataverse import upload_dataset
 
 
 def _make_mapping_key(p: Path):
@@ -38,15 +40,11 @@ def get_project_dirs(context):
     description="Create dataset index file from project directory.",
     )
 def create_dataset_index_from_project_dir(context, project_dir: str) -> dict:
-    project_dir = Path(project_dir)
-    meta = {
-        'project_id': project_dir.name,
-        }
+    dp = LmtslrDataProd.from_project_dir(Path(project_dir))
+    meta = dp.meta
     context.log.info(f"metadata: {meta}")
     yield Output(
-        {
-            'meta': meta,
-            },
+        dp.make_dataverse_dataset_index(),
         metadata_entries=[
             MetadataEntry(
                 value=MetadataValue.text(meta['project_id']),
@@ -66,41 +64,21 @@ def create_dataset_index_from_project_dir(context, project_dir: str) -> dict:
     description="Get project directories.",
 )
 def upload_dataset_to_dataverse(context, dataset_index: dict):
+
     dataverse = context.resources.dataverse
-    api = dataverse.api
-    resp = api.get_info_version()
-    context.log.info(f"api version query: {resp.json()}")
     meta = dataset_index['meta']
-    # TODO
-    # implement the actual flow
-    url = f'dataset_url_{meta["project_id"]}'
+    dataset_url = upload_dataset(
+        dataset_index=dataset_index, dataverse=dataverse)
     yield Output(
-        url,
+        dataset_url,
         metadata_entries=[
             MetadataEntry(
                 value=MetadataValue.text(meta['project_id']),
                 label='project_id'
                 ),
             MetadataEntry(
-                value=MetadataValue.url(url),
+                value=MetadataValue.url(dataset_url),
                 label='dataset_url'
                 )
-            ]
-        )
-
-
-@op(
-    out=Out(int),
-    description="Count datasets processed.",
-    )
-def count_items(items: List[Any]) -> int:
-    n = len(items)
-    yield Output(
-        n,
-        metadata_entries=[
-            MetadataEntry(
-                value=MetadataValue.int(n),
-                label='n_items'
-                ),
             ]
         )

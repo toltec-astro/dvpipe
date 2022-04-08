@@ -137,6 +137,12 @@ main.add_command(cmd_dataset)
 from .dagster import make_dagit_command, make_dagster_command  # noqa: E402
 main.add_command(make_dagit_command())
 main.add_command(make_dagster_command())
+
+# pipeline modules
+# TODO enable plug-in style import
+from ..pipelines import pipeline_commands  # noqa: E402
+for c in pipeline_commands:
+    main.add_command(c)
 # ################################################
 
 

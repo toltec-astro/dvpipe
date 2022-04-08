@@ -23,8 +23,8 @@ from .resources import (
     # dvpipe_config
     )
 from dvpipe.dagster.resources import DVPIPE_RESOURCES
+from dvpipe.dagster.ops import count_items
 from .ops import (
-    count_items,
     get_project_dirs,
     create_dataset_index_from_project_dir,
     upload_dataset_to_dataverse

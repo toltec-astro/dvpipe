@@ -15,6 +15,7 @@ requirements = [
     'pydantic', 'python-dotenv', 'pydantic-yaml',
     'pyDataverse', 'pandas',
     'dagster', 'dagit',
+    'astropy',
     ]
 
 test_requirements = ['pytest>=3', ]
