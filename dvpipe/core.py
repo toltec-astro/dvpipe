@@ -3,9 +3,9 @@
 from loguru import logger
 from pydantic import BaseModel, BaseSettings
 from pydantic_yaml import YamlModelMixin
+from typing import Optional, Dict
 
 from pyDataverse.api import NativeApi
-from functools import cached_property
 
 
 class DataverseConfig(BaseModel):
@@ -13,14 +13,14 @@ class DataverseConfig(BaseModel):
     api_token: str
     base_url: str
 
-    @cached_property
+    @property
     def api(self):
         api = NativeApi(self.base_url, self.api_token)
         logger.debug(f"created dataverse api instance: {api}")
         return api
 
     class Config:
-        keep_untouched = (cached_property, )
+        pass
 
 
 class DVPConfig(YamlModelMixin, BaseSettings):
@@ -30,6 +30,7 @@ class DVPConfig(YamlModelMixin, BaseSettings):
     """
 
     dataverse: DataverseConfig
+    dagster: Optional[Dict]
 
     class Config:
         env_prefix = 'DVPIPE_'  # defaults to no prefix, i.e. ""

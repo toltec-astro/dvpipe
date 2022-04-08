@@ -5,10 +5,18 @@ import click
 from loguru import logger
 import yaml
 from pydantic import BaseModel
+from typing import Optional
+from pathlib import Path
+from wrapt import ObjectProxy
 
 from .. import __version__
 from ..core import DVPConfig
 from ..utils import pformat_yaml
+
+
+ctxobj_proxy = ObjectProxy(None)
+"""A proxy object of the current click context object.
+"""
 
 
 _prog_info = {
@@ -37,9 +45,10 @@ def _init_log(level='INFO'):
 
 
 class Config(BaseModel):
-    """A wrapper model for loading DVPConfig from config file."""
+    """A wrapper model for loading configs from config file."""
 
     dvpipe: DVPConfig
+    config_file: Optional[Path]
 
 
 @click.group(
@@ -106,7 +115,8 @@ def main(ctx, debug, no_banner, config_file, env_file):
     # update the env file for dvpconfig to pick it up
     if env_file is not None:
         DVPConfig.Config.env_file = env_file
-    ctxobj = ctx.obj = Config(**config)
+    ctxobj = ctx.obj = ctxobj_proxy.__wrapped__ = Config(
+        **config, config_file=config_file)
     logger.debug(f"dvp cfg:\n{ctxobj.dvpipe.yaml()}")
     # try show the serve info version
     api = ctxobj.dvpipe.dataverse.api
@@ -124,7 +134,9 @@ from .user import cmd_user  # noqa: E402
 main.add_command(cmd_user)
 from .dataset import cmd_dataset  # noqa: E402
 main.add_command(cmd_dataset)
-
+from .dagster import make_dagit_command, make_dagster_command  # noqa: E402
+main.add_command(make_dagit_command())
+main.add_command(make_dagster_command())
 # ################################################
 
 

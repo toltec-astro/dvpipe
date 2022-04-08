@@ -27,3 +27,6 @@ def pformat_resp(resp):
         'status_code': resp.status_code,
         'reason': resp.reason,
         })
+
+
+pyaml.add_representer(None, lambda s, d: s.represent_str(str(d)))
