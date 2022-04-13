@@ -119,7 +119,7 @@ def main(ctx, debug, no_banner, config_file, env_file):
         **config, config_file=config_file)
     logger.debug(f"dvp cfg:\n{ctxobj.dvpipe.yaml()}")
     # try show the serve info version
-    api = ctxobj.dvpipe.dataverse.api
+    api = ctxobj.dvpipe.dataverse.native_api
     resp = api.get_info_version()
     if resp.ok:
         logger.info(f"Dataverse server info:\n{pformat_yaml(resp.json())}")

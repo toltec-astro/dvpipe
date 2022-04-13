@@ -13,7 +13,8 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'Click>=7.0', 'loguru', 'pyyaml', 'pyaml',
     'pydantic', 'python-dotenv', 'pydantic-yaml',
-    'pyDataverse', 'pandas',
+    'pyDataverse @ git+https://github.com/Jerry-Ma/pyDataverse.git@dvpipe',
+    'pandas',
     'dagster', 'dagit',
     'astropy',
     ]

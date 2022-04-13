@@ -40,20 +40,21 @@ class LmtslrDataProd(object):
         # collect data items from project_dir
         tap_dir = project_dir.joinpath(cls._tap_dirpath)
         # collect obsnums by parsing the tap tar names
-        re_tapname = r'(?P<obsnum_start>\d+)(?:_(?P<obsnum_end>\d+))?_TAP.tar'
+        re_tapname = (
+            r'(?P<obsnum>(?P<obsnum_start>\d+)(?:_(?P<obsnum_end>\d+))?)'
+            r'_TAP.tar'
+            )
         data_items = list()
         for tap_tar_path in tap_dir.glob(cls._glob_tap_tar):
             meta = dict()
             d = re.match(re_tapname, tap_tar_path.name).groupdict()
             meta.update(d)
-            meta['obsnum'] = tap_tar_path.stem
             meta['name'] = tap_tar_path.stem
             meta['data_prod_type'] = 'TAP'
-            meta['archive_path'] = tap_tar_path.relative_to(
-                project_dir).as_posix()
+            meta['archive_path'] = tap_tar_path.relative_to(project_dir)
             data_items.append({
                 'meta': meta,
-                'filepath': tap_tar_path.as_posix()
+                'filepath': tap_tar_path
                 })
         return data_items
 
@@ -81,12 +82,14 @@ class LmtslrDataProd(object):
                 {
                     'authorName': 'LMT',
                     'authorAffiliation': 'Large Millimeter Telescope',
+                    'authorEmail': 'dp@lmtgtm.org',
                     },
                 ],
             'datasetContact': [
                 {
                     'datasetContactName': 'LMT',
-                    'datasetContactAffiliation': 'Large Millimeter Telescope'
+                    'datasetContactAffiliation': 'Large Millimeter Telescope',
+                    'datasetContactEmail': 'dp@lmtgtm.org',
                     },
                 ],
             'subject': ['Astronomy and Astrophysics'],
@@ -107,8 +110,8 @@ class LmtslrDataProd(object):
                 "categories": ['Data'],
                 "restrict": True,
                 "label": meta['name'],
-                "directoryLabel": meta['archive_path'],
-                "filename": data_item['filepath'],
+                "directoryLabel": meta['archive_path'].parent.as_posix(),
+                "filename": data_item['filepath'].as_posix(),
                 'pid': 'not_yet_set'
                 }
             df = DVDatafile()

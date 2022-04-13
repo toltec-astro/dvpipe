@@ -8,7 +8,8 @@ from dagster import (
     OutputContext,
     io_manager, DagsterEventType
     )
-from astropy.io.misc import yaml
+
+from dvpipe.utils import yaml
 
 
 project_dir = make_values_resource(

@@ -4,13 +4,8 @@ import click
 import pandas as pd
 from loguru import logger
 
-from astropy.io.misc import yaml
-
-from pyDataverse.models import Dataset as DVDataset
-from pyDataverse.models import Datafile as DVDatafile
-
-
-from ..utils import pformat_resp, pformat_yaml
+from ..dataverse import search_dataverse, upload_dataset
+from ..utils import pformat_resp, pformat_yaml, yaml
 
 
 @click.group(
@@ -32,7 +27,7 @@ def cmd_dataset(ctxobj, ):
 @click.pass_obj
 def cmd_dataset_list(ctxobj, parent):
     """List all datasets in a dataverse."""
-    api = ctxobj.dvpipe.dataverse.api
+    api = ctxobj.dvpipe.dataverse.native_api
     # parent info
     resp = api.get_dataverse(parent)
     logger.debug(f'query parent dataverse:\n{pformat_resp(resp)}')
@@ -47,6 +42,42 @@ def cmd_dataset_list(ctxobj, parent):
         print(f"No dataset found in parent {parent}")
     else:
         print(df)
+
+
+@cmd_dataset.command('search')
+@click.argument(
+    'options', nargs=-1,
+    metavar='OPT',
+    )
+@click.pass_obj
+def cmd_dataset_search(ctxobj, options):
+    """Search the dataverse."""
+    # build the options dict
+    kwargs = {
+        'q_str': '*',
+        'data_type': 'dataset',
+        }
+    # TODO the pydataverse current does not support
+    # query repeatable fields.
+    # _repeatable_keys = ['subtree', 'metadata_fields']
+    _repeatable_keys = []
+    for kv in options:
+        k, v = kv.split('=', 1)
+        if k in _repeatable_keys:
+            v = [v]
+        # values for repeated keys get merged
+        if k in kwargs and k in _repeatable_keys:
+            kwargs[k].extend(v)
+        else:
+            kwargs[k] = v
+    result = search_dataverse(ctxobj.dvpipe.dataverse, **kwargs)
+    if result:
+        print(result)
+    else:
+        print(
+            f"No result found. Details:"
+            f"\n{pformat_yaml(result.meta)}"
+            )
 
 
 @cmd_dataset.command('upload')
@@ -66,55 +97,32 @@ def cmd_dataset_list(ctxobj, parent):
     metavar='FILE',
     help='YAML file path that defines the dataset content.',
     )
+@click.option(
+    '--action_on_exist', '-a',
+    type=click.Choice(
+        ['none', 'update', 'create'],
+        case_sensitive=False),
+    default='none',
+    help='The action to take when the dataset exists',
+    )
+@click.option(
+    '--publish', '-b',
+    type=click.Choice(
+        ['none', 'major', 'minor'],
+        case_sensitive=False),
+    default='none',
+    help='Specify how the dataset is published ("none" for not publish).',
+    )
 @click.pass_obj
-def cmd_dataset_upload(ctxobj, parent, index_file):
+def cmd_dataset_upload(ctxobj, parent, index_file, action_on_exist, publish):
     """Create dataset in `parent` according to the content of `index_file`."""
-    api = ctxobj.dvpipe.dataverse.api
-    # parent info
-    resp = api.get_dataverse(parent)
-    logger.debug(f'query parent dataverse:\n{pformat_resp(resp)}')
-    data = resp.json().pop("data")
-    logger.debug(f"parent dataverse metadata:\n{pformat_yaml(data)}")
-
     with open(index_file, 'r') as fo:
         dataset_index = yaml.load(fo)
-    logger.info(f"load dataset meta:\n{pformat_yaml(dataset_index['meta'])}")
-    # create ds
-    ds = DVDataset()
-    ds.set(dataset_index['dataset'])
-    assert ds.validate_json()
-
-    # create dataset
-    resp = api.create_dataset(
-        parent, ds.json(), pid=None, publish=False, auth=True)
-    logger.info(f"create dataset:\n{pformat_resp(resp)}")
-    pid = resp.json()["data"]["persistentId"]
-    logger.debug(f"dataset pid: {pid}")
-
-    data_files = list()
-    for data in dataset_index['files']:
-        # update pid to point to the dataset.
-        data['pid'] = pid
-        df = DVDatafile()
-        df.set(data)
-        assert df.validate_json()
-        data_files.append(df)
-
-    # TODO
-    # implement the conversion between index and json data for dataset
-    # creation.
-    # some snippets can be found here:
-    # https://pydataverse.readthedocs.io/en/latest/user/advanced-usage.html#advanced-usage-data-migration
-    # 1. create dataset with metadata and get pid
-    # resp = api.create_dataset(
-    #     parent, metadata, pid=None, publish=False, auth=True)
-    # pid = resp.json()["data"]["persistentId"]
-    # 2. loop over datafiles to create data files:
-    # for df in df_lst:
-    #     pid = dataset_id_2_pid[df.get()["org.dataset_id"]]
-    #     filename = os.path.join(os.getcwd(), df.get()["org.filename"])
-    #     df.set({"pid": pid, "filename": filename})
-    #     resp = api.upload_datafile(pid, filename, df.json())
-    # 3. publish dataset specified by the pid
-    # resp = api.publish_dataset(pid, "major")
-    print("Import not implemented yet.")
+    dataset_meta = dataset_index['meta']
+    logger.info(f"upload dataset:\n{pformat_yaml(dataset_meta)}")
+    upload_dataset(
+        ctxobj.dvpipe.dataverse,
+        parent_id=parent,
+        dataset_index=dataset_index,
+        action_on_exist=action_on_exist,
+        publish=publish)

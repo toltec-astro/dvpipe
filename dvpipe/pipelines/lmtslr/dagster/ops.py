@@ -8,8 +8,8 @@ from dagster import (
     DynamicOut, DynamicOutput, MetadataValue, MetadataEntry,
     op)
 
+from dvpipe.dataverse import upload_dataset
 from ..data_prod import LmtslrDataProd
-from ..dataverse import upload_dataset
 
 
 def _make_mapping_key(p: Path):

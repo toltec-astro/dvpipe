@@ -3,8 +3,7 @@
 import click
 from loguru import logger
 from pathlib import Path
-from ...utils import pformat_yaml
-from astropy.io.misc import yaml
+from ...utils import pformat_yaml, yaml
 
 
 @click.group(

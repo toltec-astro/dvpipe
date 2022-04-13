@@ -5,7 +5,7 @@ from pydantic import BaseModel, BaseSettings
 from pydantic_yaml import YamlModelMixin
 from typing import Optional, Dict
 
-from pyDataverse.api import NativeApi
+from pyDataverse.api import DataAccessApi, NativeApi, MetricsApi, SearchApi
 
 
 class DataverseConfig(BaseModel):
@@ -13,11 +13,46 @@ class DataverseConfig(BaseModel):
     api_token: str
     base_url: str
 
-    @property
-    def api(self):
-        api = NativeApi(self.base_url, self.api_token)
+    def get_api(self, type):
+        """Return the pyDataverse.Api instance of `type`.
+
+        Parameters
+        ----------
+        type : {'data_access', 'native', 'metrics', 'search'}
+            The type of API.
+        """
+        dispatch_type = {
+            'data_access': DataAccessApi,
+            'native': NativeApi,
+            'metrics': MetricsApi,
+            'search': SearchApi
+            }
+        api_cls = dispatch_type.get(type, None)
+        if api_cls is None:
+            raise ValueError(f"Invalid api type {type}")
+        api = api_cls(base_url=self.base_url, api_token=self.api_token)
         logger.debug(f"created dataverse api instance: {api}")
         return api
+
+    @property
+    def data_access_api(self):
+        """The data access api instance."""
+        return self.get_api('data_access')
+
+    @property
+    def native_api(self):
+        """The native api instance."""
+        return self.get_api('native')
+
+    @property
+    def metrics_api(self):
+        """The metrics api instance."""
+        return self.get_api('metrics')
+
+    @property
+    def search_api(self):
+        """The search api instance."""
+        return self.get_api('search')
 
     class Config:
         pass

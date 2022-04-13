@@ -3,6 +3,12 @@
 import pyaml
 import urllib.parse as urlparse
 from urllib.parse import urlencode
+from pathlib import PosixPath
+
+from astropy.io.misc import yaml
+
+
+__all__ = ['yaml', 'pformat_yaml', 'pformat_resp']
 
 
 def pformat_yaml(obj):
@@ -22,11 +28,21 @@ def pformat_resp(resp):
         query.pop(k)
     url_parts[4] = urlencode(query)
     url = urlparse.urlunparse(url_parts)
-    return pformat_yaml({
+    result = {
         'url': url,
         'status_code': resp.status_code,
         'reason': resp.reason,
-        })
+        }
+    if not resp.ok:
+        result['content'] = resp.json()
+    return pformat_yaml(result)
 
 
 pyaml.add_representer(None, lambda s, d: s.represent_str(str(d)))
+
+
+def _path_representer(dumper, p):
+    return dumper.represent_str(p.as_posix())
+
+
+yaml.AstropyDumper.add_representer(PosixPath, _path_representer)

@@ -14,7 +14,7 @@ from ..utils import pformat_yaml, pformat_resp
 @click.pass_obj
 def cmd_user(ctxobj, ):
     """The CLI for user management."""
-    api = ctxobj.dvpipe.dataverse.api
+    api = ctxobj.dvpipe.dataverse.native_api
     url = f"{api.base_url_api_native}/users/:me"
     resp = api.get_request(url, auth=True)
     logger.debug(f'query current user:\n{pformat_resp(resp)}')
@@ -26,7 +26,7 @@ def cmd_user(ctxobj, ):
 @click.pass_obj
 def cmd_user_list(ctxobj):
     """List all users."""
-    api = ctxobj.dvpipe.dataverse.api
+    api = ctxobj.dvpipe.dataverse.native_api
     url = f"{api.base_url_api_native}/admin/list-users"
     resp = api.get_request(url, auth=True, params={
         'itemsPerPage': 1000
