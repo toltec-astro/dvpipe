@@ -13,7 +13,7 @@ def dataverse_config(init_context):
 class _ResourceConfigMakers(object):
 
     @staticmethod
-    def dataverse(dvp_config):
+    def dataverse_config(dvp_config):
         # create config dict for source from dvp config
         return {
             'config': dvp_config.dataverse.dict()
@@ -21,7 +21,7 @@ class _ResourceConfigMakers(object):
 
 
 DVPIPE_RESOURCES = {
-    'dataverse': dataverse_config
+    'dataverse_config': dataverse_config
     }
 
 

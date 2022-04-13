@@ -80,7 +80,7 @@ def get_datafiles(dv_config, dataset_id, version=':latest'):
 def upload_dataset(
         dv_config, parent_id, dataset_index,
         action_on_exist='none',
-        publish='none'):
+        publish_type='none'):
     """Upload dataset to dataverse.
 
     Parameters
@@ -96,7 +96,7 @@ def upload_dataset(
         * 'none': no action.
         * 'update': update existing dataset.
         * 'create': create new dataset.
-    publish : {'none', 'major', 'minor'}
+    publish_type : {'none', 'major', 'minor'}
         How the dataset is published:
         * 'none': do not publish.
         * 'major': publish with major version bump.
@@ -208,7 +208,7 @@ def upload_dataset(
         else:
             raise ValueError("invalid action")
     # finally, publish the dataset if requested
-    if publish in ['major', 'minor']:
-        resp = api.publish_dataset(pid, publish)
+    if publish_type in ['major', 'minor']:
+        resp = api.publish_dataset(pid, publish_type)
         logger.info(f'publish dataset pid={pid}: {pformat_resp(resp)}')
     return pid

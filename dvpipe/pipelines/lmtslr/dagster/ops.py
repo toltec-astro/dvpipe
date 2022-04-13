@@ -6,7 +6,7 @@ from pathlib import Path
 from dagster import (
     Out, Output,
     DynamicOut, DynamicOutput, MetadataValue, MetadataEntry,
-    op)
+    op, Field, Enum, EnumValue)
 
 from dvpipe.dataverse import upload_dataset
 from ..data_prod import LmtslrDataProd
@@ -59,16 +59,43 @@ def create_dataset_index_from_project_dir(context, project_dir: str) -> dict:
 
 
 @op(
-    required_resource_keys={"dataverse"},
+    required_resource_keys={"dataverse_config"},
+    config_schema={
+        'parent_id': str,
+        'action_on_exist': Field(
+            Enum(
+                'ActionOnExist',
+                [
+                    EnumValue('none'),
+                    EnumValue('create'),
+                    EnumValue('update'),
+                    ]
+                ),
+            default_value='none'
+            ),
+        'publish_type': Field(
+            Enum(
+                'PublishType',
+                [
+                    EnumValue('none'),
+                    EnumValue('major'),
+                    EnumValue('minor'),
+                    ]
+                ),
+            default_value='none'
+            ),
+        },
     out=Out(str),
-    description="Get project directories.",
+    description="Upload dataset to dataverse.",
 )
 def upload_dataset_to_dataverse(context, dataset_index: dict):
 
-    dataverse = context.resources.dataverse
+    dataverse_config = context.resources.dataverse_config
     meta = dataset_index['meta']
     dataset_url = upload_dataset(
-        dataset_index=dataset_index, dataverse=dataverse)
+        dataverse_config,
+        dataset_index=dataset_index,
+        **context.op_config)
     yield Output(
         dataset_url,
         metadata_entries=[
