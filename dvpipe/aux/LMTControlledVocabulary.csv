@@ -1,0 +1,10 @@
+DatasetField,Value,identifier,displayOrder
+velDef,RADIO,,0
+velDef,OPTICAL,,1
+velfDef,RELATIVISTIC,,2
+velFrame,LSR,,0
+velFrame,SKY,,1
+velFrame,BARY,,2
+velFrame,SRC,,3
+velType,VELOCITY,,0
+velType,FREQUENCY,,1

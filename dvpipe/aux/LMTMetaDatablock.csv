@@ -1,0 +1,26 @@
+name,title,description,watermark,fieldType,displayOrder,displayFormat,advancedSearchField,allowControlledVocabulary,allowmultiples,facetable,displayoncreate
+projectID,Project,Project identifying string,,text,4,,TRUE,FALSE,FALSE,FALSE,FALSE
+PIName,PI,Principal Investigator name,,text,6,,TRUE,FALSE,FALSE,FALSE,FALSE
+obsnum,Obsnum,Observation Number,,int,7,,TRUE,FALSE,TRUE,FALSE,FALSE
+RA,RA (deg),right ascension (degrees),,float,8,,TRUE,FALSE,FALSE,FALSE,FALSE
+DEC,Dec (deg),declination (degrees),,float,9,,TRUE,FALSE,FALSE,FALSE,FALSE
+galLon,l (deg),Galactic Longitude (degrees),,float,10,,TRUE,FALSE,FALSE,FALSE,FALSE
+galLat,b (deg),Galactic Latitude (degrees),,float,11,,TRUE,FALSE,FALSE,FALSE,FALSE
+slBand,SL Band,Spectral line band ,,int,12,,TRUE,FALSE,FALSE,FALSE,FALSE
+lineName,Line Name,expected line ID (e.g. CO1-0).  Do we adopt the ALMA convention for names? should be created by the observing script,,text,13,,TRUE,FALSE,TRUE,FALSE,FALSE
+frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,14,,TRUE,FALSE,FALSE,FALSE,FALSE
+bandwidth,Bandwidth,Bandwidth in GHz,,float,15,,TRUE,FALSE,FALSE,FALSE,FALSE
+intTime,Integration Time (s),On-source Integration Time (seconds),,float,16,,TRUE,FALSE,FALSE,FALSE,FALSE
+projectTitle,Project Title,The title of the project as submitted by the PI,,text,17,,TRUE,FALSE,FALSE,FALSE,FALSE
+obsDate,Date,Date of observation (FITS standard) at start of integration,,text,18,,TRUE,FALSE,FALSE,FALSE,FALSE
+velocity,Velocity (km/s),source velocity in km/s,,float,19,,FALSE,FALSE,FALSE,FALSE,FALSE
+velDef,Velocity Definition,"velocity definition e.g. RADIO, OPTICAL",,text,20,,FALSE,TRUE,FALSE,FALSE,FALSE
+velFrame,Velocity Frame,"velocity reference frame, e.g. LSR,SKY,BARY,SRC",,text,21,,FALSE,TRUE,FALSE,FALSE,FALSE
+velType,Velocity Type,"Velocity type of FITS cube axiis3, either frequency or velocity",,text,22,,FALSE,TRUE,FALSE,FALSE,FALSE
+z,Redshift,redshift,,float,23,,TRUE,TRUE,FALSE,FALSE,FALSE
+beam,Beam Size (deg),beam size in degrees,,float,25,,FALSE,FALSE,FALSE,FALSE,FALSE
+contSens,Cont. Sensitivity (Jy/beam),continuum sensitivity (Jy/beam). Not needed for SLR,,float,26,,TRUE,FALSE,FALSE,FALSE,FALSE
+lineSens,SL Sensitivity (K),spectral line sensitivity in 10 km/s window (K of Ta*). Not needed for TOLTEC,,float,27,,TRUE,FALSE,FALSE,FALSE,FALSE
+qaGrade,QA Grade,quality assessment grade [if QA fails do data still go into dataverse?],,text,28,,TRUE,TRUE,FALSE,FALSE,FALSE
+boundingBox,Bounding Box,"for mosaics, outside bounding box, list of vertices, e.g. Python list of tuples",,text,29,,FALSE,FALSE,FALSE,FALSE,FALSE
+pipeVersion,Pipeline Version,pipeline version,,text,30,,TRUE,FALSE,FALSE,FALSE,FALSE
