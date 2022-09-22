@@ -46,3 +46,43 @@ def _path_representer(dumper, p):
 
 
 yaml.AstropyDumper.add_representer(PosixPath, _path_representer)
+
+def now():
+    """
+    :returns: a string representing the current date and time in ISO format
+    """
+    return datetime.datetime.now().isoformat()
+
+
+# stolen from pdrtpy/pdrutils.py
+#@TODO  use setup.py and pkg_resources to do this properly
+def root_dir():
+    """Project root directory, including trailing slash
+
+    :rtype: str
+    """
+    return str(root_path())+'/'
+
+def root_path():
+    """Project root directory as path
+
+    :rtype: :py:mod:`Path`
+    """
+    return Path(__file__).parent
+
+def aux_dir():
+    """Project auxillary tables and files directory, including trailing slash
+
+    :rtype: str
+    """
+    return os.path.join(root_dir(),'aux/')
+
+def aux_file(filename):
+    """Return fully qualified path of the auxillary file.
+
+    :param filename: input file name
+    :type filename: str
+    :rtype: str
+    """
+    return aux_dir()+filename
+
