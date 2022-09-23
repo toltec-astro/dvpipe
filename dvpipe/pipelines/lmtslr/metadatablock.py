@@ -52,7 +52,7 @@ class MetadataBlock(object):
         return self._metadata
  
     def add_metadata(self,name,value):
-        if name not in self._datasetFields['name']:
+        if name not in self._datasetFields['name'].values:
             raise KeyError(f'{name} is not a recognized dataset field in {self.name}')
         #@todo check value against controlled vocabulary
         self._metadata[name] = value
