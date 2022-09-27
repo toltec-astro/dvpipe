@@ -10,7 +10,6 @@ class MetadataBlock(object):
        Specific metadata blocks should inherit from this class.
     '''
     def __init__(self,name,dataset_file,vocabulary_file=None):
-        print("In MetaDataBlock")
         self._name = name 
         self._dsfColnames = ['name', 'title', 'description', 'watermark',
                           'fieldType', 'displayOrder', 'displayFormat', 
@@ -53,6 +52,8 @@ class MetadataBlock(object):
     def metadata(self):
         return self._metadata
  
+    # NB a dict will not allow repeated entries (allowmultiples=True)
+    # switch to DataFrame?
     def add_metadata(self,name,value):
         if name not in self._datasetFields['name'].values:
             raise KeyError(f'{name} is not a recognized dataset field in {self.name}')
