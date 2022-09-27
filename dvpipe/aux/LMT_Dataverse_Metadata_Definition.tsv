@@ -1,0 +1,47 @@
+#metadataBlock	name	dataverseAlias	displayName												
+	LMTData		Large Millimeter Telescope metadata												
+#datasetField	name	title	description	watermark	fieldType	displayOrder	displayFormat	advancedSearchField	allowControlledVocabulary	allowmultiples	facetable	displayoncreate	required	parent	metadatablock_id
+	projectID	Project	Project identifying string		text	4		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	PIName	PI	Principal Investigator name		text	6		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	obsnum	Obsnum	Observation Number		int	7		TRUE	FALSE	TRUE	FALSE	FALSE	TRUE		LMTData
+	RA	RA (deg)	right ascension (degrees)		float	8		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	DEC	Dec (deg)	declination (degrees)		float	9		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	galLon	l (deg)	Galactic Longitude (degrees)		float	10		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	galLat	b (deg)	Galactic Latitude (degrees)		float	11		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	slBand	SL Band	Spectral line band 		int	12		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	lineName	Line Name	expected line ID (e.g., CO1-0).  Do we adopt the ALMA convention for names? should be created by the observing script		text	13		TRUE	FALSE	TRUE	FALSE	FALSE	FALSE		LMTData
+	frequencyCenter	Frequency Center (GHz)	Center frequency in GHz		float	14		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	bandwidth	Bandwidth	Bandwidth in GHz		float	15		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	intTime	Integration Time (s)	On-source Integration Time (seconds)		float	16		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	projectTitle	Project Title	The title of the project as submitted by the PI		text	17		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	obsDate	Date	Date of observation  at start of integration. FITS standard format		text	18		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velocity	Velocity (km/s)	source velocity in km/s		float	19		FALSE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velDef	Velocity Definition	velocity definition e.g. RADIO, OPTICAL		text	20		FALSE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velFrame	Velocity Frame	velocity reference frame, e.g. LSR,SKY,BARY,SRC		text	21		FALSE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velType	Velocity Type	Velocity type of FITS cube axis3, either frequency or velocity		text	22		FALSE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	z	Redshift	redshift		float	23		TRUE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	beam	Beam Size (deg)	beam size in degrees		float	25		FALSE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	contSens	Cont. Sensitivity (Jy/beam)	continuum sensitivity (Jy/beam). Not needed for SLR		float	26		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	lineSens	SL Sensitivity (K)	spectral line sensitivity in 1 km/s window (K of Ta*). 		float	27		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	qaGrade	QA Grade	quality assessment grade		text	28		TRUE	TRUE	FALSE	FALSE	FALSE	FALSE		LMTData
+	boundingBox	Bounding Box	for mosaics, outside bounding box, list of vertices, e.g. Python list of tuples		text	29		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	pipeVersion	Pipeline Version	pipeline version		text	30		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	facility	Facility	The observatory or facility where the data was obtained.		text	31		TRUE	TRUE	FALSE	TRUE	FALSE	TRUE		LMTdata
+	instrument	Instrument	The instrument used to collect the data.		text	32		TRUE	TRUE	FALSE	TRUE	FALSE	TRUE		LMTdata
+	object	Object	Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).		text	33		TRUE	FALSE	FALSE	TRUE	FALSE	FALSE		LMTdata
+#controlledVocabulary	DatasetField	Value	identifier	displayOrder											
+	velDef	RADIO		0											
+	velDef	OPTICAL		1											
+	velfDef	RELATIVISTIC		2											
+	velFrame	LSR		0											
+	velFrame	SKY		1											
+	velFrame	BARY		2											
+	velFrame	SRC		3											
+	velType	VELOCITY		0											
+	velType	FREQUENCY		1											
+	facility	LMT		0											
+	instrument	TOLTEC		0											
+	instrument	SEQUOIA		1											
+	instrument	RSR		2											
+	instrument	1MM		3											
+	instrument	OMAYA		4											
