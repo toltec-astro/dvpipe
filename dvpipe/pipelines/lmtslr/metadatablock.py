@@ -1,5 +1,5 @@
-
 import pandas as pd
+import numpy as np
 class MetadataBlock(object):
     '''Generic representation of a Dataverse metadata block.
        Metadata blocks have a datasetField which gives the names and
@@ -9,6 +9,7 @@ class MetadataBlock(object):
        Specific metadata blocks should inherit from this class.
     '''
     def __init__(self,name,dataset_file,vocabulary_file=None):
+        print("In MetaDataBlock")
         self._name = name 
         self._dsfColnames = ['name', 'title', 'description', 'watermark',
                           'fieldType', 'displayOrder', 'displayFormat', 
@@ -55,4 +56,15 @@ class MetadataBlock(object):
         if name not in self._datasetFields['name'].values:
             raise KeyError(f'{name} is not a recognized dataset field in {self.name}')
         #@todo check value against controlled vocabulary
+        if not self.check_controlled(name,value):
+            s =  self._allowed_values(name,value)
+            raise ValueError(f'{value} is not a valid value for dataset field {name} in {self.name}. Allowed values are: {s}.')
         self._metadata[name] = value
+
+    def _allowed_values(self,name,value):
+        series =  self._controlledVocabulary.loc[self._controlledVocabulary["DatasetField"] == name]["Value"]
+        return series.values
+
+    def check_controlled(self,name,value):
+        s =  self._allowed_values(name,value)
+        return s.size == 0 or value in s
