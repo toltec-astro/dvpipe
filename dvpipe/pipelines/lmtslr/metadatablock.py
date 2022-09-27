@@ -1,5 +1,6 @@
 import pandas as pd
-import numpy as np
+import json
+import dvpipe.utils as utils
 class MetadataBlock(object):
     '''Generic representation of a Dataverse metadata block.
        Metadata blocks have a datasetField which gives the names and
@@ -68,3 +69,8 @@ class MetadataBlock(object):
     def check_controlled(self,name,value):
         s =  self._allowed_values(name,value)
         return s.size == 0 or value in s
+
+    def to_yaml(self,indent=4):
+        js = json.dumps(self._metadata,indent=indent)
+        return utils.pformat_yaml(js)
+        return self.metadata

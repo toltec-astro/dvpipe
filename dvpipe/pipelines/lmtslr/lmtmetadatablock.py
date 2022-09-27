@@ -40,13 +40,13 @@ if __name__ == "__main__":
         lmtdata.add_metadata("foobar",12345)
     except KeyError as v:
         print("Caught as expected: ",v)
-#    print(lmtdata.metadata)
-    js = json.dumps(lmtdata.metadata,indent=4)
-    print(js)
-    print(utils.pformat_yaml(js))
     print(lmtdata.controlledVocabulary)
     print(lmtdata.check_controlled("velFrame","Foobar"))
     print(lmtdata.check_controlled("velFrame","LSR"))
     print(lmtdata.check_controlled("foobar","uhno"))
-    lmtdata.add_metadata("velFrame","Foobar")
+    try:
+        lmtdata.add_metadata("velFrame","Foobar")
+    except ValueError as v:
+        print("Caught as expected: ",v)
+    print(lmtdata.to_yaml())
 
