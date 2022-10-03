@@ -1,4 +1,4 @@
-from dvpipe.pipelines.lmtslr.metadatablock import MetadataBlock
+from dvpipe.pipelines.metadatablock import MetadataBlock
 import pandas as d
 import json
 import dvpipe.utils as utils
