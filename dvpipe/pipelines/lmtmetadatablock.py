@@ -15,11 +15,15 @@ if __name__ == "__main__":
     print(lmtdata.datasetFields['name'].values)
     lmtdata.add_metadata("projectID","2021-S1-US-3")
     lmtdata.add_metadata("PIName","Marc Pound")
-    lmtdata.add_metadata("obsnum",12345)
+    lmtdata.add_metadata("obsnum","12345") 
+#   for multiple obsnums:
+    #lmtdata.add_metadata("obsnum","12345,56783,42099") 
     lmtdata.add_metadata("RA",123.456)
     lmtdata.add_metadata("DEC",-43.210)
     lmtdata.add_metadata("slBand",1)
     lmtdata.add_metadata("lineName",'CS2-1')
+#   for multiple lines:
+    #lmtdata.add_metadata("lineName",'CS2-1,CO1-0,H2CS')
     lmtdata.add_metadata("frequencyCenter",97.981)
     lmtdata.add_metadata("bandwidth",2.5)
     lmtdata.add_metadata("intTime",30.0)
