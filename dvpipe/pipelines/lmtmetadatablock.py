@@ -8,16 +8,18 @@ class LmtMetadataBlock(MetadataBlock):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
+      self._version = "1.0.0"
 
 if __name__ == "__main__":
     lmtdata = LmtMetadataBlock()
     print(lmtdata.name,'\n',lmtdata.datasetFields)
+    print("LMTMetadata version",lmtdata.version)
     print(lmtdata.datasetFields['name'].values)
     lmtdata.add_metadata("projectID","2021-S1-US-3")
     lmtdata.add_metadata("PIName","Marc Pound")
     lmtdata.add_metadata("obsnum","12345") 
 #   for multiple obsnums:
-    #lmtdata.add_metadata("obsnum","12345,56783,42099") 
+    lmtdata.add_metadata("obsnum","12345,56783,42099") 
     lmtdata.add_metadata("RA",123.456)
     lmtdata.add_metadata("DEC",-43.210)
     lmtdata.add_metadata("slBand",1)

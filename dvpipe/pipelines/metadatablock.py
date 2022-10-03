@@ -27,6 +27,7 @@ class MetadataBlock(object):
             self._controlledVocabulary = pd.read_csv(vocabulary_file)
         # The actual metadata
         self._metadata = dict()
+        self._version = None
     
     @property
     def name(self):
@@ -52,13 +53,15 @@ class MetadataBlock(object):
     @property 
     def metadata(self):
         return self._metadata
+
+    @property
+    def version(self):
+        return self._version
  
-    # NB a dict will not allow repeated entries (allowmultiples=True)
-    # switch to DataFrame?
     def add_metadata(self,name,value):
         if name not in self._datasetFields['name'].values:
             raise KeyError(f'{name} is not a recognized dataset field in {self.name}')
-        #@todo check value against controlled vocabulary
+        # check value against controlled vocabulary
         if not self.check_controlled(name,value):
             s =  self._allowed_values(name,value)
             raise ValueError(f'{value} is not a valid value for dataset field {name} in {self.name}. Allowed values are: {s}.')
