@@ -1,13 +1,13 @@
 name,title,description,watermark,fieldType,displayOrder,displayFormat,advancedSearchField,allowControlledVocabulary,allowmultiples,facetable,displayoncreate,required,parent,metadatablock_id
 projectID,Project,Project identifying string,,text,4,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 PIName,PI,Principal Investigator name,,text,6,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
-obsnum,Obsnum,Observation Number(s).  Integer or comma separated list,,text,7,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
+obsnum,Obsnum,"Observation Number(s).  Single number, comma separated list, or range with underscore",,text,7,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 RA,RA (deg),right ascension (degrees),,float,8,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 DEC,Dec (deg),declination (degrees),,float,9,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 galLon,l (deg),Galactic Longitude (degrees),,float,10,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 galLat,b (deg),Galactic Latitude (degrees),,float,11,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 slBand,SL Band,Spectral line band ,,int,12,,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,,LMTData
-lineName,Line Name,"expected line ID (e.g., CO1-0).  Do we adopt the ALMA convention for names? should be created by the observing script",,text,13,,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,,LMTData
+lineName,Line Name,"expected line(s) identification. E.g. ""CO1-0"".  Single ID or comma separated list",,text,13,,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,,LMTData
 frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,14,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 bandwidth,Bandwidth,Bandwidth in GHz,,float,15,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 intTime,Integration Time (s),On-source Integration Time (seconds),,float,16,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
