@@ -81,4 +81,5 @@ class MetadataBlock(object):
 
     def to_yaml(self,indent=4):
         js = json.dumps(self._metadata,indent=indent)
-        return utils.pformat_yaml(js)
+        comment = f"# {self.name} metadata block version {self.version}\n"
+        return utils.pformat_yaml(comment+js)
