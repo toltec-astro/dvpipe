@@ -1,0 +1,16 @@
+DatasetField,Value,identifier,displayOrder
+velDef,RADIO,,0
+velDef,OPTICAL,,1
+velfDef,RELATIVISTIC,,2
+velFrame,LSR,,0
+velFrame,SKY,,1
+velFrame,BARY,,2
+velFrame,SRC,,3
+velType,VELOCITY,,0
+velType,FREQUENCY,,1
+observatory,LMT,,0
+LMTInstrument,TolTEC,,0
+LMTInstrument,SEQUOIA,,1
+LMTInstrument,RSR,,2
+LMTInstrument,MSIP1MM,,3
+LMTInstrument,OMAYA,,4
