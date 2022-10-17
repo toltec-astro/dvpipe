@@ -38,9 +38,9 @@ if __name__ == "__main__":
     lmtdata.add_metadata("z",0.001071)
     lmtdata.add_metadata("beam",20.0/3600.0)
     lmtdata.add_metadata("lineSens",0.072)
-    lmtdata.add_metadata("facility","LMT")
-    lmtdata.add_metadata("instrument","SEQUOIA")
-    lmtdata.add_metadata("object","NGC 5948")
+    lmtdata.add_metadata("observatory","LMT")
+    lmtdata.add_metadata("LMTInstrument","SEQUOIA")
+    lmtdata.add_metadata("targetName","NGC 5948")
     try:
         lmtdata.add_metadata("foobar",12345)
     except KeyError as v:
