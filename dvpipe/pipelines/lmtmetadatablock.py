@@ -8,7 +8,7 @@ class LmtMetadataBlock(MetadataBlock):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
-      self._version = "1.0.1"
+      self._version = "1.0.2"
 
 if __name__ == "__main__":
     lmtdata = LmtMetadataBlock()

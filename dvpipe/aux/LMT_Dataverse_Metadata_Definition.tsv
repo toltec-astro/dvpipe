@@ -1,34 +1,35 @@
 #metadataBlock	name	dataverseAlias	displayName												
 	LMTData		Large Millimeter Telescope metadata												
 #datasetField	name	title	description	watermark	fieldType	displayOrder	displayFormat	advancedSearchField	allowControlledVocabulary	allowmultiples	facetable	displayoncreate	required	parent	metadatablock_id
-	projectID	Project	Project identifying string		text	4		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	PIName	PI	Principal Investigator name		text	6		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	obsnum	Obsnum	Observation Number(s).  Single number, comma separated list, or range with underscore		text	7		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	RA	RA (deg)	right ascension (degrees)		float	8		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	DEC	Dec (deg)	declination (degrees)		float	9		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	galLon	l (deg)	Galactic Longitude (degrees)		float	10		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	galLat	b (deg)	Galactic Latitude (degrees)		float	11		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	slBand	SL Band	Spectral line band 		int	12		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	lineName	Line Name	expected line(s) identification. E.g. "CO1-0".  Single ID or comma separated list		text	13		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	frequencyCenter	Frequency Center (GHz)	Center frequency in GHz		float	14		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	bandwidth	Bandwidth	Bandwidth in GHz		float	15		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	intTime	Integration Time (s)	On-source Integration Time (seconds)		float	16		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	projectID	Project	Project identifying string		text	1		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	PIName	PI	Principal Investigator name		text	2		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	obsnum	Obsnum	Observation Number(s).  Single number, comma separated list, or range with underscore		text	3		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	RA	RA (deg)	right ascension (degrees)		float	4		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	DEC	Dec (deg)	declination (degrees)		float	5		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	galLon	l (deg)	Galactic Longitude (degrees)		float	6		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	galLat	b (deg)	Galactic Latitude (degrees)		float	7		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	band	Bandwidth	Information about the spectral observing band		none	8		FALSE	FALSE	TRUE	FALSE	TRUE	TRUE		LMTData
+	slBand	SL Band	Spectral line band 		int	9		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE	band	LMTData
+	lineName	Line Name	expected line(s) identification. E.g. "CO1-0".  Single ID or comma separated list		text	10		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE	band	LMTData
+	frequencyCenter	Frequency Center (GHz)	Center frequency in GHz		float	11		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE	band	LMTData
+	bandwidth	Bandwidth	Bandwidth in GHz		float	12		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE	band	LMTData
+	beam	Beam Size (deg)	beam size in degrees		float	13		FALSE	FALSE	FALSE	FALSE	FALSE	TRUE	band	LMTData
+	contSens	Cont. Sensitivity (Jy/beam)	continuum sensitivity (Jy/beam). Not needed for SLR		float	14		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE	band	LMTData
+	lineSens	SL Sensitivity (K)	spectral line sensitivity in 1 km/s window (K of Ta*). 		float	15		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE	band	LMTData
+	qaGrade	QA Grade	quality assessment grade		text	16		TRUE	TRUE	FALSE	FALSE	FALSE	FALSE	band	LMTData
 	projectTitle	Project Title	The title of the project as submitted by the PI		text	17		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	obsDate	Date	Date of observation  at start of integration. FITS standard format		text	18		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	velocity	Velocity (km/s)	source velocity in km/s		float	19		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	velDef	Velocity Definition	velocity definition e.g. RADIO, OPTICAL		text	20		FALSE	TRUE	FALSE	FALSE	FALSE	FALSE		LMTData
-	velFrame	Velocity Frame	velocity reference frame, e.g. LSR,SKY,BARY,SRC		text	21		FALSE	TRUE	FALSE	FALSE	FALSE	FALSE		LMTData
-	velType	Velocity Type	Velocity type of FITS cube axis3, either frequency or velocity		text	22		FALSE	TRUE	FALSE	FALSE	FALSE	FALSE		LMTData
-	z	Redshift	redshift		float	23		TRUE	TRUE	FALSE	FALSE	FALSE	FALSE		LMTData
-	beam	Beam Size (deg)	beam size in degrees		float	25		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	contSens	Cont. Sensitivity (Jy/beam)	continuum sensitivity (Jy/beam). Not needed for SLR		float	26		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	lineSens	SL Sensitivity (K)	spectral line sensitivity in 1 km/s window (K of Ta*). 		float	27		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	qaGrade	QA Grade	quality assessment grade		text	28		TRUE	TRUE	FALSE	FALSE	FALSE	FALSE		LMTData
-	boundingBox	Bounding Box	for mosaics, outside bounding box, list of vertices, e.g. Python list of tuples		text	29		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	pipeVersion	Pipeline Version	pipeline version		text	30		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
-	observatory	Observatory	The observatory or facility where the data was obtained.		text	31		TRUE	TRUE	FALSE	TRUE	FALSE	FALSE		LMTdata
-	LMTInstrument	Instrument	The instrument used to collect the data.		text	32		TRUE	TRUE	FALSE	TRUE	FALSE	FALSE		LMTdata
-	targetName	Target	Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).		text	33		TRUE	FALSE	FALSE	TRUE	FALSE	FALSE		LMTdata
+	obsDate	Date	Date of observation  at start of integration. FITS standard format		text	18		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	intTime	Integration Time (s)	On-source Integration Time (seconds)		float	19		TRUE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velocity	Velocity (km/s)	source velocity in km/s		float	20		FALSE	FALSE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velDef	Velocity Definition	velocity definition e.g. RADIO, OPTICAL		text	21		FALSE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velFrame	Velocity Frame	velocity reference frame, e.g. LSR,SKY,BARY,SRC		text	22		FALSE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	velType	Velocity Type	Velocity type of FITS cube axis3, either frequency or velocity		text	23		FALSE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	z	Redshift	redshift		float	24		TRUE	TRUE	FALSE	FALSE	FALSE	TRUE		LMTData
+	boundingBox	Bounding Box	for mosaics, outside bounding box, list of vertices, e.g. Python list of tuples		text	25		FALSE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	pipeVersion	Pipeline Version	pipeline version		text	26		TRUE	FALSE	FALSE	FALSE	FALSE	FALSE		LMTData
+	observatory	Observatory	The observatory or facility where the data was obtained.		text	27		TRUE	TRUE	FALSE	TRUE	FALSE	FALSE		LMTdata
+	LMTInstrument	Instrument	The instrument used to collect the data.		text	28		TRUE	TRUE	FALSE	TRUE	FALSE	FALSE		LMTdata
+	targetName	Target	Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).		text	29		TRUE	FALSE	FALSE	TRUE	FALSE	FALSE		LMTdata
 #controlledVocabulary	DatasetField	Value	identifier	displayOrder											
 	velDef	RADIO		0											
 	velDef	OPTICAL		1											
