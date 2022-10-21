@@ -6,7 +6,7 @@ RA,RA (deg),right ascension (degrees),,float,4,,TRUE,FALSE,FALSE,FALSE,FALSE,TRU
 DEC,Dec (deg),declination (degrees),,float,5,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 galLon,l (deg),Galactic Longitude (degrees),,float,6,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
 galLat,b (deg),Galactic Latitude (degrees),,float,7,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,,LMTData
-band,Bandwidth,Information about the spectral observing band,,none,8,,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,,LMTData
+band,Band,Information about the spectral observing band,,none,8,,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,,LMTData
 slBand,SL Band,Spectral line band ,,int,9,,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,band,LMTData
 lineName,Line Name,"expected line(s) identification. E.g. ""CO1-0"".  Single ID or comma separated list",,text,10,,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,band,LMTData
 frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,11,,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,band,LMTData
