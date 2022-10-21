@@ -10,11 +10,31 @@ class LmtMetadataBlock(MetadataBlock):
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
       self._version = "1.0.2"
 
-if __name__ == "__main__":
+    def test(self):
+        try:
+            self.add_metadata("foobar",12345)
+        except KeyError as v:
+            print("Caught as expected: ",v)
+        print(self.controlledVocabulary)
+        print(self._check_controlled("velFrame","Foobar"))
+        print(self._check_controlled("velFrame","LSR"))
+        print(self._check_controlled("foobar","uhno"))
+        try:
+            self.add_metadata("velFrame","Foobar")
+        except ValueError as v:
+            print("Caught as expected: ",v)
+        print(self._has_parent("slBand"))
+        print(self._has_parent("velFrame"))
+        print(self._is_parent("band"))
+        print(self.get_children("band"))
+        print(self.get_children("targetName"))
+        if False:
+            print("JSON")
+            print(self.to_json())
+
+def example():
+    '''Example usage of LmtMetadataBlock'''
     lmtdata = LmtMetadataBlock()
-    print(lmtdata.name,'\n',lmtdata.datasetFields)
-    print("LMTMetadata version",lmtdata.version)
-    print(lmtdata.datasetFields['name'].values)
     lmtdata.add_metadata("projectID","2021-S1-US-3")
     lmtdata.add_metadata("projectTitle","Life, the Universe, and Everything")
     lmtdata.add_metadata("PIName","Marc Pound")
@@ -23,6 +43,7 @@ if __name__ == "__main__":
     lmtdata.add_metadata("obsnum","12345,56783,42099") 
     lmtdata.add_metadata("RA",123.456)
     lmtdata.add_metadata("DEC",-43.210)
+    # add a band
     band = dict()
     band["slBand"] = 1
     band["lineName"]='CS2-1'
@@ -34,7 +55,6 @@ if __name__ == "__main__":
     band["lineSens"] = 0.072
     band["qaGrade"] = "A+++"
     lmtdata.add_metadata("band",band)
-
     # add a second band
     band["slBand"] = 2
     band["lineName"]='CO1-0'
@@ -57,27 +77,9 @@ if __name__ == "__main__":
     lmtdata.add_metadata("observatory","LMT")
     lmtdata.add_metadata("LMTInstrument","SEQUOIA")
     lmtdata.add_metadata("targetName","NGC 5948")
-    try:
-        lmtdata.add_metadata("foobar",12345)
-    except KeyError as v:
-        print("Caught as expected: ",v)
-    print(lmtdata.controlledVocabulary)
-    print(lmtdata._check_controlled("velFrame","Foobar"))
-    print(lmtdata._check_controlled("velFrame","LSR"))
-    print(lmtdata._check_controlled("foobar","uhno"))
-    try:
-        lmtdata.add_metadata("velFrame","Foobar")
-    except ValueError as v:
-        print("Caught as expected: ",v)
-    print(lmtdata._has_parent("slBand"))
-    print(lmtdata._has_parent("velFrame"))
-    print(lmtdata._is_parent("band"))
-    print(lmtdata.get_children("band"))
-    print(lmtdata.get_children("targetName"))
-
-    print("YAML")
+    # YAML output
     print(lmtdata.to_yaml())
-    print("JSON")
-    print(lmtdata.to_json())
 
-    
+if __name__ == "__main__":
+
+    example()
