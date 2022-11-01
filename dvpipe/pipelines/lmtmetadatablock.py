@@ -3,6 +3,9 @@ import pandas as d
 import json
 import dvpipe.utils as utils
 
+#@TODO support units in add_metadata.  Can add units to CSV (not TSV) file
+# since the CSV is not used by dataverse.
+# then dict(name)=>unit lookup and convert. 
 class LmtMetadataBlock(MetadataBlock):
     def __init__(self):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
@@ -79,7 +82,14 @@ def example():
     lmtdata.add_metadata("targetName","NGC 5948")
     # YAML output
     print(lmtdata.to_yaml())
+    print(lmtdata._has_units("bandwidth"))
+    print(lmtdata._has_units("PIName"))
+    print(lmtdata.get_units("bandwidth"))
+    print(type(lmtdata.get_units("bandwidth")))
+    print(lmtdata.get_units("PIName"))
+    print(lmtdata.get_units("band"))
 
 if __name__ == "__main__":
 
     example()
+    
