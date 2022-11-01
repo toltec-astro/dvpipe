@@ -73,7 +73,7 @@ def example():
 
     lmtdata.add_metadata("obsDate",utils.now())
     lmtdata.add_metadata("intTime",30.0,"minute")
-    lmtdata.add_metadata("velocity",321.0,"m/s")
+    lmtdata.add_metadata("velocity",321.0,u.Unit("m/s"))
     lmtdata.add_metadata("velDef","RADIO")
     lmtdata.add_metadata("velFrame","LSR")
     lmtdata.add_metadata("velType","FREQUENCY")
