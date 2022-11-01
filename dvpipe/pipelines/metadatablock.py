@@ -112,7 +112,7 @@ class MetadataBlock(object):
             if units is not None:
                 raise ValueError("You can't provide units if value is a dict; the dict must contain astropy Quantities")
             for k,v in value.items():
-                print("checking ",k,v)
+                #print("checking ",k,v)
                 q = self._check_units(k,v,units=None)
                 parsed_dict[k] = q[k]
             return parsed_dict
