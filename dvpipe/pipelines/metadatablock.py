@@ -2,6 +2,9 @@ import pandas as pd
 import json
 import dvpipe.utils as utils
 from copy import deepcopy
+import astropy.units as u
+from numbers import Number
+#import numpy as np
 
 class MetadataBlock(object):
     '''Generic representation of a Dataverse metadata block.
@@ -17,7 +20,7 @@ class MetadataBlock(object):
                           'fieldType', 'displayOrder', 'displayFormat', 
                           'advancedSearchField', 'allowControlledVocabulary', 
                           'allowmultiples', 'facetable', 'displayoncreate', 
-                          'required', 'parent', 'metadatablock_id']
+                          'required', 'parent', 'metadatablock_id','units']
         self._cvColnames = ['DatasetField', 'Value', 
                             'identifier', 'displayOrder']
         # metdata definition
@@ -61,28 +64,33 @@ class MetadataBlock(object):
     def version(self):
         return self._version
  
-    def add_metadata(self,name,value):
+    def add_metadata(self,name,value,units=None):
         if name not in self._datasetFields['name'].values:
             raise KeyError(f'{name} is not a recognized dataset field in {self.name}')
-        # check value against controlled vocabulary
-        if not self._check_controlled(name,value):
-            s =  self._allowed_values(name,value)
-            raise ValueError(f'{value} is not a valid value for dataset field {name} in {self.name}. Allowed values are: {s}.')
+        # check parent-child relationship of inputs
         isparent = self._is_parent(name)
         if isparent  and type(value) is not dict:
             raise ValueError(f'Dataset field {self.name} has children whose values must be passed as a dict: {self.get_children(name)}')
         if self._has_parent(name):
             parent = self.get_parent(name)
             raise ValueError(f'Dataset field "{name}" is a child of "{parent}" and passed as a dict member for "{parent}". e.g. add_metadata({parent},{{"{name}":...}}')
+
+        value_checked = self._check_units(name,value,units)
+
+        for k,v in value_checked.items():
+            if not self._check_controlled(k,v):
+                s =  self._allowed_values(k,v)
+                raise ValueError(f'{v} is not a valid value for dataset field {k} in {self.name}. Allowed values are: {s}.')
+
         if isparent:
             # Note: must use deepcopy of dict because caller may reuse the
             # the dict in calling object and this is normally just a reference.
             if name in self._metadata:
-                self._metadata[name].append(deepcopy(value))
+                self._metadata[name].append(deepcopy(value_checked))
             else:
-                self._metadata[name]= [deepcopy(value)]
+                self._metadata[name]= [deepcopy(value_checked)]
         else:
-            self._metadata[name] = value
+            self._metadata[name] = value_checked[name]
 
     def _allowed_values(self,name,value):
         '''The allowed values of a variable if in a controlled vocabulary 
@@ -95,6 +103,43 @@ class MetadataBlock(object):
     def _check_controlled(self,name,value):
         s =  self._allowed_values(name,value)
         return s.size == 0 or value in s
+
+    def _check_units(self,name,value,units):
+        '''always returns a dict with key=name, value is value in defined units'''
+        requnits = self.get_units(name)
+        parsed_dict = dict()
+        if type(value) is dict:
+            if units is not None:
+                raise ValueError("You can't provide units if value is a dict; the dict must contain astropy Quantities")
+            for k,v in value.items():
+                #print("checking ",k,v)
+                q = self._check_units(k,v,units=None)
+                parsed_dict[k] = q[k]
+            return parsed_dict
+
+        if requnits is not None:
+          try :
+            if units is None:
+                q = u.Quantity(value,requnits)
+            else:
+                q = u.Quantity(value,units).to(requnits)
+          except Exception as ex:
+            raise ValueError(f'Error converting units for {name}: {ex}. Required units are {requnits}.')
+          parsed_dict[name] = q.value
+        else:
+          parsed_dict[name] = value
+        return parsed_dict
+
+    def _has_units(self,name):
+        df = self._datasetFields[self._datasetFields['name'] == name]
+        return not df["units"].dropna().empty
+
+    def get_units(self,name):
+        df = self._datasetFields[self._datasetFields['name'] == name]
+        if pd.isnull(df["units"].iloc[0]):
+            return None
+        else:
+            return df["units"].iloc[0]
 
     def _has_parent(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
