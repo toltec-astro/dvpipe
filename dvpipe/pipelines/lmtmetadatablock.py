@@ -2,6 +2,7 @@ from dvpipe.pipelines.metadatablock import MetadataBlock
 import pandas as d
 import json
 import dvpipe.utils as utils
+import astropy.units as u
 
 #@TODO support units in add_metadata.  Can add units to CSV (not TSV) file
 # since the CSV is not used by dataverse.
@@ -44,7 +45,7 @@ def example():
     lmtdata.add_metadata("obsnum","12345") 
 #   for multiple obsnums:
     lmtdata.add_metadata("obsnum","12345,56783,42099") 
-    lmtdata.add_metadata("RA",123.456)
+    lmtdata.add_metadata("RA",14.01,"degree")
     lmtdata.add_metadata("DEC",-43.210)
     # add a band
     band = dict()
@@ -52,9 +53,9 @@ def example():
     band["lineName"]='CS2-1'
 #   for multiple lines:
     #band["lineName"] = 'CS2-1,CO1-0,H2CS'
-    band["frequencyCenter"] = 97.981
+    band["frequencyCenter"] = 97981*u.Unit("MHz")
     band["bandwidth"] = 2.5
-    band["beam"] = 20.0/3600.0
+    band["beam"] = u.Quantity(20.0,"arcsec")
     band["lineSens"] = 0.072
     band["qaGrade"] = "A+++"
     lmtdata.add_metadata("band",band)
@@ -63,16 +64,16 @@ def example():
     band["lineName"]='CO1-0'
 #   for multiple lines:
     #band["lineName"] = 'CS2-1,CO1-0,H2CS'
-    band["frequencyCenter"] = 115.2712
-    band["bandwidth"] = 2.5
+    band["frequencyCenter"] = u.Quantity(115.2712,"GHz")
+    band["bandwidth"] = 2.5 #GHz
     band["beam"] = (97.981/115.2712)*20.0/3600.0
-    band["lineSens"] = 0.1
+    band["lineSens"] = 123*u.Unit("mK")
     band["qaGrade"] = "B-"
     lmtdata.add_metadata("band",band)
 
     lmtdata.add_metadata("obsDate",utils.now())
-    lmtdata.add_metadata("intTime",30.0)
-    lmtdata.add_metadata("velocity",321.0)
+    lmtdata.add_metadata("intTime",30.0,"minute")
+    lmtdata.add_metadata("velocity",321.0,"m/s")
     lmtdata.add_metadata("velDef","RADIO")
     lmtdata.add_metadata("velFrame","LSR")
     lmtdata.add_metadata("velType","FREQUENCY")
