@@ -1,5 +1,8 @@
 import pandas as pd
 import json
+import yaml
+#import pyaml
+#import ruamel.yaml as ry
 import dvpipe.utils as utils
 from copy import deepcopy
 import astropy.units as u
@@ -126,8 +129,11 @@ class MetadataBlock(object):
           except Exception as ex:
             raise ValueError(f'Error converting units for {name}: {ex}. Required units are {requnits}.')
           parsed_dict[name] = q.value
+          if type(parsed_dict[name]) is not str:
+            parsed_dict[name] =  parsed_dict[name].item()
         else:
           parsed_dict[name] = value
+        print("TYPE: ",name,type(parsed_dict[name]))
         return parsed_dict
 
     def _has_units(self,name):
@@ -167,6 +173,11 @@ class MetadataBlock(object):
     def to_yaml(self):
         comment = f"# {self.name} metadata block version {self.version}"
         return comment+utils.pformat_yaml(self._metadata)
+    #def to_yaml2(self):
+    #    comment = f"# YAML2 {self.name} metadata block version {self.version}"
+    #    return yaml.dump(self._metadata,encoding='utf-8')
+    #def to_yaml3(self):
+    #    return pyaml.p(self._metadata)
 
     def to_json(self,indent=4):
         comment = f"# {self.name} metadata block version {self.version}\n"
