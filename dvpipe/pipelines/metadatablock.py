@@ -140,7 +140,6 @@ class MetadataBlock(object):
             parsed_dict[name] =  parsed_dict[name].item()
         else:
           parsed_dict[name] = value
-        print("TYPE: ",name,type(parsed_dict[name]))
         return parsed_dict
 
     def _has_units(self,name):
@@ -149,7 +148,7 @@ class MetadataBlock(object):
 
     def get_units(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
-        if "units" not in df or pd.isnull(df["units"].iloc[0]):
+        if "units" not in df.columns or pd.isnull(df["units"].iloc[0]):
             return None
         else:
             return df["units"].iloc[0]
