@@ -20,7 +20,6 @@ def pformat_yaml(obj):
     """Return pretty-formatted YAML string representation for `obj`."""
     return f"\n{pyaml.dump(obj)}"
 
-
 def pformat_resp(resp):
     # TODO fix this. maybe in our own fork of pydataverse?
     # the url composed by pydatavese contains the api token as params.
