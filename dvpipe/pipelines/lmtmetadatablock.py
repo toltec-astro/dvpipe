@@ -12,7 +12,7 @@ class LmtMetadataBlock(MetadataBlock):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
-      self._version = "1.0.2"
+      self._version = "1.0.3"
 
     def test(self):
         try:
@@ -85,6 +85,13 @@ def example():
     print(lmtdata.to_yaml())
     return lmtdata
 
+
+class CitationMetadataBlock(MetadataBlock):
+    def __init__(self):
+      self._datacsv = utils.aux_file("CitationMetaDatablock.csv")
+      self._vocabcsv =  utils.aux_file("CitationControlledVocabulary.csv")
+      super().__init__("CitationData",self._datacsv,self._vocabcsv)
+      self._version = "5.12.1"
 
 if __name__ == "__main__":
 

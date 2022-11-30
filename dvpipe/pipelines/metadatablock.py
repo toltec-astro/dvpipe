@@ -51,6 +51,10 @@ class MetadataBlock(object):
     def datasetFields(self):
         return self._datasetFields
 
+    @property
+    def keys(self):
+        return list(self._datasetFields['name'])
+
     @property 
     def controlledVocabularyColnames(self):
         return self._cvColnames
@@ -67,8 +71,11 @@ class MetadataBlock(object):
     def version(self):
         return self._version
  
+    def is_recognized_field(self,name):
+        return name in self._datasetFields['name'].values
+
     def add_metadata(self,name,value,units=None):
-        if name not in self._datasetFields['name'].values:
+        if not self.is_recognized_field(name):
             raise KeyError(f'{name} is not a recognized dataset field in {self.name}')
         # check parent-child relationship of inputs
         isparent = self._is_parent(name)
@@ -142,7 +149,7 @@ class MetadataBlock(object):
 
     def get_units(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
-        if pd.isnull(df["units"].iloc[0]):
+        if "units" not in df or pd.isnull(df["units"].iloc[0]):
             return None
         else:
             return df["units"].iloc[0]
