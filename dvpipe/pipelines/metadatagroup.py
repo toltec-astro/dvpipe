@@ -1,6 +1,7 @@
-from lmtmetadatablock import LmtMetadataBlock, CitationMetadataBlock
+from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock, CitationMetadataBlock
 import dvpipe.utils as utils
 import astropy.units as u
+
 class MetadataGroup(object):
     '''Object to contain multiple metadata blocks and write them as one yaml file'''
     def __init__(self,name):
