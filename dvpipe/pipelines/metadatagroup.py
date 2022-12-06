@@ -23,7 +23,6 @@ class MetadataGroup(object):
         for b in self._blocks.values():
             if b.is_recognized_field(name):
                 b.add_metadata(name,value,units)
-                print(f"added {name}={value} to {b.name}")
                 return
         raise KeyError(f'{name} is not a recognized dataset field in metadatablocks: {list(self._blocks.keys())}')
         
