@@ -91,7 +91,7 @@ class CitationMetadataBlock(MetadataBlock):
       self._datacsv = utils.aux_file("CitationMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("CitationControlledVocabulary.csv")
       super().__init__("CitationData",self._datacsv,self._vocabcsv)
-      self._version = "5.12.1"
+      self._version = "/Dataverse version 5.12.1"
 
 if __name__ == "__main__":
 
