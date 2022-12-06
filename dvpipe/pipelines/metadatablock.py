@@ -100,7 +100,12 @@ class MetadataBlock(object):
             else:
                 self._metadata[name]= [deepcopy(value_checked)]
         else:
-            self._metadata[name] = value_checked[name]
+         # prevent yaml writer from putting quotes around it because 
+         # it is <'class numpy.float64'>
+            if type(value_checked[name]) is str:
+                self._metadata[name] = value_checked[name]
+            else:
+                self._metadata[name] = float(value_checked[name])
 
     def _allowed_values(self,name,value):
         '''The allowed values of a variable if in a controlled vocabulary 
