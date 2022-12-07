@@ -108,6 +108,7 @@ def example():
     lmt.add_metadata("observatory","LMT")
     lmt.add_metadata("LMTInstrument","SEQUOIA")
     lmt.add_metadata("targetName","NGC 5948")
+    lmt.add_metadata("calibrationStatus","UNCALIBRATED")# or CALIBRATED
     # YAML output
     print(lmt.to_yaml())
     return lmt

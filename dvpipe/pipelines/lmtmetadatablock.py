@@ -4,15 +4,12 @@ import json
 import dvpipe.utils as utils
 import astropy.units as u
 
-#@TODO support units in add_metadata.  Can add units to CSV (not TSV) file
-# since the CSV is not used by dataverse.
-# then dict(name)=>unit lookup and convert. 
 class LmtMetadataBlock(MetadataBlock):
     def __init__(self):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
-      self._version = "1.0.3"
+      self._version = "1.0.4"
 
     def test(self):
         try:
@@ -81,6 +78,7 @@ def example():
     lmtdata.add_metadata("observatory","LMT")
     lmtdata.add_metadata("LMTInstrument","SEQUOIA")
     lmtdata.add_metadata("targetName","NGC 5948")
+    lmtdata.add_metadata("calibrationStatus","UNCALIBRATED")# or CALIBRATED
     # YAML output
     print(lmtdata.to_yaml())
     return lmtdata
@@ -91,7 +89,7 @@ class CitationMetadataBlock(MetadataBlock):
       self._datacsv = utils.aux_file("CitationMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("CitationControlledVocabulary.csv")
       super().__init__("CitationData",self._datacsv,self._vocabcsv)
-      self._version = "/Dataverse version 5.12.1"
+      self._version = "Dataverse 5.12.1"
 
 if __name__ == "__main__":
 

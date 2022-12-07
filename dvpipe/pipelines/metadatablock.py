@@ -182,7 +182,7 @@ class MetadataBlock(object):
         return df['name'].values
 
     def to_yaml(self):
-        comment = f"# {self.name} metadata block version {self.version}"
+        comment = f"# {self.name} metadata block {self.version}"
         return comment+utils.pformat_yaml(self._metadata)
     #def to_yaml2(self):
     #    comment = f"# YAML2 {self.name} metadata block version {self.version}"
