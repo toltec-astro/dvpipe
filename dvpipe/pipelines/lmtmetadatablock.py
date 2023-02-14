@@ -1,15 +1,53 @@
 from dvpipe.pipelines.metadatablock import MetadataBlock
-import pandas as d
+from dvpipe.pipelines.metadb import MetaDB
+import pandas as pd
 import json
 import dvpipe.utils as utils
 import astropy.units as u
+import sqlite3
+import os
 
 class LmtMetadataBlock(MetadataBlock):
     def __init__(self):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
+      self._almakeyscsv =  utils.aux_file("alma_to_lmt_keymap.csv")
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
-      self._version = "1.0.4"
+      self._map_lmt_to_alma()
+      self._version = "1.0.5"
+
+    def _map_lmt_to_alma(self):
+        self._lmt_map = dict()
+        alma_keys =  pd.read_csv(self._almakeyscsv)
+        self._lmt_keys = alma_keys[alma_keys['LMT Keyword'].notna()]
+        tablenames = set(alma_keys['Database Table'])
+        for name in tablenames:
+            kv = self._lmt_keys[(self._lmt_keys['Database Table'] == name)]
+            self._lmt_map[name] = dict(zip(kv['LMT Keyword'],kv['ALMA Keyword']))
+    def _write_to_db(self,file):
+        if False:
+            if not os.path.exists(file):
+                # create the database file
+                db = MetaDB(file)
+        foo = dict()
+        # this ain't right . this is backwards
+        for name in self._lmt_map:
+            if name = "window":
+            for k,v in self._lmt_map[name].items():
+                print(f"{name}{v}={k}")
+                if not self.is_recognized_field(k):
+                   raise KeyError('{k} is not a recognized dataset field in {self.name}')
+                if k in self._metadata:
+                    foo[v] = self._metadata[k]
+                elif k in self._metadata["band"][0]:
+                # ugh force to slBand 1
+                    foo[v] = self._metadata["band"][0][k]
+                else:
+                # the key is valid but was not present
+                    pass
+                    
+        return foo
+        
 
     def test(self):
         try:
@@ -94,9 +132,10 @@ class CitationMetadataBlock(MetadataBlock):
 if __name__ == "__main__":
 
     lmtdata = example()
-    print(lmtdata._has_units("bandwidth"))
-    print(lmtdata._has_units("PIName"))
-    print(lmtdata.get_units("bandwidth"))
-    print(lmtdata.get_units("PIName"))
-    print(lmtdata.get_units("band"))
+    if False: 
+        print(lmtdata._has_units("bandwidth"))
+        print(lmtdata._has_units("PIName"))
+        print(lmtdata.get_units("bandwidth"))
+        print(lmtdata.get_units("PIName"))
+        print(lmtdata.get_units("band"))
     
