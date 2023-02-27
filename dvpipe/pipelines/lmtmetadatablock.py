@@ -16,7 +16,7 @@ class LmtMetadataBlock(MetadataBlock):
       self._db = None
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
       self._map_lmt_to_alma()
-      self._version = "1.0.5"
+      self._version = "1.0.6"
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
@@ -31,6 +31,13 @@ class LmtMetadataBlock(MetadataBlock):
     def _open_db(self,create=True):
        # True: will create if not exists
         self._db = MetaDB(self._dbfile,create) 
+        if self._db._created:
+            self._alma_id = 1
+        else:
+            # Get the highest alma_id in the table and add 1 as each metadata is a new entry
+            # This query returns list[tuple], hence the double indices.
+            self._alma_id = self._db.query("alma","MAX(id)")[0][0] + 1
+        #print("ALMA ID is ",self._alma_id)
 
     def _write_to_db(self):
         if self._db is None:
@@ -44,21 +51,22 @@ class LmtMetadataBlock(MetadataBlock):
             for ak in df['ALMA Keyword']:
                 x = df.loc[df['ALMA Keyword'] == ak]
                 insertme[ak] = b[x['LMT Keyword'].array[0]]
-            print("Attempting to insert: ",insertme)
-            insertme["a_id"] = 1 # required not null, so fake it
+            #print("Attempting to insert: ",insertme)
+            insertme["a_id"] = self._alma_id
             self._db.insert_into("win",insertme) 
         
         dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
-        print("DOLIST",set(dolist))
+        #print("DOLIST",set(dolist))
         for name in set(dolist):
             insertme = dict()
             for k,v in self._lmt_map[name].items():
                 #print(f"{name}.{v}={k}")
                 if k in self._metadata:
                     insertme[v] = self._metadata[k]
-            print("I:",insertme,len(insertme),not insertme)
+            #print("I:",insertme,len(insertme),not insertme)
             if insertme: # don't insert empty dict
                 self._db.insert_into(name,insertme)
+        self._alma_id += 1
 
     @property
     def dbfile(self):
