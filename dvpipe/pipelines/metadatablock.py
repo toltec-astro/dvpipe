@@ -122,7 +122,7 @@ class MetadataBlock(object):
 
     def _check_units(self,name,value,units):
         '''always returns a dict with key=name, value is value in defined units'''
-        print(f"checking units for {name},{value},{units}")
+        #print(f"checking units for {name},{value},{units}")
         requnits = self.get_units(name)
         parsed_dict = dict()
         if type(value) is dict:
