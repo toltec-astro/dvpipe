@@ -3,7 +3,7 @@
 #  Warning:  there isn't a lot of sanity checking if that data is properly structured
 
 import sqlite3
-from sqlite3 import Error
+import os
 
 # ------------------------------------------------------------
 #  if a new field is added to a table:
@@ -121,24 +121,27 @@ class MetaDB(object):
     def __init__(self, db_file, create=False):
         self.db   = db_file
         self.conn = None
+        self._created = False
 
-        # create_connection
         try:
-            self.conn = sqlite3.connect(db_file)
-        except Exception:
-            if create == False:
+            if os.path.isfile(db_file):
+               self.conn = sqlite3.connect(db_file)
+            else:
+               if create:
+                   # default is to create if it doesn't exists
+                   self.conn = sqlite3.connect(db_file)
+                   self.create_table(header_table)
+                   self.create_table(   alma_table)
+                   self.create_table(    win_table)
+                   self.create_table(  lines_table)
+                   self.create_table(sources_table)
+                   self._created = True
+               else:
+                   msg = f"Cannot create the database connection to {db_file}. Check that the file exists. If not, try create=True"
+                   raise Exception(msg)
+        except sqlite3.Error:
                 raise
 
-        if create and self.conn is not None:
-        # create tables
-                self.create_table( header_table)
-                self.create_table(   alma_table)
-                self.create_table(    win_table)
-                self.create_table(  lines_table)
-                self.create_table(sources_table)
-        else:
-            msg = f"Cannot create the database connection to {db_file}. Check that the file exists. If not, try create=True"
-            raise Exception(msg)
             
 
     def close(self):
@@ -155,8 +158,6 @@ class MetaDB(object):
         #try:
         c = self.conn.cursor()
         c.execute(create_table_sql)
-        #except Error as e:
-        #    print(e)
 
 
     def insert_into(self,table,keyval):
@@ -177,6 +178,13 @@ class MetaDB(object):
         cur = self.conn.cursor()
         cur.execute(sql,v)
         self.conn.commit()
+
+    def query(self,table,item):
+        sql = f"SELECT {item} from {table};"
+        #print("QUERY IS ",sql)
+        cur = self.conn.cursor()
+        cur.execute(sql)
+        return cur.fetchall()
 
     def create_header(self, entry):
         """
