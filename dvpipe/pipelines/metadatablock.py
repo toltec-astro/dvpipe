@@ -30,10 +30,11 @@ class MetadataBlock(object):
         self._dataset_file = dataset_file
         # controlled vocabulary definition
         self._vocabulary_file = vocabulary_file
-        self._datasetFields = pd.read_csv(dataset_file)
+        #TODO trim trailing spaces will will get us intro trouble possibly later
+        self._datasetFields = pd.read_csv(dataset_file,skipinitialspace=True)
         self._datasetFields.set_index("parent")
         if vocabulary_file is not None:
-            self._controlledVocabulary = pd.read_csv(vocabulary_file)
+            self._controlledVocabulary = pd.read_csv(vocabulary_file,skipinitialspace=True)
         # The actual metadata
         self._metadata = dict()
         self._version = None
@@ -121,6 +122,7 @@ class MetadataBlock(object):
 
     def _check_units(self,name,value,units):
         '''always returns a dict with key=name, value is value in defined units'''
+        print(f"checking units for {name},{value},{units}")
         requnits = self.get_units(name)
         parsed_dict = dict()
         if type(value) is dict:
@@ -148,11 +150,16 @@ class MetadataBlock(object):
         return parsed_dict
 
     def _has_units(self,name):
+        # duh use is recognized data
         df = self._datasetFields[self._datasetFields['name'] == name]
+        if df.empty:
+            raise Exception(f'{name} is not a valid dataset field')
         return not df["units"].dropna().empty
 
     def get_units(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
+        if df.empty:
+            raise Exception(f'{name} is not a valid dataset field')
         if "units" not in df.columns or pd.isnull(df["units"].iloc[0]):
             return None
         else:
@@ -160,14 +167,20 @@ class MetadataBlock(object):
 
     def _has_parent(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
+        if df.empty:
+            raise Exception(f'{name} is not a valid dataset field')
         return df.notna()["parent"].values[0]
 
     def _is_parent(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
+        if df.empty:
+            raise Exception(f'{name} is not a valid dataset field')
         return df["fieldType"].values[0] == "none"
 
     def get_parent(self,name):
         df = self._datasetFields[self._datasetFields['name'] == name]
+        if df.empty:
+            raise Exception(f'{name} is not a valid dataset field')
         return df["parent"].values[0]
 
     def get_children(self,name):
@@ -179,10 +192,12 @@ class MetadataBlock(object):
         :rtype: numpy.ndarray
         '''
         df = self._datasetFields[self._datasetFields['parent'] == name]
+        if df.empty:
+            raise Exception(f'{name} is not a valid dataset field')
         return df['name'].values
 
     def to_yaml(self):
-        comment = f"# {self.name} metadata block {self.version}"
+        comment = f"# {self.name} metadata block version {self.version}"
         return comment+utils.pformat_yaml(self._metadata)
     #def to_yaml2(self):
     #    comment = f"# YAML2 {self.name} metadata block version {self.version}"

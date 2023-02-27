@@ -8,46 +8,61 @@ import sqlite3
 import os
 
 class LmtMetadataBlock(MetadataBlock):
-    def __init__(self):
+    def __init__(self,dbfile=None):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
       self._almakeyscsv =  utils.aux_file("alma_to_lmt_keymap.csv")
+      self._dbfile = dbfile
+      self._db = None
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
       self._map_lmt_to_alma()
       self._version = "1.0.5"
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
-        alma_keys =  pd.read_csv(self._almakeyscsv)
-        self._lmt_keys = alma_keys[alma_keys['LMT Keyword'].notna()]
-        tablenames = set(alma_keys['Database Table'])
+        #TODO trim trailing spaces will will get us intro trouble possibly later
+        self._alma_keys =  pd.read_csv(self._almakeyscsv,skipinitialspace=True)
+        self._lmt_keys = self._alma_keys[self._alma_keys['LMT Keyword'].notna()]
+        tablenames = set(self._alma_keys['Database Table'])
         for name in tablenames:
             kv = self._lmt_keys[(self._lmt_keys['Database Table'] == name)]
             self._lmt_map[name] = dict(zip(kv['LMT Keyword'],kv['ALMA Keyword']))
-    def _write_to_db(self,file):
-        if False:
-            if not os.path.exists(file):
-                # create the database file
-                db = MetaDB(file)
-        foo = dict()
-        # this ain't right . this is backwards
-        for name in self._lmt_map:
-            if name = "window":
-            for k,v in self._lmt_map[name].items():
-                print(f"{name}{v}={k}")
-                if not self.is_recognized_field(k):
-                   raise KeyError('{k} is not a recognized dataset field in {self.name}')
-                if k in self._metadata:
-                    foo[v] = self._metadata[k]
-                elif k in self._metadata["band"][0]:
-                # ugh force to slBand 1
-                    foo[v] = self._metadata["band"][0][k]
-                else:
-                # the key is valid but was not present
-                    pass
-                    
-        return foo
+
+    def _open_db(self,create=True):
+       # True: will create if not exists
+        self._db = MetaDB(self._dbfile,create) 
+
+    def _write_to_db(self):
+        if self._db is None:
+            self._open_db()
         
+        #loop over the metadata. First do the bands
+        for b in self._metadata["band"]:
+            insertme= dict()
+            df = self._lmt_keys[(self._lmt_keys['Database Table'] == "win")]
+            # there must be a quicker way to do this with pure pandas
+            for ak in df['ALMA Keyword']:
+                x = df.loc[df['ALMA Keyword'] == ak]
+                insertme[ak] = b[x['LMT Keyword'].array[0]]
+            print("Attempting to insert: ",insertme)
+            insertme["a_id"] = 1 # required not null, so fake it
+            self._db.insert_into("win",insertme) 
+        
+        dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
+        print("DOLIST",set(dolist))
+        for name in set(dolist):
+            insertme = dict()
+            for k,v in self._lmt_map[name].items():
+                #print(f"{name}.{v}={k}")
+                if k in self._metadata:
+                    insertme[v] = self._metadata[k]
+            print("I:",insertme,len(insertme),not insertme)
+            if insertme: # don't insert empty dict
+                self._db.insert_into(name,insertme)
+
+    @property
+    def dbfile(self):
+        return self._dbfile
 
     def test(self):
         try:
@@ -73,7 +88,7 @@ class LmtMetadataBlock(MetadataBlock):
 
 def example():
     '''Example usage of LmtMetadataBlock'''
-    lmtdata = LmtMetadataBlock()
+    lmtdata = LmtMetadataBlock(dbfile="test_meta.db")
     lmtdata.add_metadata("projectID","2021-S1-US-3")
     lmtdata.add_metadata("projectTitle","Life, the Universe, and Everything")
     lmtdata.add_metadata("PIName","Marc Pound")
@@ -85,18 +100,20 @@ def example():
     # add a band
     band = dict()
     band["slBand"] = 1
-    band["lineName"]='CS2-1'
-#   for multiple lines:
-    #band["lineName"] = 'CS2-1,CO1-0,H2CS'
+    band["formula"]='CS2-1'
+    band["transition"]='2-1'
     band["frequencyCenter"] = 97981*u.Unit("MHz")
+    band["velocityCenter"] = 300.0 #km/s
     band["bandwidth"] = 2.5
     band["beam"] = u.Quantity(20.0,"arcsec")
     band["lineSens"] = 0.072
     band["qaGrade"] = "A+++"
+    band["nchan"] = 1024
     lmtdata.add_metadata("band",band)
     # add a second band
     band["slBand"] = 2
-    band["lineName"]='CO1-0'
+    band["formula"]='CO'
+    band["transition"]='1-0'
 #   for multiple lines:
     #band["lineName"] = 'CS2-1,CO1-0,H2CS'
     band["frequencyCenter"] = u.Quantity(115.2712,"GHz")
@@ -104,6 +121,8 @@ def example():
     band["beam"] = (97.981/115.2712)*20.0/3600.0
     band["lineSens"] = 123*u.Unit("mK")
     band["qaGrade"] = "B-"
+    band["velocityCenter"] = -25.0 #km/s
+    band["nchan"] = 2048
     lmtdata.add_metadata("band",band)
 
     lmtdata.add_metadata("obsDate",utils.now())
@@ -118,7 +137,7 @@ def example():
     lmtdata.add_metadata("targetName","NGC 5948")
     lmtdata.add_metadata("calibrationStatus","UNCALIBRATED")# or CALIBRATED
     # YAML output
-    print(lmtdata.to_yaml())
+    #print(lmtdata.to_yaml())
     return lmtdata
 
 
@@ -132,6 +151,7 @@ class CitationMetadataBlock(MetadataBlock):
 if __name__ == "__main__":
 
     lmtdata = example()
+    lmtdata._write_to_db()
     if False: 
         print(lmtdata._has_units("bandwidth"))
         print(lmtdata._has_units("PIName"))
