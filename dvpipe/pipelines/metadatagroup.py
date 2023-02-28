@@ -32,10 +32,14 @@ class MetadataGroup(object):
             retval += b.to_yaml()
         return retval
 
+    def write_to_db(self):
+        self._blocks["LMT"]._write_to_db()
+
+
 class LmtMetadataGroup(MetadataGroup):
-    def __init__(self,name):
+    def __init__(self,name,dbfile):
         super().__init__(name)
-        self.add_block("LMT",LmtMetadataBlock())
+        self.add_block("LMT",LmtMetadataBlock(dbfile=dbfile))
         self.add_block("citation",CitationMetadataBlock())
 
     @property
@@ -46,10 +50,10 @@ class LmtMetadataGroup(MetadataGroup):
         return s
 
 def example():
-    lmt = LmtMetadataGroup("LMT Group")
+    lmt = LmtMetadataGroup("LMT Group",dbfile="example_lmt.db")
     print(lmt.keys)
 
-    # Citation metadata
+    # Dataverse Citation metadata
     desc = dict()
 
     desc["dsDescriptionValue"] = "Combined reduction of obsnums 12345, 56783, 42099."
@@ -65,37 +69,41 @@ def example():
     lmt.add_metadata("dateOfDeposit",utils.now())
     # "softwareName", "softwareVersion"
 
-    #LMT Metadata 
+    # LMT specific metadata
     lmt.add_metadata("projectID","2021-S1-US-3")
     lmt.add_metadata("projectTitle","Life, the Universe, and Everything")
     lmt.add_metadata("PIName","Marc Pound")
     lmt.add_metadata("obsnum","12345") 
-#   fortiple obsnums:
-    lmt.add_metadata("obsnum","12345,56783,42099") 
+#   for multiple obsnums:
+#   unclear this actually works
+    #lmtdata.add_metadata("obsnum","12345,56783,42099") 
     lmt.add_metadata("RA",14.01,"degree")
     lmt.add_metadata("DEC",-43.210)
     # add a band
     band = dict()
     band["slBand"] = 1
-    band["lineName"]='CS2-1'
-#   for multiple lines:
-    #band["lineName"] = 'CS2-1,CO1-0,H2CS'
+    band["formula"]='CS'
+    band["transition"]='2-1'
     band["frequencyCenter"] = 97981*u.Unit("MHz")
+    band["velocityCenter"] = 300.0 #km/s
     band["bandwidth"] = 2.5
     band["beam"] = u.Quantity(20.0,"arcsec")
     band["lineSens"] = 0.072
     band["qaGrade"] = "A+++"
+    band["nchan"] = 1024
     lmt.add_metadata("band",band)
     # add a second band
     band["slBand"] = 2
-    band["lineName"]='CO1-0'
+    band["formula"]='CO'
+    band["transition"]='1-0'
 #   for multiple lines:
-    #band["lineName"] = 'CS2-1,CO1-0,H2CS'
     band["frequencyCenter"] = u.Quantity(115.2712,"GHz")
     band["bandwidth"] = 2.5 #GHz
     band["beam"] = (97.981/115.2712)*20.0/3600.0
     band["lineSens"] = 123*u.Unit("mK")
     band["qaGrade"] = "B-"
+    band["velocityCenter"] = -25.0 #km/s
+    band["nchan"] = 2048
     lmt.add_metadata("band",band)
 
     lmt.add_metadata("obsDate",utils.now())
@@ -109,6 +117,17 @@ def example():
     lmt.add_metadata("LMTInstrument","SEQUOIA")
     lmt.add_metadata("targetName","NGC 5948")
     lmt.add_metadata("calibrationStatus","UNCALIBRATED")# or CALIBRATED
+
     # YAML output
     print(lmt.to_yaml())
+
+    # write to database
+    print(f"Writing to sqlite file: {lmt._blocks['LMT'].dbfile}")
+    lmt.write_to_db()
+
+    #
     return lmt
+
+if __name__ == "__main__":
+    lmtdata = example()
+    lmtdata.write_to_db()

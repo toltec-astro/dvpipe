@@ -102,13 +102,13 @@ def example():
     lmtdata.add_metadata("PIName","Marc Pound")
     lmtdata.add_metadata("obsnum","12345") 
 #   for multiple obsnums:
-    lmtdata.add_metadata("obsnum","12345,56783,42099") 
+    #lmtdata.add_metadata("obsnum","12345,56783,42099") 
     lmtdata.add_metadata("RA",14.01,"degree")
     lmtdata.add_metadata("DEC",-43.210)
     # add a band
     band = dict()
     band["slBand"] = 1
-    band["formula"]='CS2-1'
+    band["formula"]='CS'
     band["transition"]='2-1'
     band["frequencyCenter"] = 97981*u.Unit("MHz")
     band["velocityCenter"] = 300.0 #km/s
@@ -123,7 +123,6 @@ def example():
     band["formula"]='CO'
     band["transition"]='1-0'
 #   for multiple lines:
-    #band["lineName"] = 'CS2-1,CO1-0,H2CS'
     band["frequencyCenter"] = u.Quantity(115.2712,"GHz")
     band["bandwidth"] = 2.5 #GHz
     band["beam"] = (97.981/115.2712)*20.0/3600.0
@@ -159,11 +158,3 @@ class CitationMetadataBlock(MetadataBlock):
 if __name__ == "__main__":
 
     lmtdata = example()
-    lmtdata._write_to_db()
-    if False: 
-        print(lmtdata._has_units("bandwidth"))
-        print(lmtdata._has_units("PIName"))
-        print(lmtdata.get_units("bandwidth"))
-        print(lmtdata.get_units("PIName"))
-        print(lmtdata.get_units("band"))
-    
