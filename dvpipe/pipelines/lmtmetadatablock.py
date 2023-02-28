@@ -8,15 +8,16 @@ import sqlite3
 import os
 
 class LmtMetadataBlock(MetadataBlock):
-    def __init__(self,dbfile=None):
+    def __init__(self,dbfile=None,yamlfile=None):
       self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
       self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
       self._almakeyscsv =  utils.aux_file("alma_to_lmt_keymap.csv")
       self._dbfile = dbfile
+      self._yamlfile = yamlfile
       self._db = None
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
       self._map_lmt_to_alma()
-      self._version = "1.0.6"
+      self._version = "1.0.7"
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
@@ -38,6 +39,15 @@ class LmtMetadataBlock(MetadataBlock):
             # This query returns list[tuple], hence the double indices.
             self._alma_id = self._db.query("alma","MAX(id)")[0][0] + 1
         #print("ALMA ID is ",self._alma_id)
+
+    def _write_to_yaml(self):
+        if self._yamlfile is None:
+            print(f"yamlfile is not set, can't write")
+            return
+        print(f"Writing to YML file: {self._yamlfile}")
+        f = open(self._yamlfile,"w")
+        f.write(self.to_yaml())
+        f.close()
 
     def _write_to_db(self):
         if self.dbfile is None:
@@ -77,6 +87,10 @@ class LmtMetadataBlock(MetadataBlock):
     def dbfile(self):
         return self._dbfile
 
+    @property
+    def yamlfile(self):
+        return self._yamlfile
+
     def test(self):
         try:
             self.add_metadata("foobar",12345)
@@ -99,9 +113,9 @@ class LmtMetadataBlock(MetadataBlock):
             print("JSON")
             print(self.to_json())
 
-def example():
+def example(dbfile=None,yamlfile=None):
     '''Example usage of LmtMetadataBlock'''
-    lmtdata = LmtMetadataBlock(dbfile="test_meta.db")
+    lmtdata = LmtMetadataBlock(dbfile=dbfile,yamlfile=yamlfile)
     lmtdata.add_metadata("projectID","2021-S1-US-3")
     lmtdata.add_metadata("projectTitle","Life, the Universe, and Everything")
     lmtdata.add_metadata("PIName","Marc Pound")
@@ -159,10 +173,3 @@ class CitationMetadataBlock(MetadataBlock):
       self._vocabcsv =  utils.aux_file("CitationControlledVocabulary.csv")
       super().__init__("CitationData",self._datacsv,self._vocabcsv)
       self._version = "Dataverse 5.12.1"
-
-if __name__ == "__main__":
-
-    lmtdata = example()
-    lmtdata._write_to_db()
-    lmtdata._dbfile=None
-    lmtdata._write_to_db()

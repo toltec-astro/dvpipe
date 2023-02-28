@@ -33,16 +33,22 @@ class MetadataGroup(object):
         return retval
 
     def dbfile(self,dbfile):
-        self._blocks["LMT"]._dbfile =  dbfile
+        self._blocks["LMT"]._dbfile = dbfile
+
+    def yamlfile(self,yamlfile):
+        self._blocks["LMT"]._yamlfile = yamlfile
 
     def write_to_db(self):
         self._blocks["LMT"]._write_to_db()
 
+    def write_to_yaml(self):
+        self._blocks["LMT"]._write_to_yaml()
+
 
 class LmtMetadataGroup(MetadataGroup):
-    def __init__(self,name,dbfile=None):
+    def __init__(self,name,dbfile=None,yamlfile=None):
         super().__init__(name)
-        self.add_block("LMT",LmtMetadataBlock(dbfile=dbfile))
+        self.add_block("LMT",LmtMetadataBlock(dbfile=dbfile,yamlfile=yamlfile))
         self.add_block("citation",CitationMetadataBlock())
 
     @property
@@ -52,8 +58,8 @@ class LmtMetadataGroup(MetadataGroup):
             s+=f'{b.name}: {b.keys}\n'
         return s
 
-def example():
-    lmt = LmtMetadataGroup("LMT Group",dbfile="example_lmt.db")
+def example(dbfile=None,yamlfile=None):
+    lmt = LmtMetadataGroup("LMT Group",dbfile=dbfile,yamlfile=yamlfile)
     print(lmt.keys)
 
     # Dataverse Citation metadata
@@ -121,15 +127,16 @@ def example():
     lmt.add_metadata("targetName","NGC 5948")
     lmt.add_metadata("calibrationStatus","UNCALIBRATED")# or CALIBRATED
 
-    # YAML output
-    print(lmt.to_yaml())
-
     return lmt
 
 if __name__ == "__main__":
-    lmtdata = example() # dbfile is example_lmt.db here.
+    lmtdata = example(dbfile="example_lmt.db",yamlfile="example_lmt.yaml") 
     lmtdata.write_to_db()
+    lmtdata.write_to_yaml()
 
     # Can't write if dbfile is none
     lmtdata.dbfile(None)
     lmtdata.write_to_db()
+    # Can't write if yaml is none
+    lmtdata.yamlfile(None)
+    lmtdata.write_to_yaml()
