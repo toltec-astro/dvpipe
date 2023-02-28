@@ -32,12 +32,15 @@ class MetadataGroup(object):
             retval += b.to_yaml()
         return retval
 
+    def dbfile(self,dbfile):
+        self._blocks["LMT"]._dbfile =  dbfile
+
     def write_to_db(self):
         self._blocks["LMT"]._write_to_db()
 
 
 class LmtMetadataGroup(MetadataGroup):
-    def __init__(self,name,dbfile):
+    def __init__(self,name,dbfile=None):
         super().__init__(name)
         self.add_block("LMT",LmtMetadataBlock(dbfile=dbfile))
         self.add_block("citation",CitationMetadataBlock())
@@ -121,13 +124,12 @@ def example():
     # YAML output
     print(lmt.to_yaml())
 
-    # write to database
-    print(f"Writing to sqlite file: {lmt._blocks['LMT'].dbfile}")
-    lmt.write_to_db()
-
-    #
     return lmt
 
 if __name__ == "__main__":
-    lmtdata = example()
+    lmtdata = example() # dbfile is example_lmt.db here.
+    lmtdata.write_to_db()
+
+    # Can't write if dbfile is none
+    lmtdata.dbfile(None)
     lmtdata.write_to_db()

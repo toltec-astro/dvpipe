@@ -40,6 +40,11 @@ class LmtMetadataBlock(MetadataBlock):
         #print("ALMA ID is ",self._alma_id)
 
     def _write_to_db(self):
+        if self.dbfile is None:
+            print(f"dbfile is not set, can't write")
+            return
+
+        print(f"Writing to sqlite file: {self.dbfile}")
         if self._db is None:
             self._open_db()
         
@@ -158,3 +163,6 @@ class CitationMetadataBlock(MetadataBlock):
 if __name__ == "__main__":
 
     lmtdata = example()
+    lmtdata._write_to_db()
+    lmtdata._dbfile=None
+    lmtdata._write_to_db()
