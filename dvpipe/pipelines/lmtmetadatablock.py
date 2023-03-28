@@ -57,6 +57,10 @@ class LmtMetadataBlock(MetadataBlock):
         print(f"Writing to sqlite file: {self.dbfile}")
         if self._db is None:
             self._open_db()
+            # write version info to header
+            h = dict()
+            h["version"] = f"LMT Metadata Version {self._version}"
+            self._db.insert_into("header",h)
         
         #loop over the metadata. First do the bands
         for b in self._metadata["band"]:
