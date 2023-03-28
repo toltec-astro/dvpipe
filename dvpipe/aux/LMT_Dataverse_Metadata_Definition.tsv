@@ -44,11 +44,11 @@
 	velFrame	SRC		3											
 	velType	VELOCITY		0											
 	velType	FREQUENCY		1											
-	facility	LMT		0											
-	instrument	TOLTEC		0											
-	instrument	SEQUOIA		1											
-	instrument	RSR		2											
-	instrument	MSIP1MM		3											
-	instrument	OMAYA		4											
+	observatory	LMT		0											
+	LMTInstrument	TOLTEC		0											
+	LMTInstrument	SEQUOIA		1											
+	LMTInstrument	RSR		2											
+	LMTInstrument	MSIP1MM		3											
+	LMTInstrument	OMAYA		4											
 	calibrationStatus	CALIBRATED		0											
 	calibrationStatus	UNCALIBRATED		1											
