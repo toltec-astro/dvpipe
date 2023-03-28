@@ -60,7 +60,7 @@ class LmtMetadataGroup(MetadataGroup):
 
 def example(dbfile=None,yamlfile=None):
     lmt = LmtMetadataGroup("LMT Group",dbfile=dbfile,yamlfile=yamlfile)
-    print(lmt.keys)
+    #print(lmt.keys)
 
     # Dataverse Citation metadata
     desc = dict()
