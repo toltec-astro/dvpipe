@@ -15,8 +15,9 @@ import os
 header_table = """
 CREATE TABLE IF NOT EXISTS header (
     id integer PRIMARY KEY,
-    key text NOT NULL,
-    val text NOT NULL
+    key text ,
+    val text ,
+    version text
 );
 """
 
@@ -31,6 +32,9 @@ CREATE TABLE IF NOT EXISTS alma (
     target_name         text,
     s_ra                        FLOAT,
     s_dec                       FLOAT,
+    gal_longitude               FLOAT,
+    gal_latitude                FLOAT,
+    s_velocity                  FLOAT,
     frequency                   FLOAT,
     s_resolution                FLOAT,
     t_min                       FLOAT, 
@@ -43,7 +47,7 @@ CREATE TABLE IF NOT EXISTS alma (
     project_title       text,
     proposal_id         text,
     obs_title           text,
-    obs_creator_name     text,
+    obs_creator_name    text,
     science_keyword     text,
     scientific_category text,
     proposal_authors    text
@@ -160,6 +164,12 @@ class MetaDB(object):
         c.execute(create_table_sql)
 
 
+    # @todo deal with multiple key,vals in header.
+    #def insert_into_header(self,keyval):
+    #    s = str(list(keyval.keys())).replace("'","").strip("[").strip("]")
+    #    v = tuple(list(keyval.values()))
+    #    sql = f"INSERT INTO header(key,val) VALUES("
+
     def insert_into(self,table,keyval):
         """insert into a table"""
     
@@ -256,69 +266,3 @@ bmaj, bmin, bpa)
         cur.execute(sql, entry)
         self.conn.commit()
         return cur.lastrowid
-
-
-    def mock(self, txt_file, dryrun=False):
-        """
-        now insert some data in db from a mock txt_file
-        this is V2 of the mock format
-
-        @todo   dryrun should be run first to ensure the data are consistent
-        """
-        print("Don't use this")
-        return;
-        with self.conn:
-            mode = 0
-            s_stack = []
-            lines = open(txt_file).readlines()
-            print("Found %d lines" % len(lines))
-            for line in lines:
-                line = line.strip()
-                if len(line) == 0: continue
-                if line[0] == '#': continue
-                w = line.split()
-                print('>>',line)
-                
-                if   w[0] == 'A': mode=1
-                elif w[0] == 'W': mode=2
-                elif w[0] == 'L': mode=3
-                elif w[0] == 'S': mode=4
-                elif w[0] == 'C': mode=5
-                elif w[0] == 'H': mode=6
-                else:
-                    print("mode %s not supported - skipping line" % w[0])
-                    continue
-
-                if mode==1:  
-                    if len(s_stack) > 0:
-                        print("there is a source stack left")
-                    a_id = self.create_alma((w[1], w[2], float(w[3]), float(w[4]), float(w[5])))
-                    w_id = l_id = s_id = 0
-                elif mode==2:
-                    nl = int(w[2])
-                    ns = int(w[3])
-                    bmaj = float(w[6])
-                    bmin = float(w[7])
-                    bpa = float(w[8])
-                    w_id = self.create_spw((a_id, int(w[1]), nl, ns, int(w[4]), float(w[5]), bmaj, bmin, bpa))
-                    s_stack = []
-                    for i in range(ns):  s_stack.append(0)
-                elif mode==3:
-                    print("PJT-3",s_stack)
-                    l_id = self.create_lines((w_id, w[1], w[2], float(w[3]), float(w[4]), float(w[5])))
-                    for i in range(ns):  s_stack.append(l_id)
-                elif mode==4:
-                    print("PJT-4",s_stack)
-                    if len(s_stack) > 0:
-                        l_id = s_stack.pop(0)
-                        s_id = self.create_sources((w_id, l_id, float(w[1]), float(w[2]), float(w[3])))
-                    else:
-                        print("no stack left for another source; skipping")
-                elif mode==5:
-                    pass
-                    #c_id = self.create_cont((a_id, w[1], int(w[2])))
-                    # @todo   note we have no method to add sources to a cont map
-                elif mode==6:
-                    h_id = self.create_header((w[1], ' '.join(w[2:])))
-                else:
-                    print("should never get here")
