@@ -1,6 +1,7 @@
 from dvpipe.pipelines.lmtmetadatablock import LmtMetadataBlock, CitationMetadataBlock
 import dvpipe.utils as utils
 import astropy.units as u
+from astropy.coordinates import SkyCoord
 
 class MetadataGroup(object):
     '''Object to contain multiple metadata blocks and write them as one yaml file'''
@@ -86,8 +87,11 @@ def example(dbfile=None,yamlfile=None):
 #   for multiple obsnums:
 #   unclear this actually works
     #lmtdata.add_metadata("obsnum","12345,56783,42099") 
-    lmt.add_metadata("RA",14.01,"degree")
-    lmt.add_metadata("DEC",-43.210)
+    coord = SkyCoord(ra=14.01*u.degree,dec=-43.21*u.degree,frame='icrs')
+    lmt.add_metadata("RA",coord.ra.value,coord.ra.unit)
+    lmt.add_metadata("DEC",coord.dec.value,coord.dec.unit)
+    lmt.add_metadata("galLon",coord.galactic.l.value,coord.galactic.l.unit)
+    lmt.add_metadata("galLat",coord.galactic.b.value,coord.galactic.b.unit)
     # add a band
     band = dict()
     band["slBand"] = 1
