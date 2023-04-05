@@ -1,34 +1,35 @@
 name,title,description,watermark,fieldType,displayOrder,displayFormat,advancedSearchField,allowControlledVocabulary,allowmultiples,facetable,displayoncreate,required,parent,metadatablock_id,units
 projectID,Project,Project identifying string,,text,1,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
 PIName,PI,Principal Investigator name,,text,2,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-obsnum,Obsnum,"Observation Number(s).  Single number, comma separated list, or range with underscore",,text,3,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-RA,RA (deg),right ascension (degrees),,float,4,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
-DEC,Dec (deg),declination (degrees),,float,5,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
-galLon,l (deg),Galactic Longitude (degrees),,float,6,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
-galLat,b (deg),Galactic Latitude (degrees),,float,7,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
-band,Band,Information about the spectral observing band,,none,8,,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,,LMTData,
-slBand,SL Band,Spectral line band ,,int,9,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
-formula,Line formula,"expected line(s) identification formula. e.g. ""CO"".  Single ID or comma separated list",,text,10,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
-transition,Line transition,"expected line(s) transition, e.g. “1-0”. Single ID or comma separated list",,text,11,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
-frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,12,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
-velocityCenter,Center Velocity (km/s),Center velocity in km/s,,float,13,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,km/s
-bandwidth,Bandwidth,Bandwidth in GHz,,float,14,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
-nchan,Number of channels,Number of channels,,float,15,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,
-beam,Beam Size (deg),beam size in degrees,,float,16,,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,degree
-contSens,Cont. Sensitivity (Jy/beam),continuum sensitivity (Jy/beam). Not needed for SLR,,float,17,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,Jansky/beam
-lineSens,SL Sensitivity (K),spectral line sensitivity in 1 km/s window (K of Ta*). ,,float,18,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
-qaGrade,QA Grade,quality assessment grade,,text,19,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
-projectTitle,Project Title,The title of the project as submitted by the PI,,text,20,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
-obsDate,Date,Date of observation  at start of integration. FITS standard format,,text,21,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-intTime,Integration Time (s),On-source Integration Time (seconds),,float,22,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,second
-velocity,Velocity (km/s),source velocity in km/s,,float,23,,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,km/s
-velDef,Velocity Definition,"velocity definition e.g. RADIO, OPTICAL",,text,24,,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-velFrame,Velocity Frame,"velocity reference frame, e.g. LSR,SKY,BARY,SRC",,text,25,,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-velType,Velocity Type,"Velocity type of FITS cube axis3, either frequency or velocity",,text,26,,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-z,Redshift,redshift,,float,27,,TRUE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-boundingBox,Bounding Box,"for mosaics, outside bounding box, list of vertices, e.g. Python list of tuples",,text,28,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
-pipeVersion,Pipeline Version,pipeline version,,text,29,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
-observatory,Observatory,The observatory or facility where the data was obtained.,,text,30,,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,,LMTData,
-LMTInstrument,Instrument,The instrument used to collect the data.,,text,31,,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,,LMTData,
-targetName,Target,Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).,,text,32,,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,,LMTData,
-calibrationStatus,Calibration Status,whether these are uncalibrated or calibrated data,,text,33,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+obsnum,Obsnum,Observation Number or observation number range.  Single number or range with underscore,,text,3,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+obsnumList,ObsnumList,"Full comma-separated list of obsnums represented if obsnum is a range.  If obsnum is a single number, then this field is the same number",,text,4,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+RA,RA (deg),right ascension (degrees),,float,5,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
+DEC,Dec (deg),declination (degrees),,float,6,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
+galLon,l (deg),Galactic Longitude (degrees),,float,7,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
+galLat,b (deg),Galactic Latitude (degrees),,float,8,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
+band,Band,Information about the spectral observing band,,none,9,,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,,LMTData,
+slBand,SL Band,Spectral line band ,,int,10,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
+formula,Line formula,"expected line(s) identification formula. e.g. ""CO"".  Single ID or comma separated list",,text,11,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
+transition,Line transition,"expected line(s) transition, e.g. “1-0”. Single ID or comma separated list",,text,12,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
+frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,13,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
+velocityCenter,Center Velocity (km/s),Center velocity in km/s,,float,14,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,km/s
+bandwidth,Bandwidth,Bandwidth in GHz,,float,15,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
+nchan,Number of channels,Number of channels,,float,16,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,
+beam,Beam Size (deg),beam size in degrees,,float,17,,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,degree
+contSens,Cont. Sensitivity (Jy/beam),continuum sensitivity (Jy/beam). Not needed for SLR,,float,18,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,Jansky/beam
+lineSens,SL Sensitivity (K),spectral line sensitivity in 1 km/s window (K of Ta*). ,,float,19,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
+qaGrade,QA Grade,quality assessment grade,,text,20,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
+projectTitle,Project Title,The title of the project as submitted by the PI,,text,21,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+obsDate,Date,Date of observation  at start of integration. FITS standard format,,text,22,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+intTime,Integration Time (s),On-source Integration Time (seconds),,float,23,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,second
+velocity,Velocity (km/s),source velocity in km/s,,float,24,,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,km/s
+velDef,Velocity Definition,"velocity definition e.g. RADIO, OPTICAL",,text,25,,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+velFrame,Velocity Frame,"velocity reference frame, e.g. LSR,SKY,BARY,SRC",,text,26,,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+velType,Velocity Type,"Velocity type of FITS cube axis3, either frequency or velocity",,text,27,,FALSE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+z,Redshift,redshift,,float,28,,TRUE,TRUE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+boundingBox,Bounding Box,"for mosaics, outside bounding box, list of vertices, e.g. Python list of tuples",,text,29,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+pipeVersion,Pipeline Version,pipeline version,,text,30,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+observatory,Observatory,The observatory or facility where the data was obtained.,,text,31,,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,,LMTData,
+LMTInstrument,Instrument,The instrument used to collect the data.,,text,32,,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,,LMTData,
+targetName,Target,Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).,,text,33,,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,,LMTData,
+calibrationStatus,Calibration Status,whether these are uncalibrated or calibrated data,,text,34,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,

@@ -3,7 +3,8 @@
 #datasetField	name	title	description	watermark	fieldType	displayOrder	displayFormat	advancedSearchField	allowControlledVocabulary	allowmultiples	facetable	displayoncreate	required	parent	metadatablock_id
 	projectID	Project	Project identifying string		text	1		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	PIName	PI	Principal Investigator name		text	2		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
-	obsnum	Obsnum	Observation Number(s).  Single number, comma separated list, or range with underscore		text	3		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
+	obsnum	Obsnum	Observation Number or observation number range.  Single number or range with underscore		text	3		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
+	obsnumList	ObsnumList	Full comma-separated list of obsnums represented if obsnum is a range.  If obsnum is a single number, then this field is the same number		text	4		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	RA	RA (deg)	right ascension (degrees)		float	4		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	DEC	Dec (deg)	declination (degrees)		float	5		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	galLon	l (deg)	Galactic Longitude (degrees)		float	6		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
