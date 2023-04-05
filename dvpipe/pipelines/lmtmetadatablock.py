@@ -17,7 +17,7 @@ class LmtMetadataBlock(MetadataBlock):
       self._db = None
       super().__init__("LMTData",self._datacsv,self._vocabcsv)
       self._map_lmt_to_alma()
-      self._version = "1.0.7"
+      self._version = "1.0.8"
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
