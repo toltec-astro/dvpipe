@@ -83,10 +83,9 @@ def example(dbfile=None,yamlfile=None):
     lmt.add_metadata("projectID","2021-S1-US-3")
     lmt.add_metadata("projectTitle","Life, the Universe, and Everything")
     lmt.add_metadata("PIName","Marc Pound")
-    lmt.add_metadata("obsnum","12345") 
-#   for multiple obsnums:
-#   unclear this actually works
-    #lmtdata.add_metadata("obsnum","12345,56783,42099") 
+    # example with obsnum range and full obsnum list.
+    lmt.add_metadata("obsnum","12345_12350") 
+    lmt.add_metadata("obsnumList","12345,12346,12347,12348,12349,12350") 
     coord = SkyCoord(ra=14.01*u.degree,dec=-43.21*u.degree,frame='icrs')
     lmt.add_metadata("RA",coord.ra.value,coord.ra.unit)
     lmt.add_metadata("DEC",coord.dec.value,coord.dec.unit)
