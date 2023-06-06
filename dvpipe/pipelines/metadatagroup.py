@@ -128,7 +128,10 @@ def example(dbfile=None,yamlfile=None):
     lmt.add_metadata("observatory","LMT")
     lmt.add_metadata("LMTInstrument","SEQUOIA")
     lmt.add_metadata("targetName","NGC 5948")
-    lmt.add_metadata("calibrationStatus","UNCALIBRATED")# or CALIBRATED
+    # 0 = uncalibrated, 1 = calibration level 1, etc
+    lmt.add_metadata("calibrationLevel",1)
+    lmt.add_metadata("obsGoal","SCIENCE")
+    lmt.add_metadata("obsComment","This is an observation comment")
 
     return lmt
 

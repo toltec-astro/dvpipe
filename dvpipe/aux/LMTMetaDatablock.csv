@@ -32,4 +32,6 @@ pipeVersion,Pipeline Version,pipeline version,,text,30,,TRUE,FALSE,FALSE,FALSE,T
 observatory,Observatory,The observatory or facility where the data was obtained.,,text,31,,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,,LMTData,
 LMTInstrument,Instrument,The instrument used to collect the data.,,text,32,,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,,LMTData,
 targetName,Target,Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).,,text,33,,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,,LMTData,
-calibrationStatus,Calibration Status,whether these are uncalibrated or calibrated data,,text,34,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+calibrationLevel,Calibration Level,"Integer indicating level of calibration. 0 = no calibration, 1 = first level, 2 = second level, etc",,int,33,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+obsGoal,Observation Goal,"flag indicating science calibration, focus, other",,text,34,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+obsComment,Observation Comment,"Free-from textual description of the data or other relevant information, useful when obsGoal is OTHER",,text,35,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
