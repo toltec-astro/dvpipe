@@ -33,6 +33,12 @@ class MetadataGroup(object):
             retval += b.to_yaml()
         return retval
 
+    def to_json(self):
+        retval = ''
+        for b in self._blocks.values():
+            retval += b.to_json()
+        return retval
+
     def dbfile(self,dbfile):
         self._blocks["LMT"]._dbfile = dbfile
 
@@ -146,3 +152,4 @@ if __name__ == "__main__":
     # Can't write if yaml is none
     lmtdata.yamlfile(None)
     lmtdata.write_to_yaml()
+    lmtdata.write_to_json()
