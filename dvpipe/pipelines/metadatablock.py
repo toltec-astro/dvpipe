@@ -213,4 +213,33 @@ class MetadataBlock(object):
         return f"MetadataBlock({self.name})"
 
     def to_dataverse_dataset_fields(self):
-        return {self.name: self._metadata}
+        # this function should prepare the data in this way:
+        # https://guides.dataverse.org/en/5.10.1/api/native-api.html#create-dataset-command
+        # see "data.LMTData" here for the expected data:
+        # http://lmtdv1.astro.umass.edu/api/datasets/2/versions/1/metadata
+        d = self._metadata
+        return {
+            self.name: {
+                "fields":[
+                    # TODO these should be generated programatically using
+                    # the spec csv file
+                    {
+                        "typeName":"projectID",
+                        "multiple": False,
+                        "typeClass":"primitive",
+                        "value": d['projectID'],
+                    },
+                    {
+                        "typeName":"PIName",
+                        "multiple": False,
+                        "typeClass": "primitive",
+                        "value": d['PIName']
+                    },
+                ]
+            }}
+
+    def load_from_yaml(self, yamlfile):
+        with open(yamlfile, 'r') as fo:
+            d = utils.yaml.load(fo)
+        self._metadata = d
+

@@ -62,7 +62,7 @@ class LmtslrDataProd(object):
         if not len(lmtmetadata_path) == 1:
             raise ValueError(f"No LMTData metadata yaml found in {data_prod_dir}")
         lmtmetadata_path = lmtmetadata_path[0]
-        lmtmetadata_block = LmtMetadataBlock(yamlfile=lmtmetadata_path)
+        lmtmetadata_block = LmtMetadataBlock.from_yaml(lmtmetadata_path)
         return {
             'name': data_prod_dir.name,
             "path": data_prod_dir,

@@ -8,16 +8,18 @@ import sqlite3
 import os
 
 class LmtMetadataBlock(MetadataBlock):
-    def __init__(self,dbfile=None,yamlfile=None):
-      self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
-      self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
-      self._almakeyscsv =  utils.aux_file("alma_to_lmt_keymap.csv")
-      self._dbfile = dbfile
-      self._yamlfile = yamlfile
-      self._db = None
-      super().__init__("LMTData",self._datacsv,self._vocabcsv)
-      self._map_lmt_to_alma()
-      self._version = "1.0.8"
+    def __init__(self,dbfile=None,yamlfile=None, load_data=False):
+        self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
+        self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
+        self._almakeyscsv =  utils.aux_file("alma_to_lmt_keymap.csv")
+        self._dbfile = dbfile
+        self._yamlfile = yamlfile
+        self._db = None
+        super().__init__("LMTData",self._datacsv,self._vocabcsv)
+        self._map_lmt_to_alma()
+        self._version = "1.0.8"
+        if load_data and yamlfile is not None:
+            self.load_from_yaml(yamlfile)
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
@@ -31,7 +33,7 @@ class LmtMetadataBlock(MetadataBlock):
 
     def _open_db(self,create=True):
        # True: will create if not exists
-        self._db = MetaDB(self._dbfile,create) 
+        self._db = MetaDB(self._dbfile,create)
         if self._db._created:
             self._alma_id = 1
         else:
@@ -61,7 +63,7 @@ class LmtMetadataBlock(MetadataBlock):
             h = dict()
             h["version"] = f"LMT Metadata Version {self._version}"
             self._db.insert_into("header",h)
-        
+
         #loop over the metadata. First do the bands
         for b in self._metadata["band"]:
             insertme= dict()
@@ -72,8 +74,8 @@ class LmtMetadataBlock(MetadataBlock):
                 insertme[ak] = b[x['LMT Keyword'].array[0]]
             #print("Attempting to insert: ",insertme)
             insertme["a_id"] = self._alma_id
-            self._db.insert_into("win",insertme) 
-        
+            self._db.insert_into("win",insertme)
+
         dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
         #print("DOLIST",set(dolist))
         for name in set(dolist):
@@ -94,6 +96,10 @@ class LmtMetadataBlock(MetadataBlock):
     @property
     def yamlfile(self):
         return self._yamlfile
+
+    @classmethod
+    def from_yaml(cls, yamlfile):
+        return cls(yamlfile=yamlfile, load_data=True)
 
     def test(self):
         try:

@@ -133,13 +133,16 @@ def upload_dataset(
     # create ds object
     ds = DVDataset()
     ds.set(dataset_index['dataset'])
+    ds_json = ds.json()
     # assert ds.validate_json()
-    logger.debug(f"dataset json:\n{ds.json()}")
 
     def _create():
+        logger.debug(f"create dataset json:\n{ds_json}")
         resp = api.create_dataset(
-            parent_id, ds.json(), pid=None, publish=False, auth=True)
-        logger.info(f"create dataset:\n{pformat_resp(resp)}")
+            parent_id, ds_json, pid=None, publish=False, auth=True)
+        logger.info(f"create dataset response:\n{pformat_resp(resp)}")
+        if not resp.ok:
+            raise ValueError(f"Failed create dataset:\n{pformat_resp(resp)}")
         # get pid
         return resp.json()["data"]["persistentId"]
 
@@ -181,6 +184,7 @@ def upload_dataset(
                 logger.debug("update dataset with metadata")
                 # TODO implement this
                 # update dataset with pid
+                raise NotImplementedError()
             else:
                 raise ValueError("invalid action.")
     # if we reach here, we need to handle the datafiles
