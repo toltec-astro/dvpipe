@@ -106,7 +106,7 @@ def cmd_dataset_search(ctxobj, options):
     help='The action to take when the dataset exists',
     )
 @click.option(
-    '--publish', '-b',
+    '--publish_type', '-b',
     type=click.Choice(
         ['none', 'major', 'minor'],
         case_sensitive=False),
@@ -114,7 +114,8 @@ def cmd_dataset_search(ctxobj, options):
     help='Specify how the dataset is published ("none" for not publish).',
     )
 @click.pass_obj
-def cmd_dataset_upload(ctxobj, parent, index_file, action_on_exist, publish):
+def cmd_dataset_upload(
+        ctxobj, parent, index_file, action_on_exist, publish_type):
     """Create dataset in `parent` according to the content of `index_file`."""
     with open(index_file, 'r') as fo:
         dataset_index = yaml.load(fo)
@@ -125,4 +126,4 @@ def cmd_dataset_upload(ctxobj, parent, index_file, action_on_exist, publish):
         parent_id=parent,
         dataset_index=dataset_index,
         action_on_exist=action_on_exist,
-        publish=publish)
+        publish_type=publish_type)

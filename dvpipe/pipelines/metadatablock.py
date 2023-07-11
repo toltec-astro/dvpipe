@@ -12,19 +12,19 @@ from numbers import Number
 class MetadataBlock(object):
     '''Generic representation of a Dataverse metadata block.
        Metadata blocks have a datasetField which gives the names and
-       properties of the metadata items, i.e. the metadata definition. 
-       Actual metadata conforming to this definition are in the 
+       properties of the metadata items, i.e. the metadata definition.
+       Actual metadata conforming to this definition are in the
       'metadata' proprty.
        Specific metadata blocks should inherit from this class.
     '''
     def __init__(self,name,dataset_file,vocabulary_file=None):
-        self._name = name 
+        self._name = name
         self._dsfColnames = ['name', 'title', 'description', 'watermark',
-                          'fieldType', 'displayOrder', 'displayFormat', 
-                          'advancedSearchField', 'allowControlledVocabulary', 
-                          'allowmultiples', 'facetable', 'displayoncreate', 
+                          'fieldType', 'displayOrder', 'displayFormat',
+                          'advancedSearchField', 'allowControlledVocabulary',
+                          'allowmultiples', 'facetable', 'displayoncreate',
                           'required', 'parent', 'metadatablock_id','units']
-        self._cvColnames = ['DatasetField', 'Value', 
+        self._cvColnames = ['DatasetField', 'Value',
                             'identifier', 'displayOrder']
         # metdata definition
         self._dataset_file = dataset_file
@@ -38,13 +38,13 @@ class MetadataBlock(object):
         # The actual metadata
         self._metadata = dict()
         self._version = None
-    
+
     @property
     def name(self):
         '''Name of this metadata block'''
         return self._name
 
-    @property 
+    @property
     def datasetColnames(self):
         return self._dsfColnames
 
@@ -56,7 +56,7 @@ class MetadataBlock(object):
     def keys(self):
         return list(self._datasetFields['name'])
 
-    @property 
+    @property
     def controlledVocabularyColnames(self):
         return self._cvColnames
 
@@ -64,14 +64,14 @@ class MetadataBlock(object):
     def controlledVocabulary(self):
         return self._controlledVocabulary
 
-    @property 
+    @property
     def metadata(self):
         return self._metadata
 
     @property
     def version(self):
         return self._version
- 
+
     def is_recognized_field(self,name):
         return name in self._datasetFields['name'].values
 
@@ -101,7 +101,7 @@ class MetadataBlock(object):
             else:
                 self._metadata[name]= [deepcopy(value_checked)]
         else:
-         # prevent yaml writer from putting quotes around it because 
+         # prevent yaml writer from putting quotes around it because
          # it is <'class numpy.float64'>
             if type(value_checked[name]) is str:
                 self._metadata[name] = value_checked[name]
@@ -109,8 +109,8 @@ class MetadataBlock(object):
                 self._metadata[name] = float(value_checked[name])
 
     def _allowed_values(self,name,value):
-        '''The allowed values of a variable if in a controlled vocabulary 
-           (i.e., the enums).  Will return empty list if the variable 
+        '''The allowed values of a variable if in a controlled vocabulary
+           (i.e., the enums).  Will return empty list if the variable
            is not controlled
         '''
         series =  self._controlledVocabulary.loc[self._controlledVocabulary["DatasetField"] == name]["Value"]
@@ -185,7 +185,7 @@ class MetadataBlock(object):
 
     def get_children(self,name):
         '''Identify the children of the given dataset field
-        
+
         :param name: the parent field to check for children
         :type name: str
         :return: list of names of children. This list will be empty if the input field has no children
@@ -208,3 +208,38 @@ class MetadataBlock(object):
     def to_json(self,indent=4):
         comment = f"# {self.name} metadata block version {self.version}\n"
         return comment+json.dumps(self._metadata,indent=indent)
+
+    def __str__(self):
+        return f"MetadataBlock({self.name})"
+
+    def to_dataverse_dataset_fields(self):
+        # this function should prepare the data in this way:
+        # https://guides.dataverse.org/en/5.10.1/api/native-api.html#create-dataset-command
+        # see "data.LMTData" here for the expected data:
+        # http://lmtdv1.astro.umass.edu/api/datasets/2/versions/1/metadata
+        d = self._metadata
+        return {
+            self.name: {
+                "fields":[
+                    # TODO these should be generated programatically using
+                    # the spec csv file
+                    {
+                        "typeName":"projectID",
+                        "multiple": False,
+                        "typeClass":"primitive",
+                        "value": d['projectID'],
+                    },
+                    {
+                        "typeName":"PIName",
+                        "multiple": False,
+                        "typeClass": "primitive",
+                        "value": d['PIName']
+                    },
+                ]
+            }}
+
+    def load_from_yaml(self, yamlfile):
+        with open(yamlfile, 'r') as fo:
+            d = utils.yaml.load(fo)
+        self._metadata = d
+
