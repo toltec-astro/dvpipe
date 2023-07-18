@@ -108,7 +108,11 @@ class MetadataBlock(object):
             else:
                 self._metadata[name] = float(value_checked[name])
 
-    def _allowed_values(self,name,value):
+    def isControlled(self,name):
+        av = self._allowed_values(name)
+        return len(av) != 0
+        
+    def _allowed_values(self,name,value=None): #value is not needed here - fix calls!
         '''The allowed values of a variable if in a controlled vocabulary
            (i.e., the enums).  Will return empty list if the variable
            is not controlled
@@ -212,31 +216,16 @@ class MetadataBlock(object):
     def __str__(self):
         return f"MetadataBlock({self.name})"
 
+    def to_dataverse_dict(self):
+        return "Subclasses must implement this!"
+
     def to_dataverse_dataset_fields(self):
         # this function should prepare the data in this way:
         # https://guides.dataverse.org/en/5.10.1/api/native-api.html#create-dataset-command
         # see "data.LMTData" here for the expected data:
         # http://lmtdv1.astro.umass.edu/api/datasets/2/versions/1/metadata
         d = self._metadata
-        return {
-            self.name: {
-                "fields":[
-                    # TODO these should be generated programatically using
-                    # the spec csv file
-                    {
-                        "typeName":"projectID",
-                        "multiple": False,
-                        "typeClass":"primitive",
-                        "value": d['projectID'],
-                    },
-                    {
-                        "typeName":"PIName",
-                        "multiple": False,
-                        "typeClass": "primitive",
-                        "value": d['PIName']
-                    },
-                ]
-            }}
+        return self.to_dataverse_dict()
 
     def load_from_yaml(self, yamlfile):
         with open(yamlfile, 'r') as fo:

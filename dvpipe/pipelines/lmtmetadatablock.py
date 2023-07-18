@@ -101,6 +101,56 @@ class LmtMetadataBlock(MetadataBlock):
     def from_yaml(cls, yamlfile):
         return cls(yamlfile=yamlfile, load_data=True)
 
+    def to_dataverse_dict(self):
+        """output in the particular upload format that dataverse wants
+            See e.g. http://lmtdv1.astro.umass.edu/api/datasets/2/versions/1/metadata
+        """
+        md = self._metadata
+        df = self._datasetFields
+        fields = []
+        fdict = {"fields":fields}
+        
+        # yes iterrows is frowned upon for performance, but we don't have many rows
+        for index,row in df.iterrows():
+            d = dict()
+            p = row['name']
+            am = row['allowmultiples']
+            if pd.isnull(row['parent']):
+                if self._is_parent(p):
+                    d["typeName"] = p
+                    d["multiple"] = am
+                    d["typeClass"] = "compound"
+                    d["value"] = []
+                    children = self.get_children(row['name'])
+                    nparent = len(md[p])
+                    for np in range(nparent):
+                        for c in children:
+                            child_dict = dict()
+                            r = df[df['name'] == c]
+                            am=r['allowmultiples'].values[0]
+                            if self.isControlled(c):
+                                tc = "controlledVocabulary"
+                            else:
+                                tc = "primitive"
+                            child_dict["typeName"] = c
+                            child_dict["typeClass"] = tc
+                            child_dict["multiple"] = am
+                            child_dict["value"] = md[p][np][c]
+                            #print("appending child ",child_dict)
+                            d['value'].append(child_dict)
+                else:
+                    if self.isControlled(p):
+                        tc = "controlledVocabulary"
+                    else:
+                        tc = "primitive"
+                    d["typeName"] = p
+                    d["typeClass"] = tc
+                    d["multiple"] = am
+                    d["value"] = md[p]
+                fields.append(d)
+        dvdict = {self.name:fdict}
+        return  dvdict
+
     def test(self):
         try:
             self.add_metadata("foobar",12345)

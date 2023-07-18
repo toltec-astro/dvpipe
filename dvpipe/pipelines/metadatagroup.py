@@ -107,6 +107,7 @@ def example(dbfile=None,yamlfile=None):
     band["bandwidth"] = 2.5
     band["beam"] = u.Quantity(20.0,"arcsec")
     band["lineSens"] = 0.072
+    band["contSens"] = 0.001
     band["qaGrade"] = "A+++"
     band["nchan"] = 1024
     lmt.add_metadata("band",band)
@@ -138,6 +139,8 @@ def example(dbfile=None,yamlfile=None):
     lmt.add_metadata("calibrationLevel",1)
     lmt.add_metadata("obsGoal","SCIENCE")
     lmt.add_metadata("obsComment","This is an observation comment")
+    lmt.add_metadata("boundingBox","[]")
+    lmt.add_metadata("pipeVersion","1.0")
 
     return lmt
 
