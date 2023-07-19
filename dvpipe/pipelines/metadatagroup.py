@@ -40,16 +40,19 @@ class MetadataGroup(object):
         return retval
 
     def dbfile(self,dbfile):
-        self._blocks["LMT"]._dbfile = dbfile
+        pass
 
     def yamlfile(self,yamlfile):
-        self._blocks["LMT"]._yamlfile = yamlfile
+        pass
 
-    def write_to_db(self):
-        self._blocks["LMT"]._write_to_db()
+    def write_to_db(self,validate=True):
+        pass
 
-    def write_to_yaml(self):
-        self._blocks["LMT"]._write_to_yaml()
+    def write_to_yaml(self,validate=True):
+        pass
+
+    def write_to_json(self,validate=True):
+        pass
 
 
 class LmtMetadataGroup(MetadataGroup):
@@ -64,6 +67,27 @@ class LmtMetadataGroup(MetadataGroup):
         for b in self._blocks.values():
             s+=f'{b.name}: {b.keys}\n'
         return s
+
+    def dbfile(self,dbfile):
+        self._blocks["LMT"]._dbfile = dbfile
+
+    def yamlfile(self,yamlfile):
+        self._blocks["LMT"]._yamlfile = yamlfile
+
+    def write_to_db(self,validate=True):
+        if validate:
+            if not self._blocks["LMT"].validate():
+                missing = self._blocks["LMT"].missing_metadata()
+                raise KeyError(f"The following metadata key(s)/value(s) are missing or the value of a key is None {missing}")
+        self._blocks["LMT"]._write_to_db()
+
+
+    def write_to_yaml(self,validate=True):
+        if validate:
+            if not self._blocks["LMT"].validate():
+                missing = self._blocks["LMT"].missing_metadata()
+                raise KeyError(f"The following metadata key(s)/value(s) are missing or the value of a key is None {missing}")
+        self._blocks["LMT"]._write_to_yaml()
 
 def example(dbfile=None,yamlfile=None):
     lmt = LmtMetadataGroup("LMT Group",dbfile=dbfile,yamlfile=yamlfile)
@@ -155,4 +179,3 @@ if __name__ == "__main__":
     # Can't write if yaml is none
     lmtdata.yamlfile(None)
     lmtdata.write_to_yaml()
-    lmtdata.write_to_json()

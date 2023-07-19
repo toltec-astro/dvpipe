@@ -128,7 +128,7 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict = dict()
                             r = df[df['name'] == c]
                             am=r['allowmultiples'].values[0]
-                            if self.isControlled(c):
+                            if self.is_controlled(c):
                                 tc = "controlledVocabulary"
                             else:
                                 tc = "primitive"
@@ -139,7 +139,7 @@ class LmtMetadataBlock(MetadataBlock):
                             #print("appending child ",child_dict)
                             d['value'].append(child_dict)
                 else:
-                    if self.isControlled(p):
+                    if self.is_controlled(p):
                         tc = "controlledVocabulary"
                     else:
                         tc = "primitive"

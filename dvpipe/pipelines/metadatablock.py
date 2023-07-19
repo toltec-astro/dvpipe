@@ -108,7 +108,7 @@ class MetadataBlock(object):
             else:
                 self._metadata[name] = float(value_checked[name])
 
-    def isControlled(self,name):
+    def is_controlled(self,name):
         av = self._allowed_values(name)
         return len(av) != 0
         
@@ -121,6 +121,17 @@ class MetadataBlock(object):
         return series.values
 
     def _check_controlled(self,name,value):
+        '''Check that `value` is allowable for key `name`.  If `name` is governed by a controlled vocabulary, `value` must be in the vocabulary.
+
+           :param name:  The name of the dataset field
+           :type name: str
+
+           :param value: The value of the dataset field
+           :type name: any
+
+           :rtype: bool
+           :return: True if `value` is in a controlled vocabulary of `name` or is not controlled. False otherwise.
+        '''
         s =  self._allowed_values(name,value)
         return s.size == 0 or value in s
 
@@ -232,3 +243,30 @@ class MetadataBlock(object):
             d = utils.yaml.load(fo)
         self._metadata = d
 
+    def validate(self):
+        '''Return true if the metadata are present and valid'''
+        return len(self.missing_metadata()) == 0
+
+    def missing_metadata(self):
+        '''Check if any key,value pairs are missing from metadata or if any values are None.  
+      
+        :returns: list with key names of missing metadata. Empty if none missing
+        '''
+        missing = []
+        for k in self._datasetFields['name'].values:
+            value = self._metadata.get(k,None)
+            #print(k,type(value))
+            if value is None and not self._has_parent(k):
+                missing.append(k)
+            if self._is_parent(k):
+                if type(value) is list:
+                # it will be a list of dictionaries
+                    for v in value:
+                        children = self.get_children(k)
+                        for c in children:
+                            if v.get(c,None) is None:
+                                missing.append(c)
+                else:
+                    print(f"Warning: got unexpected value for {k}={value}")
+                    missing.append(k)
+        return missing
