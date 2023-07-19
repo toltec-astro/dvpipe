@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS alma (
     obsnum              text,
     obsnumlist          text,
     instrument          text,
-    calibration_status  text,
+    calibration_level   text,
     target_name         text,
     s_ra                        FLOAT,
     s_dec                       FLOAT,
@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS alma (
     proposal_id         text,
     obs_title           text,
     obs_creator_name    text,
+    obs_goal            text,
+    obs_comment         text,
     science_keyword     text,
     scientific_category text,
     proposal_authors    text
