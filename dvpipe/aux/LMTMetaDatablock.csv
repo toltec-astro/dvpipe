@@ -16,7 +16,7 @@ velocityCenter,Center Velocity (km/s),Center velocity in km/s,,float,14,,TRUE,FA
 bandwidth,Bandwidth,Bandwidth in GHz,,float,15,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
 nchan,Number of channels,Number of channels,,float,16,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,
 beam,Beam Size (deg),beam size in degrees,,float,17,,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,degree
-contSens,Cont. Sensitivity (Jy/beam),continuum sensitivity (Jy/beam). Not needed for SLR,,float,18,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,Jansky/beam
+contSens,Cont. Sensitivity (Jy/beam),continuum sensitivity (Jy/beam). Not needed for SLR,,float,18,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
 lineSens,SL Sensitivity (K),spectral line sensitivity in 1 km/s window (K of Ta*). ,,float,19,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
 qaGrade,QA Grade,quality assessment grade,,text,20,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
 projectTitle,Project Title,The title of the project as submitted by the PI,,text,21,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
