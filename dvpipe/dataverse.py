@@ -8,7 +8,16 @@ from pyDataverse.models import Dataset as _DVDataset
 from pyDataverse.models import Datafile as _DVDatafile
 
 import json
+import numpy as np
 from .utils import pformat_resp, pformat_yaml
+
+# replace numpy.bool_ with bool
+# see https://stackoverflow.com/questions/58408054/typeerror-object-of-type-bool-is-not-json-serializable
+class CustomJSONizer(json.JSONEncoder):
+    def default(self, obj):
+        return super().encode(bool(obj)) \
+            if isinstance(obj, np.bool_) \
+            else super().default(obj)
 
 
 class DVDataset(_DVDataset):
@@ -22,8 +31,7 @@ class DVDataset(_DVDataset):
         for key, item in self.get().get('metadata_blocks', {}).items():
             logger.debug(f"generate json for custom metadata block {key}")
             data["datasetVersion"]["metadataBlocks"][key] = item
-        return json.dumps(data, indent=2)
-
+        return json.dumps(data, indent=2,cls=CustomJSONizer)
 
 class DVDatafile(_DVDatafile):
     """A class to handle dataverse data files.
