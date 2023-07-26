@@ -43,12 +43,14 @@ class LmtslrDataProd(object):
         # SRDP
         if archive_rootpath is None:
             archive_rootpath = Path("unnamed_project")
+        #print(f"DATAPRODDIR {data_prod_dir}")
         for srdp_tar_path in data_prod_dir.glob(cls._glob_srdp_tar):
             meta = {
                 "name": srdp_tar_path.stem,
                 "data_prod_type": 'SRDP',
                 "archive_path": archive_rootpath.joinpath(data_prod_dir)
             }
+            #print("Meta: ",meta)
             data_items.append({
                 "meta": meta,
                 "filepath": srdp_tar_path
@@ -130,6 +132,7 @@ class LmtslrDataProd(object):
         for mdb in data_prod_meta['metadata_blocks']:
             metadata_blocks.update(mdb.to_dataverse_dataset_fields())
         data['metadata_blocks'] = metadata_blocks
+        #print(metadata_blocks)
         # create the dataverse dataset
         ds = DVDataset()
         ds.set(data)

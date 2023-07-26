@@ -30,7 +30,8 @@ class DVDataset(_DVDataset):
         data = json.loads(super().json(**kwargs))
         for key, item in self.get().get('metadata_blocks', {}).items():
             logger.debug(f"generate json for custom metadata block {key}")
-        return json.dumps(data, indent=2,cls=CustomJSONizer)
+            data["datasetVersion"]["metadataBlocks"][key] = item
+        return json.dumps(data, indent=2,cls=CustomJSONizer,default=str)
 
 
 class DVDatafile(_DVDatafile):
@@ -78,7 +79,7 @@ def get_datafiles(dv_config, dataset_id, version=':latest'):
     dataset_id : str
         The persistent id of the dataset.
     version : str, optional
-        The vresion of the dataset. Default is ':latest'
+        The version of the dataset. Default is ':latest'
     Returns
     -------
     df : The data frame containing the result.
@@ -142,7 +143,12 @@ def upload_dataset(
     ds = DVDataset()
     ds.set(dataset_index['dataset'])
     ds_json = ds.json()
-    # assert ds.validate_json()
+    print("VALIDATING...")
+    print(ds_json)
+    assert ds.validate_json()
+    print("OK")
+    print(f"action_on_exist : {action_on_exist}")
+    print(f"DATASET INDEX FILES: {dataset_index['files']}, len={len(dataset_index['files'])}")
 
     def _create():
         logger.debug(f"create dataset json:\n{ds_json}")
@@ -195,6 +201,7 @@ def upload_dataset(
                 raise NotImplementedError()
             else:
                 raise ValueError("invalid action.")
+
     # if we reach here, we need to handle the datafiles
     logger.info(f"upload datafiles to dataset pid: {pid}")
     data_files = list()

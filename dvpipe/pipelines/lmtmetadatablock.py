@@ -5,6 +5,7 @@ import json
 import dvpipe.utils as utils
 import astropy.units as u
 import sqlite3
+import numpy as npy
 import os
 
 class LmtMetadataBlock(MetadataBlock):
@@ -124,6 +125,9 @@ class LmtMetadataBlock(MetadataBlock):
                     children = self.get_children(row['name'])
                     nparent = len(md[p])
                     for np in range(nparent):
+                        # for each item, create a dict containing
+                        # all chilren
+                        parent_dict = dict()
                         for c in children:
                             child_dict = dict()
                             r = df[df['name'] == c]
@@ -135,18 +139,35 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict["typeName"] = c
                             child_dict["typeClass"] = tc
                             child_dict["multiple"] = am
-                            child_dict["value"] = md[p][np][c]
+                            if isinstance(md[p][np][c],npy.bool_):
+                                child_dict["value"] = bool(md[p][np][c])
+                            elif isinstance(md[p][np][c],str):
+                                child_dict["value"] = md[p][np][c]
+                            else:
+                                child_dict["value"] = str(md[p][np][c])
                             #print("appending child ",child_dict)
-                            d['value'].append(child_dict)
+                            parent_dict[c] = child_dict
+                        d['value'].append(parent_dict)
                 else:
                     if self.is_controlled(p):
+                        tc = "controlledVocabulary"
+                    elif p == 'obsGoal':
+                        # TODO fix this in the csv
                         tc = "controlledVocabulary"
                     else:
                         tc = "primitive"
                     d["typeName"] = p
                     d["typeClass"] = tc
                     d["multiple"] = am
-                    d["value"] = md[p]
+                    if isinstance(md[p],npy.bool_):
+                        d["value"] = bool(md[p])
+                    elif isinstance(md[p],str):
+                        d["value"] = md[p]
+                    # TODO fix this
+                    elif p in ['calibrationLevel']:
+                        d["value"] = str(int(md[p]))
+                    else:
+                        d["value"] = str(md[p])
                 fields.append(d)
         dvdict = {self.name:fdict}
         return  dvdict
