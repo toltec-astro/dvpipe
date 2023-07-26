@@ -151,9 +151,9 @@ class LmtMetadataBlock(MetadataBlock):
                 else:
                     if self.is_controlled(p):
                         tc = "controlledVocabulary"
-                    elif p == 'obsGoal':
+                    #elif p == 'obsGoal':
                         # TODO fix this in the csv
-                        tc = "controlledVocabulary"
+                    #    tc = "controlledVocabulary"
                     else:
                         tc = "primitive"
                     d["typeName"] = p
