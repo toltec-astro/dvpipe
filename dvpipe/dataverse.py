@@ -11,7 +11,6 @@ import json
 import numpy as np
 from .utils import pformat_resp, pformat_yaml
 
-
 # replace numpy.bool_ with bool
 # see https://stackoverflow.com/questions/58408054/typeerror-object-of-type-bool-is-not-json-serializable
 class CustomJSONizer(json.JSONEncoder):
@@ -32,7 +31,6 @@ class DVDataset(_DVDataset):
             logger.debug(f"generate json for custom metadata block {key}")
             data["datasetVersion"]["metadataBlocks"][key] = item
         return json.dumps(data, indent=2,cls=CustomJSONizer,default=str)
-
 
 class DVDatafile(_DVDatafile):
     """A class to handle dataverse data files.
