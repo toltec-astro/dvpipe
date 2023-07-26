@@ -9,10 +9,11 @@ velFrame,SRC,,3
 velType,VELOCITY,,0
 velType,FREQUENCY,,1
 observatory,LMT,,0
-LMTInstrument,TolTEC,,0
+LMTInstrument,TOLTEC,,0
 LMTInstrument,SEQUOIA,,1
 LMTInstrument,RSR,,2
 LMTInstrument,MSIP1MM,,3
 LMTInstrument,OMAYA,,4
-calibrationStatus,CALIBRATED,,0
-calibrationStatus,UNCALIBRATED,,1
+obsGoal,SCIENCE,,0
+obsGoal,TEST,,1
+obsGoal,OTHER,,2
