@@ -45,12 +45,20 @@ def cmd_dataset_list(ctxobj, parent):
 
 
 @cmd_dataset.command('search')
+@click.option(
+    '--action_on_exist', '-a',
+    type=click.Choice(
+        ['none', 'delete'],
+        case_sensitive=False),
+    default='none',
+    help='The action to take for returned datasets',
+    )
 @click.argument(
     'options', nargs=-1,
     metavar='OPT',
     )
 @click.pass_obj
-def cmd_dataset_search(ctxobj, options):
+def cmd_dataset_search(ctxobj, action_on_exist, options):
     """Search the dataverse."""
     # build the options dict
     kwargs = {
@@ -78,6 +86,16 @@ def cmd_dataset_search(ctxobj, options):
             f"No result found. Details:"
             f"\n{pformat_yaml(result.meta)}"
             )
+    # handle action
+    if action_on_exist == "none":
+        return
+    if action_on_exist == "delete":
+        api = ctxobj.dvpipe.dataverse.native_api
+        for item in result:
+            item_str = pformat_yaml(dict(item))
+            if click.confirm(f'Deleting dataset\n{item_str}\nDo you want to continue?'):
+                api.delete_dataset(item['global_id'], is_pid=True, auth=True)
+        
 
 
 @cmd_dataset.command('upload')

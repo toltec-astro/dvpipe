@@ -62,7 +62,7 @@ def search_dataverse(dv_config, **kwargs):
         # we return an empty table to hold the metadata anyway
         tbl = Table()
     else:
-        tbl = Table(rows=items, dtype=[object] * len(items[0]))
+        tbl = Table(rows=items, dtype=[object] * max(len(item) for item in items))
     tbl.meta['response_data'] = data
     return tbl
 
@@ -148,6 +148,8 @@ def upload_dataset(
     print(f"action_on_exist : {action_on_exist}")
     print(f"DATASET INDEX FILES: {dataset_index['files']}, len={len(dataset_index['files'])}")
 
+    file_action = action_on_exist
+
     def _create():
         logger.debug(f"create dataset json:\n{ds_json}")
         resp = api.create_dataset(
@@ -155,6 +157,9 @@ def upload_dataset(
         logger.info(f"create dataset response:\n{pformat_resp(resp)}")
         if not resp.ok:
             raise ValueError(f"Failed create dataset:\n{pformat_resp(resp)}")
+        # set file action to create for newly created datasets
+        nonlocal file_action
+        file_action = 'create'
         # get pid
         return resp.json()["data"]["persistentId"]
 
@@ -164,7 +169,7 @@ def upload_dataset(
     else:
         # search for existing dataset
         search_kwargs = {
-            'q_str': f'title:{dataset_index["dataset"]["title"]}',
+            'q_str': f'title:"{dataset_index["dataset"]["title"]}"',
             'subtree': parent_id,
             'sort': 'date',
             'order': 'desc'
@@ -196,16 +201,17 @@ def upload_dataset(
                 logger.debug("update dataset with metadata")
                 # TODO implement this
                 # update dataset with pid
-                raise NotImplementedError()
+                # raise NotImplementedError()
+                logger.warning("metadata update is not implemented yet, skipped.")
             else:
                 raise ValueError("invalid action.")
 
     # if we reach here, we need to handle the datafiles
-    logger.info(f"upload datafiles to dataset pid: {pid}")
+    logger.info(f"upload datafiles to dataset pid: {pid}; {file_action=}")
     data_files = list()
     # we retrieve the list of data files in the dataset
     # if action is to update.
-    if action_on_exist == 'update':
+    if file_action == 'update':
         files_remote = get_datafiles(dv_config, dataset_id=pid)
         logger.debug(f"existing files:\n{files_remote}")
 
@@ -217,10 +223,10 @@ def upload_dataset(
         assert df.validate_json()
         data_files.append(df)
         # upload file if needed
-        if action_on_exist == 'create':
+        if file_action == 'create':
             resp = api.upload_datafile(df.pid, df.filename, df.json())
             logger.info(f"create datafile:\n{pformat_resp(resp)}")
-        elif action_on_exist == 'update':
+        elif file_action == 'update':
             # check if the file is in the list of existing files
             m = files_remote[files_remote['label'] == df.label]
             if len(m) > 0:
@@ -242,7 +248,7 @@ def upload_dataset(
                 logger.info(
                     f"create non-existing datafile:\n{pformat_resp(resp)}")
         else:
-            raise ValueError("invalid action")
+            logger.debug("no action specified for file uploading, skipped.")
     # finally, publish the dataset if requested
     if publish_type in ['major', 'minor']:
         resp = api.publish_dataset(pid, publish_type)

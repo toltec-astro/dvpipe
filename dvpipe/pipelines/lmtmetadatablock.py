@@ -24,7 +24,7 @@ class LmtMetadataBlock(MetadataBlock):
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
-        #TODO trim trailing spaces will will get us intro trouble possibly later
+        #TODO trim trailing spaces will will get us into trouble possibly later
         self._alma_keys =  pd.read_csv(self._almakeyscsv,skipinitialspace=True)
         self._lmt_keys = self._alma_keys[self._alma_keys['LMT Keyword'].notna()]
         tablenames = set(self._alma_keys['Database Table'])
@@ -151,9 +151,6 @@ class LmtMetadataBlock(MetadataBlock):
                 else:
                     if self.is_controlled(p):
                         tc = "controlledVocabulary"
-                    #elif p == 'obsGoal':
-                        # TODO fix this in the csv
-                    #    tc = "controlledVocabulary"
                     else:
                         tc = "primitive"
                     d["typeName"] = p
