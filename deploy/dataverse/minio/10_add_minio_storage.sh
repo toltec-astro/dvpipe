@@ -1,10 +1,17 @@
-DV_MINIO_STORAGE_NAME=nese-minio
-DV_MINIO_ENDPOINT_REGION=us-east-1
-DV_MINIO_ENDPOINT_PROXY_URL=localhost:9000
-DV_MINIO_ENDPOINT_URL=dp.lmtgtm.org
-DV_MINIO_ACCESS_KEY=
-DV_MINIO_SECRET_KEY=
+: "${DV_MINIO_STORAGE_NAME:=nese-minio}"
+: "${DV_MINIO_ENDPOINT_REGION:=us-east-1}"
+: "${DV_MINIO_ENDPOINT_PROXY_URL:=}"
+: "${DV_MINIO_ENDPOINT_URL:=dp.lmtgtm.org}"
+: "${DV_MINIO_ACCESS_KEY:=key}"
+: "${DV_MINIO_SECRET_KEY:=value}"
 
+echo "add storage:"
+echo "name: ${DV_MINIO_STORAGE_NAME}"
+echo "region: ${DV_MINIO_ENDPOINT_REGION}"
+echo "proxy_url: ${DV_MINIO_ENDPOINT_PROXY_URL}"
+echo "url: ${DV_MINIO_ENDPOINT_URL}"
+
+exit 1
 
 ./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.type=s3"
 ./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.label=${DV_MINIO_STORAGE}"
