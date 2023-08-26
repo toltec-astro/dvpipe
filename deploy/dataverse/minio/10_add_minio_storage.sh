@@ -11,11 +11,11 @@ echo "region: ${DV_MINIO_ENDPOINT_REGION}"
 echo "proxy_url: ${DV_MINIO_ENDPOINT_PROXY_URL}"
 echo "url: ${DV_MINIO_ENDPOINT_URL}"
 
-exit 1
+# exit 1
 
 ./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.type=s3"
-./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.label=${DV_MINIO_STORAGE}"
-./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.bucket-name=${DV_MINIO_STORAGE}"
+./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.label=${DV_MINIO_STORAGE_NAME}"
+./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.bucket-name=${DV_MINIO_STORAGE_NAME}"
 ./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.upload-redirect=true"
 ./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.profile=default"
 ./asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.download-redirect=true"
