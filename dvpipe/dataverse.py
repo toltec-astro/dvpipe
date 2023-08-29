@@ -19,6 +19,12 @@ class CustomJSONizer(json.JSONEncoder):
             if isinstance(obj, np.bool_) \
             else super().default(obj)
 
+def _json_dumps(data):
+    return json.dumps(
+            data, indent=2,
+            cls=CustomJSONizer,
+            default=str, ensure_ascii=False)
+
 class DVDataset(_DVDataset):
     """A class to handle dataverse dataset.
 
@@ -155,7 +161,7 @@ def upload_dataset(
     def _create():
         logger.debug(f"create dataset json:\n{ds_json}")
         resp = api.create_dataset(
-            parent_id, json.loads(ds_json), pid=None, publish=False, auth=True)
+            parent_id, ds_json, pid=None, publish=False, auth=True)
         logger.info(f"create dataset response:\n{pformat_resp(resp)}")
         if not resp.ok:
             raise ValueError(f"Failed create dataset:\n{pformat_resp(resp)}")
@@ -224,9 +230,11 @@ def upload_dataset(
         df.set(data)
         assert df.validate_json()
         data_files.append(df)
+        df_json = df.json()
+        logger.debug(f"create file json:\n{df_json}")
         # upload file if needed
         if file_action == 'create':
-            resp = api.upload_datafile(df.pid, df.filename, df.json())
+            resp = api.upload_datafile(df.pid, df.filename, df_json)
             logger.info(f"create datafile:\n{pformat_resp(resp)}")
         elif file_action == 'update':
             # check if the file is in the list of existing files
@@ -246,7 +254,7 @@ def upload_dataset(
                     f"skip existing datafile label={df.label}")
             else:
                 # not exist yet, create
-                resp = api.upload_datafile(df.pid, df.filename, df.json())
+                resp = api.upload_datafile(df.pid, df.filename, df_json)
                 logger.info(
                     f"create non-existing datafile:\n{pformat_resp(resp)}")
         else:
