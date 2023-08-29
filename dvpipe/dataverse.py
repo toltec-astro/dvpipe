@@ -27,10 +27,12 @@ class DVDataset(_DVDataset):
     def json(self, **kwargs):
         logger.debug(f"generate json for standard dataset")
         data = json.loads(super().json(**kwargs))
+        data["datasetVersion"].update({"license":{"name":"CC0 1.0","uri":"http://creativecommons.org/publicdomain/zero/1.0","iconUri":"https://licensebuttons.net/p/zero/1.0/88x31.png"}})
         for key, item in self.get().get('metadata_blocks', {}).items():
             logger.debug(f"generate json for custom metadata block {key}")
             data["datasetVersion"]["metadataBlocks"][key] = item
-        return json.dumps(data, indent=2,cls=CustomJSONizer,default=str)
+        return json.dumps(data, indent=2,cls=CustomJSONizer,default=str, ensure_ascii=False)
+        # return data_str.replace('\uFFFD', '?')
 
 class DVDatafile(_DVDatafile):
     """A class to handle dataverse data files.
@@ -153,7 +155,7 @@ def upload_dataset(
     def _create():
         logger.debug(f"create dataset json:\n{ds_json}")
         resp = api.create_dataset(
-            parent_id, ds_json, pid=None, publish=False, auth=True)
+            parent_id, json.loads(ds_json), pid=None, publish=False, auth=True)
         logger.info(f"create dataset response:\n{pformat_resp(resp)}")
         if not resp.ok:
             raise ValueError(f"Failed create dataset:\n{pformat_resp(resp)}")
