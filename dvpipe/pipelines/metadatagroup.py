@@ -114,8 +114,30 @@ def example(dbfile=None,yamlfile=None):
     lmt.add_metadata("projectTitle","Life, the Universe, and Everything")
     lmt.add_metadata("PIName","Marc Pound")
     # example with obsnum range and full obsnum list.
-    lmt.add_metadata("obsnum","12345_12350") 
-    lmt.add_metadata("obsnumList","12345,12346,12347,12348,12349,12350") 
+    obsinfo = dict()
+    obsinfo["obsNum"] = 12345
+    obsinfo["subObsNum"] = 88
+    obsinfo["scanNum"] = 9999
+    obsinfo["obsDate"] = utils.now()
+    obsinfo["intTime"] = 30.0*u.minute
+    obsinfo["opacity225"] = 0.05
+    obsinfo["obsGoal"] = "SCIENCE"
+    obsinfo["obsComment"] = "This is an observation comment"
+    lmt.add_metadata("obsInfo",obsinfo)
+    # add a second obsnum
+    obsinfo["obsNum"] = 12346
+    obsinfo["subObsNum"] = 89
+    obsinfo["scanNum"] = 1111
+    obsinfo["obsDate"] = utils.now()
+    obsinfo["intTime"] = 20.0*u.minute
+    obsinfo["opacity225"] = 0.053
+    obsinfo["obsGoal"] = "SCIENCE"
+    obsinfo["obsComment"] = "This is another observation comment"
+    lmt.add_metadata("obsInfo",obsinfo)
+    lmt.add_metadata("totalIntTime",50.0,"minute") # total integration time of both obsnums
+    
+    #lmt.add_metadata("obsnum","12345_12350") 
+    #lmt.add_metadata("obsnumList","12345,12346,12347,12348,12349,12350") 
     coord = SkyCoord(ra=14.01*u.degree,dec=-43.21*u.degree,frame='icrs')
     lmt.add_metadata("RA",coord.ra.value,coord.ra.unit)
     lmt.add_metadata("DEC",coord.dec.value,coord.dec.unit)
@@ -128,10 +150,10 @@ def example(dbfile=None,yamlfile=None):
     band["transition"]='2-1'
     band["frequencyCenter"] = 97981*u.Unit("MHz")
     band["velocityCenter"] = 300.0 #km/s
-    band["bandwidth"] = 2.5
+    band["bandwidth"] = 2.5 # GHz
     band["beam"] = u.Quantity(20.0,"arcsec")
-    band["lineSens"] = 0.072
-    band["contSens"] = 0.001
+    band["lineSens"] = 0.072*u.K
+    band["contSens"] = 0.001*u.K
     band["qaGrade"] = "A+++"
     band["nchan"] = 1024
     lmt.add_metadata("band",band)
@@ -149,8 +171,7 @@ def example(dbfile=None,yamlfile=None):
     band["nchan"] = 2048
     lmt.add_metadata("band",band)
 
-    lmt.add_metadata("obsDate",utils.now())
-    lmt.add_metadata("intTime",30.0,"minute")
+    #lmt.add_metadata("intTime",30.0,"minute")
     lmt.add_metadata("velocity",321.0,u.Unit("m/s"))
     lmt.add_metadata("velDef","RADIO")
     lmt.add_metadata("velFrame","LSR")
@@ -161,9 +182,6 @@ def example(dbfile=None,yamlfile=None):
     lmt.add_metadata("targetName","NGC 5948")
     # 0 = uncalibrated, 1 = calibration level 1, etc
     lmt.add_metadata("calibrationLevel",1)
-    lmt.add_metadata("obsGoal","SCIENCE")
-    lmt.add_metadata("obsComment","This is an observation comment")
-    lmt.add_metadata("boundingBox","[]")
     lmt.add_metadata("pipeVersion","1.0")
 
     return lmt
