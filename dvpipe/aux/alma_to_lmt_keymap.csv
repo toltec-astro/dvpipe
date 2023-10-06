@@ -50,6 +50,8 @@ calibration_level,Calibration Status,alma,calibrationLevel,
 obs_goal,Observation Goal,alma,obsGoal,obsinfo
 obs_comment,Observation Comment,alma,obsComment,obsinfo
 target_name,Source name (ALMA),alma,targetName,
+ref_id,Reference ID,alma,referenceID,
+is_combined,Combined or not,alma,isCombined,
 s_ra,Right Ascension ,alma,RA,
 s_dec,Declination,alma,DEC,
 gal_longitude,Galactic Longitude,alma,galLon,

@@ -10,6 +10,8 @@ obsComment,Observation Comment,"Free-from textual description of the data or oth
 intTime,Integration Time (s),On-source Integration Time (seconds),,float,9,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsInfo,LMTData,second
 obsDate,Date,Date of observation  at start of integration. FITS standard format,,text,10,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsInfo,LMTData,
 opacity225,Opacity,Atmospheric opacity at 225 GHz,,float,11,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsInfo,LMTData,
+referenceID,Reference ID,Reference ID,,text,12,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
+isCombined,Combined obsnum flag,Are these combined obsnums?,,int,13,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
 RA,RA (deg),right ascension (degrees),,float,12,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
 DEC,Dec (deg),declination (degrees),,float,13,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree
 galLon,l (deg),Galactic Longitude (degrees),,float,14,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,degree

@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS alma (
     obsnum              int,
     subobsnum           int,
     scannum             int,
+    ref_id              int,
+    is_combined         int,
     instrument          text,
     calibration_level   text,
     target_name         text,
