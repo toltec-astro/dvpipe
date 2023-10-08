@@ -7,7 +7,7 @@ nlines,Number of lines,win,,
 nsources,Number of sources,win,,
 nchan,Number of channels,win,nchan,band
 win_peak,Window peak flux,win,,
-win_rms,Window RMS noise,win,lineSens,band
+win_rms,Window RMS noise,win,winrms,band
 win_snr,Window Signal to noise ratio (peak/rms),win,,
 bmaj,Beam major axis,win,beam,band
 bmin,Beam minor axis,win,,
@@ -69,7 +69,7 @@ t_exptime,Integration time (s),alma,intTime,obsInfo
 t_total_exptime,Total integration time (s),alma,totalIntTime,
 pol_states,"Polarisation type (Single, Dual, Full)",alma,,
 sensitivity_10kms,Line sensitivity (10 km/s) (mJy/beam),alma,,
-cont_sensitivity_bandwidth,Continuum sensitivity (mJy/beam),alma,contSens,
+cont_sensitivity_bandwidth,Continuum sensitivity (mJy/beam),alma,,
 pvw,Water vapour (mm),alma,,
 opacity,Opactity at 225 GHz,alma,opacity225,obsInfo
 proposal_id,Project code,alma,projectID,

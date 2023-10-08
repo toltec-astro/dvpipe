@@ -152,8 +152,7 @@ def example(dbfile=None,yamlfile=None):
     band["velocityCenter"] = 300.0 #km/s
     band["bandwidth"] = 2.5 # GHz
     band["beam"] = u.Quantity(20.0,"arcsec")
-    band["lineSens"] = 0.072*u.K
-    band["contSens"] = 0.001*u.K
+    band["winrms"] = 0.072*u.K
     band["qaGrade"] = "A+++"
     band["nchan"] = 1024
     lmt.add_metadata("band",band)
@@ -165,7 +164,7 @@ def example(dbfile=None,yamlfile=None):
     band["frequencyCenter"] = u.Quantity(115.2712,"GHz")
     band["bandwidth"] = 2.5 #GHz
     band["beam"] = (97.981/115.2712)*20.0/3600.0
-    band["lineSens"] = 123*u.Unit("mK")
+    band["winrms"] = 123*u.Unit("mK")
     band["qaGrade"] = "B-"
     band["velocityCenter"] = -25.0 #km/s
     band["nchan"] = 2048
