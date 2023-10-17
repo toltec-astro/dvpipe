@@ -6,9 +6,9 @@ spw,Spectral window name,win,,
 nlines,Number of lines,win,,
 nsources,Number of sources,win,,
 nchan,Number of channels,win,nchan,band
-win_peak,Window peak flux,win,,
-win_rms,Window RMS noise,win,winrms,band
-win_snr,Window Signal to noise ratio (peak/rms),win,,
+peak_w,Window peak flux,win,,
+rms_w,Window RMS noise,win,winrms,band
+snr_w,Window Signal to noise ratio (peak/rms),win,,
 bmaj,Beam major axis,win,beam,band
 bmin,Beam minor axis,win,,
 bpa,Beam PA,win,,
