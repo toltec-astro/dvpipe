@@ -189,6 +189,8 @@ if __name__ == "__main__":
     lmtdata = example(dbfile="example_lmt.db",yamlfile="example_lmt.yaml") 
     lmtdata.write_to_db()
     lmtdata.write_to_yaml()
+    for b in lmtdata.blocks:
+        print(lmtdata.blocks[b].to_dataverse_dataset_fields())
 
     # Can't write if dbfile is none
     lmtdata.dbfile(None)
