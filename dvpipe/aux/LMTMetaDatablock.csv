@@ -2,7 +2,7 @@ name,title,description,watermark,fieldType,displayOrder,displayFormat,advancedSe
 projectID,Project,Project identifying string,,text,1,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
 PIName,PI,Principal Investigator name,,text,2,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,
 obsInfo,Observation Information,Information about the observing scan and subscan(s),,none,3,,FALSE,FALSE,TRUE,FALSE,TRUE,TRUE,,LMTData,
-obsNum,Obs Number,Observation Number,,int,4,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsinfo,LMTData,
+obsNum,Obs Number,Observation Number,,int,4,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsInfo,LMTData,
 subObsNum,SubObs Number,Sub-observation number,,int,5,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsInfo,LMTData,
 scanNum,Scan Number,Scan number,,int,6,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,obsInfo,LMTData,
 obsGoal,Observation Goal,"flag indicating science calibration,test, other",,text,7,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,obsInfo,LMTData,
