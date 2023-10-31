@@ -18,7 +18,7 @@ class LmtMetadataBlock(MetadataBlock):
         self._db = None
         super().__init__("LMTData",self._datacsv,self._vocabcsv)
         self._map_lmt_to_alma()
-        self._version = "1.0.8"
+        self._version = "1.1.1"
         if load_data and yamlfile is not None:
             self.load_from_yaml(yamlfile)
 
@@ -58,6 +58,7 @@ class LmtMetadataBlock(MetadataBlock):
             return
 
         print(f"Writing to sqlite file: {self.dbfile}")
+        _inserted = dict()
         if self._db is None:
             self._open_db()
             # write version info to header
@@ -72,18 +73,40 @@ class LmtMetadataBlock(MetadataBlock):
             # there must be a quicker way to do this with pure pandas
             for ak in df['ALMA Keyword']:
                 x = df.loc[df['ALMA Keyword'] == ak]
-                insertme[ak] = b[x['LMT Keyword'].array[0]]
-            #print("Attempting to insert: ",insertme)
+                if x['LMT Keyword'].array[0] in b:
+                    insertme[ak] = b[x['LMT Keyword'].array[0]]
+            print("Attempting to insert: band.",insertme)
             insertme["a_id"] = self._alma_id
             self._db.insert_into("win",insertme)
+            _inserted.update(insertme)
 
-        dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
-        #print("DOLIST",set(dolist))
+        # don't need to do the rest of the "win" table because they
+        # aren't relevant to LMT
+
+        # then do obsInfo
+        for b in self._metadata["obsInfo"]:
+            insertme= dict()
+            df = self._lmt_keys[(self._lmt_keys['Database Table'] == "alma")]
+            # there must be a quicker way to do this with pure pandas
+            for ak in df['ALMA Keyword']:
+                x = df.loc[df['ALMA Keyword'] == ak]
+                print("doing  ",x['LMT Keyword'].array[0])
+                if x['LMT Keyword'].array[0] in b:
+                    insertme[ak] = b[x['LMT Keyword'].array[0]]
+                else:
+                    insertme[ak] = self._metadata[x['LMT Keyword'].array[0]]
+            print("Attempting to insert: ",insertme)
+            self._db.insert_into("alma",insertme)
+            _inserted.update(insertme)
+
+        #dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
+        dolist = self._lmt_keys['Database Table']
+        print("DOLIST",set(dolist))
         for name in set(dolist):
             insertme = dict()
             for k,v in self._lmt_map[name].items():
                 #print(f"{name}.{v}={k}")
-                if k in self._metadata:
+                if k in self._metadata and k not in _inserted:
                     insertme[v] = self._metadata[k]
             #print("I:",insertme,len(insertme),not insertme)
             if insertme: # don't insert empty dict

@@ -26,8 +26,11 @@ CREATE TABLE IF NOT EXISTS alma (
     id integer PRIMARY KEY,
     obs_id              text,
     observatory         text,
-    obsnum              text,
-    obsnumlist          text,
+    obsnum              int,
+    subobsnum           int,
+    scannum             int,
+    ref_id              int,
+    is_combined         int,
     instrument          text,
     calibration_level   text,
     target_name         text,
@@ -40,8 +43,10 @@ CREATE TABLE IF NOT EXISTS alma (
     s_resolution                FLOAT,
     t_min                       FLOAT, 
     t_exptime                   FLOAT, 
+    t_total_exptime             FLOAT, 
     pol_states                  TEXT,
     pvw                         FLOAT,
+    opacity,                    FLOAT,
     cont_sensitivity_bandwidth  FLOAT,
     sensitivity_10kms           FLOAT,
     project_abstract    text,
@@ -191,6 +196,24 @@ class MetaDB(object):
         cur = self.conn.cursor()
         cur.execute(sql,v)
         self.conn.commit()
+
+    def replace_into(self,table,key,values):
+        """replace a column in a table"""
+    
+        #s = str(list(keyval.keys())).replace("'","").strip("[").strip("]")
+        v = tuple(values)
+        vx = ''
+        for i in range(len(v)):
+            vx += f'({i+1}, {v[i]}),'
+            print(f"UPDATE {table} SET {key} = {v[i]} where id = {i+1};")
+        vx = vx[0:-1] # remove the comma
+
+        sql = f"REPLACE INTO {table} (id, {key}) VALUES {vx};"
+        #print(sql)
+        if False:
+            cur = self.conn.cursor()
+            cur.execute(sql)
+            self.conn.commit()
 
     def query(self,table,item):
         sql = f"SELECT {item} from {table};"

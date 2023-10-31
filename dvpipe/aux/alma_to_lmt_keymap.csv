@@ -6,9 +6,9 @@ spw,Spectral window name,win,,
 nlines,Number of lines,win,,
 nsources,Number of sources,win,,
 nchan,Number of channels,win,nchan,band
-win_peak,Window peak flux,win,,
-win_rms,Window RMS noise,win,,
-win_snr,Window Signal to noise ratio (peak/rms),win,,
+peak_w,Window peak flux,win,,
+rms_w,Window RMS noise,win,winrms,band
+snr_w,Window Signal to noise ratio (peak/rms),win,,
 bmaj,Beam major axis,win,beam,band
 bmin,Beam minor axis,win,,
 bpa,Beam PA,win,,
@@ -42,13 +42,16 @@ header_key,Key,header,,
 header_val,Value,header,,
 obs_id,Observation ID string,alma,,
 observatory,Observatory,alma,observatory,
-obsnum,Observation number,alma,obsnum,
-obsnumlist,Observation number list if multiple obsnums,alma,obsnumList,
+obsnum,Observation number,alma,obsNum,obsInfo
+subobsnum,Sub-observation number,alma,subObsNum,obsinfo
+scannum,Scan Number,alma,scanNum,obsinfo
 instrument,Instrument,alma,LMTInstrument,
 calibration_level,Calibration Status,alma,calibrationLevel,
-obs_goal,Observation Goal,alma,obsGoal,
-obs_comment,Observation Comment,alma,obsComment,
+obs_goal,Observation Goal,alma,obsGoal,obsinfo
+obs_comment,Observation Comment,alma,obsComment,obsinfo
 target_name,Source name (ALMA),alma,targetName,
+ref_id,Reference ID,alma,referenceID,
+is_combined,Combined or not,alma,isCombined,
 s_ra,Right Ascension ,alma,RA,
 s_dec,Declination,alma,DEC,
 gal_longitude,Galactic Longitude,alma,galLon,
@@ -61,12 +64,14 @@ frequency,Frequency (GHz),alma,,
 bandwidth,Bandwidth (Hz),alma,,
 spectral_resolution,Spectral resolution (KHz),alma,,
 band_list,Band,alma,,
-t_min,Observation date,alma,obsDate,
-t_exptime,Integration time (s),alma,intTime,
+t_min,Observation date,alma,obsDate,obsInfo
+t_exptime,Integration time (s),alma,intTime,obsInfo
+t_total_exptime,Total integration time (s),alma,totalIntTime,
 pol_states,"Polarisation type (Single, Dual, Full)",alma,,
-sensitivity_10kms,Line sensitivity (10 km/s) (mJy/beam),alma,lineSens,band
-cont_sensitivity_bandwidth,Continuum sensitivity (mJy/beam),alma,contSens,band
+sensitivity_10kms,Line sensitivity (10 km/s) (mJy/beam),alma,,
+cont_sensitivity_bandwidth,Continuum sensitivity (mJy/beam),alma,,
 pvw,Water vapour (mm),alma,,
+opacity,Opactity at 225 GHz,alma,opacity225,obsInfo
 proposal_id,Project code,alma,projectID,
 obs_title,Project title,alma,projectTitle,
 obs_creator_name,PI name,alma,PIName,
