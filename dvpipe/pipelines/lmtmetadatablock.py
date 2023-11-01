@@ -159,6 +159,7 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict = dict()
                             r = df[df["name"] == c]
                             am = r["allowmultiples"].values[0]
+                            fieldType = r["fieldType"].values[0]
                             if self.is_controlled(c):
                                 tc = "controlledVocabulary"
                             else:
@@ -166,12 +167,15 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict["typeName"] = c
                             child_dict["typeClass"] = tc
                             child_dict["multiple"] = am
-                            if isinstance(md[p][np][c], npy.bool_):
-                                child_dict["value"] = bool(md[p][np][c])
+                            rawvalue = md[p][np][c]
+                            if isinstance(rawvalue, npy.bool_):
+                                child_dict["value"] = bool(rawvalue)
                             elif isinstance(md[p][np][c], str):
-                                child_dict["value"] = md[p][np][c]
+                                child_dict["value"] = rawvalue
                             else:
-                                child_dict["value"] = str(md[p][np][c])
+                                if fieldType == "int":
+                                    rawvalue = int(rawvalue)
+                                child_dict["value"] = str(rawvalue)
                             # print("appending child ",child_dict)
                             parent_dict[c] = child_dict
                         d["value"].append(parent_dict)
@@ -183,15 +187,19 @@ class LmtMetadataBlock(MetadataBlock):
                     d["typeName"] = p
                     d["typeClass"] = tc
                     d["multiple"] = am
-                    if isinstance(md[p], npy.bool_):
-                        d["value"] = bool(md[p])
-                    elif isinstance(md[p], str):
-                        d["value"] = md[p]
+                    fieldType = row["fieldType"]
+                    rawvalue = md[p]
+                    if isinstance(rawvalue, npy.bool_):
+                        d["value"] = bool(rawvalue)
+                    elif isinstance(rawvalue, str):
+                        d["value"] = rawvalue
                     # TODO fix this
-                    elif p in ["calibrationLevel"]:
-                        d["value"] = str(int(md[p]))
+                    # elif p in ["calibrationLevel"]:
+                    #    d["value"] = str(int(md[p]))
                     else:
-                        d["value"] = str(md[p])
+                        if fieldType == "int":
+                            rawvalue = int(rawvalue)
+                        d["value"] = str(rawvalue)
                 fields.append(d)
         dvdict = {self.name: fdict}
         return dvdict
