@@ -8,15 +8,16 @@ import sqlite3
 import numpy as npy
 import os
 
+
 class LmtMetadataBlock(MetadataBlock):
-    def __init__(self,dbfile=None,yamlfile=None, load_data=False):
+    def __init__(self, dbfile=None, yamlfile=None, load_data=False):
         self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
-        self._vocabcsv =  utils.aux_file("LMTControlledVocabulary.csv")
-        self._almakeyscsv =  utils.aux_file("alma_to_lmt_keymap.csv")
+        self._vocabcsv = utils.aux_file("LMTControlledVocabulary.csv")
+        self._almakeyscsv = utils.aux_file("alma_to_lmt_keymap.csv")
         self._dbfile = dbfile
         self._yamlfile = yamlfile
         self._db = None
-        super().__init__("LMTData",self._datacsv,self._vocabcsv)
+        super().__init__("LMTData", self._datacsv, self._vocabcsv)
         self._map_lmt_to_alma()
         self._version = "1.1.1"
         if load_data and yamlfile is not None:
@@ -24,31 +25,31 @@ class LmtMetadataBlock(MetadataBlock):
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
-        #TODO trim trailing spaces will will get us into trouble possibly later
-        self._alma_keys =  pd.read_csv(self._almakeyscsv,skipinitialspace=True)
-        self._lmt_keys = self._alma_keys[self._alma_keys['LMT Keyword'].notna()]
-        tablenames = set(self._alma_keys['Database Table'])
+        # TODO trim trailing spaces will will get us into trouble possibly later
+        self._alma_keys = pd.read_csv(self._almakeyscsv, skipinitialspace=True)
+        self._lmt_keys = self._alma_keys[self._alma_keys["LMT Keyword"].notna()]
+        tablenames = set(self._alma_keys["Database Table"])
         for name in tablenames:
-            kv = self._lmt_keys[(self._lmt_keys['Database Table'] == name)]
-            self._lmt_map[name] = dict(zip(kv['LMT Keyword'],kv['ALMA Keyword']))
+            kv = self._lmt_keys[(self._lmt_keys["Database Table"] == name)]
+            self._lmt_map[name] = dict(zip(kv["LMT Keyword"], kv["ALMA Keyword"]))
 
-    def _open_db(self,create=True):
-       # True: will create if not exists
-        self._db = MetaDB(self._dbfile,create)
+    def _open_db(self, create=True):
+        # True: will create if not exists
+        self._db = MetaDB(self._dbfile, create)
         if self._db._created:
             self._alma_id = 1
         else:
             # Get the highest alma_id in the table and add 1 as each metadata is a new entry
             # This query returns list[tuple], hence the double indices.
-            self._alma_id = self._db.query("alma","MAX(id)")[0][0] + 1
-        #print("ALMA ID is ",self._alma_id)
+            self._alma_id = self._db.query("alma", "MAX(id)")[0][0] + 1
+        # print("ALMA ID is ",self._alma_id)
 
     def _write_to_yaml(self):
         if self._yamlfile is None:
             print(f"yamlfile is not set, can't write")
             return
         print(f"Writing to YML file: {self._yamlfile}")
-        f = open(self._yamlfile,"w")
+        f = open(self._yamlfile, "w")
         f.write(self.to_yaml())
         f.close()
 
@@ -64,20 +65,20 @@ class LmtMetadataBlock(MetadataBlock):
             # write version info to header
             h = dict()
             h["version"] = f"LMT Metadata Version {self._version}"
-            self._db.insert_into("header",h)
+            self._db.insert_into("header", h)
 
-        #loop over the metadata. First do the bands
+        # loop over the metadata. First do the bands
         for b in self._metadata["band"]:
-            insertme= dict()
-            df = self._lmt_keys[(self._lmt_keys['Database Table'] == "win")]
+            insertme = dict()
+            df = self._lmt_keys[(self._lmt_keys["Database Table"] == "win")]
             # there must be a quicker way to do this with pure pandas
-            for ak in df['ALMA Keyword']:
-                x = df.loc[df['ALMA Keyword'] == ak]
-                if x['LMT Keyword'].array[0] in b:
-                    insertme[ak] = b[x['LMT Keyword'].array[0]]
-            print("Attempting to insert: band.",insertme)
+            for ak in df["ALMA Keyword"]:
+                x = df.loc[df["ALMA Keyword"] == ak]
+                if x["LMT Keyword"].array[0] in b:
+                    insertme[ak] = b[x["LMT Keyword"].array[0]]
+            # print("Attempting to insert: band.", insertme)
             insertme["a_id"] = self._alma_id
-            self._db.insert_into("win",insertme)
+            self._db.insert_into("win", insertme)
             _inserted.update(insertme)
 
         # don't need to do the rest of the "win" table because they
@@ -85,32 +86,35 @@ class LmtMetadataBlock(MetadataBlock):
 
         # then do obsInfo
         for b in self._metadata["obsInfo"]:
-            insertme= dict()
-            df = self._lmt_keys[(self._lmt_keys['Database Table'] == "alma")]
+            insertme = dict()
+            df = self._lmt_keys[(self._lmt_keys["Database Table"] == "alma")]
             # there must be a quicker way to do this with pure pandas
-            for ak in df['ALMA Keyword']:
-                x = df.loc[df['ALMA Keyword'] == ak]
-                print("doing  ",x['LMT Keyword'].array[0])
-                if x['LMT Keyword'].array[0] in b:
-                    insertme[ak] = b[x['LMT Keyword'].array[0]]
+            for ak in df["ALMA Keyword"]:
+                x = df.loc[df["ALMA Keyword"] == ak]
+                # print("doing  ",x['LMT Keyword'].array[0])
+                if x["LMT Keyword"].array[0] in b:
+                    insertme[ak] = b[x["LMT Keyword"].array[0]]
                 else:
-                    insertme[ak] = self._metadata[x['LMT Keyword'].array[0]]
-            print("Attempting to insert: ",insertme)
-            self._db.insert_into("alma",insertme)
+                    insertme[ak] = self._metadata[x["LMT Keyword"].array[0]]
+            # print("Attempting to insert obsInfo: ", insertme)
+            self._db.insert_into("alma", insertme)
             _inserted.update(insertme)
 
-        #dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
-        dolist = self._lmt_keys['Database Table']
-        print("DOLIST",set(dolist))
+        # dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
+        dolist = self._lmt_keys["Database Table"]
+        # print("DOLIST", set(dolist))
         for name in set(dolist):
+            # Q: we already did 'win' too should we skip that??
+            if name == "alma":
+                continue  # we already did alma with obsInfo
             insertme = dict()
-            for k,v in self._lmt_map[name].items():
-                #print(f"{name}.{v}={k}")
+            for k, v in self._lmt_map[name].items():
+                # print(f"{name}.{v}={k}")
                 if k in self._metadata and k not in _inserted:
                     insertme[v] = self._metadata[k]
-            #print("I:",insertme,len(insertme),not insertme)
-            if insertme: # don't insert empty dict
-                self._db.insert_into(name,insertme)
+            # print("I:", insertme, len(insertme), not insertme)
+            if insertme:  # don't insert empty dict
+                self._db.insert_into(name, insertme)
         self._alma_id += 1
 
     @property
@@ -127,25 +131,25 @@ class LmtMetadataBlock(MetadataBlock):
 
     def to_dataverse_dict(self):
         """output in the particular upload format that dataverse wants
-            See e.g. http://lmtdv1.astro.umass.edu/api/datasets/2/versions/1/metadata
+        See e.g. http://lmtdv1.astro.umass.edu/api/datasets/2/versions/1/metadata
         """
         md = self._metadata
         df = self._datasetFields
         fields = []
-        fdict = {"fields":fields}
-        
+        fdict = {"fields": fields}
+
         # yes iterrows is frowned upon for performance, but we don't have many rows
-        for index,row in df.iterrows():
+        for index, row in df.iterrows():
             d = dict()
-            p = row['name']
-            am = row['allowmultiples']
-            if pd.isnull(row['parent']):
+            p = row["name"]
+            am = row["allowmultiples"]
+            if pd.isnull(row["parent"]):
                 if self._is_parent(p):
                     d["typeName"] = p
                     d["multiple"] = am
                     d["typeClass"] = "compound"
                     d["value"] = []
-                    children = self.get_children(row['name'])
+                    children = self.get_children(row["name"])
                     nparent = len(md[p])
                     for np in range(nparent):
                         # for each item, create a dict containing
@@ -153,8 +157,8 @@ class LmtMetadataBlock(MetadataBlock):
                         parent_dict = dict()
                         for c in children:
                             child_dict = dict()
-                            r = df[df['name'] == c]
-                            am=r['allowmultiples'].values[0]
+                            r = df[df["name"] == c]
+                            am = r["allowmultiples"].values[0]
                             if self.is_controlled(c):
                                 tc = "controlledVocabulary"
                             else:
@@ -162,15 +166,15 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict["typeName"] = c
                             child_dict["typeClass"] = tc
                             child_dict["multiple"] = am
-                            if isinstance(md[p][np][c],npy.bool_):
+                            if isinstance(md[p][np][c], npy.bool_):
                                 child_dict["value"] = bool(md[p][np][c])
-                            elif isinstance(md[p][np][c],str):
+                            elif isinstance(md[p][np][c], str):
                                 child_dict["value"] = md[p][np][c]
                             else:
                                 child_dict["value"] = str(md[p][np][c])
-                            #print("appending child ",child_dict)
+                            # print("appending child ",child_dict)
                             parent_dict[c] = child_dict
-                        d['value'].append(parent_dict)
+                        d["value"].append(parent_dict)
                 else:
                     if self.is_controlled(p):
                         tc = "controlledVocabulary"
@@ -179,32 +183,32 @@ class LmtMetadataBlock(MetadataBlock):
                     d["typeName"] = p
                     d["typeClass"] = tc
                     d["multiple"] = am
-                    if isinstance(md[p],npy.bool_):
+                    if isinstance(md[p], npy.bool_):
                         d["value"] = bool(md[p])
-                    elif isinstance(md[p],str):
+                    elif isinstance(md[p], str):
                         d["value"] = md[p]
                     # TODO fix this
-                    elif p in ['calibrationLevel']:
+                    elif p in ["calibrationLevel"]:
                         d["value"] = str(int(md[p]))
                     else:
                         d["value"] = str(md[p])
                 fields.append(d)
-        dvdict = {self.name:fdict}
-        return  dvdict
+        dvdict = {self.name: fdict}
+        return dvdict
 
     def test(self):
         try:
-            self.add_metadata("foobar",12345)
+            self.add_metadata("foobar", 12345)
         except KeyError as v:
-            print("Caught as expected: ",v)
+            print("Caught as expected: ", v)
         print(self.controlledVocabulary)
-        print(self._check_controlled("velFrame","Foobar"))
-        print(self._check_controlled("velFrame","LSR"))
-        print(self._check_controlled("foobar","uhno"))
+        print(self._check_controlled("velFrame", "Foobar"))
+        print(self._check_controlled("velFrame", "LSR"))
+        print(self._check_controlled("foobar", "uhno"))
         try:
-            self.add_metadata("velFrame","Foobar")
+            self.add_metadata("velFrame", "Foobar")
         except ValueError as v:
-            print("Caught as expected: ",v)
+            print("Caught as expected: ", v)
         print(self._has_parent("slBand"))
         print(self._has_parent("velFrame"))
         print(self._is_parent("band"))
@@ -214,9 +218,10 @@ class LmtMetadataBlock(MetadataBlock):
             print("JSON")
             print(self.to_json())
 
+
 class CitationMetadataBlock(MetadataBlock):
     def __init__(self):
-      self._datacsv = utils.aux_file("CitationMetaDatablock.csv")
-      self._vocabcsv =  utils.aux_file("CitationControlledVocabulary.csv")
-      super().__init__("CitationData",self._datacsv,self._vocabcsv)
-      self._version = "Dataverse 5.12.1"
+        self._datacsv = utils.aux_file("CitationMetaDatablock.csv")
+        self._vocabcsv = utils.aux_file("CitationControlledVocabulary.csv")
+        super().__init__("CitationData", self._datacsv, self._vocabcsv)
+        self._version = "Dataverse 5.12.1"
