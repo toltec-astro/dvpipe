@@ -13,7 +13,7 @@
 	obsDate	Date	Date of observation  at start of integration. FITS standard format		text	10		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	obsInfo	LMTData
 	opacity225	Opacity	Atmospheric opacity at 225 GHz		float	11		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	obsInfo	LMTData
 	referenceID	Reference ID	Reference ID		text	12		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
-	isCombined	Combined obsnum flag	Are these combined obsnums?		int	13		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
+	isCombined	Combined ObsNum Flag	Are these combined obsnums?		int	13		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	RA	RA (deg)	right ascension (degrees)		float	14		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	DEC	Dec (deg)	declination (degrees)		float	15		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	galLon	l (deg)	Galactic Longitude (degrees)		float	16		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
