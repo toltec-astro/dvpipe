@@ -22,13 +22,13 @@ class LmtslrDataProd(object):
     def index_table(self):
         return self._index_table
 
-    _glob_srdp_tar = "[0-9]*_SRDP.tar"  # Science Ready Data Products
-    _glob_sdfits_tar = "[0-9]*_SDFITS.tar"  # SDFITS file
-    _glob_fits_tar = "[0-9]*_FITS.tar"  # FITS image
     _glob_lmtmetadata_yaml = "lmtmetadata.yaml"
-    _glob_dict = {
+    _glob_data_product_types = {
+        # Science Ready Data Products
         "SRDP": "[0-9]*_SRDP.tar",
+        # SDFITS file
         "SDFITS": "[0-9]*_SDFITS.tar",
+        # FITS image
         "FITS": "[0-9]*_FITS.tar",
     }
 
@@ -49,45 +49,15 @@ class LmtslrDataProd(object):
         data_items = []
         if archive_rootpath is None:
             archive_rootpath = Path("unnamed_project")
-        # print(f"DATAPRODDIR {data_prod_dir}")
-        # @TODO make this a nice loop over a dict of tar_paths
-        # SRDP
-        for key, value in cls._glob_dict.items():
-            for tar_path in data_prod_dir(value):
+        # loop over all the data prodcut types
+        for key, value in cls._glob_data_product_types.items():
+            for tar_path in data_prod_dir.glob(value):
                 meta = {
                     "name": tar_path.name,
                     "data_prod_type": key,
                     "archive_path": archive_rootpath.joinpath(data_prod_dir),
                 }
-                # print("Meta: ",meta)
                 data_items.append({"meta": meta, "filepath": tar_path})
-        if False:
-            for srdp_tar_path in data_prod_dir.glob(cls._glob_srdp_tar):
-                meta = {
-                    "name": srdp_tar_path.name,
-                    "data_prod_type": "SRDP",
-                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
-                }
-                # print("Meta: ",meta)
-                data_items.append({"meta": meta, "filepath": srdp_tar_path})
-            # SDFITS
-            for sdfits_tar_path in data_prod_dir.glob(cls._glob_sdfits_tar):
-                meta = {
-                    "name": sdfits_tar_path.name,
-                    "data_prod_type": "SDFITS",
-                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
-                }
-                # print("Meta: ",meta)
-                data_items.append({"meta": meta, "filepath": sdfits_tar_path})
-            # FITS
-            for fits_tar_path in data_prod_dir.glob(cls._glob_fits_tar):
-                meta = {
-                    "name": fits_tar_path.stem,
-                    "data_prod_type": "FITS",
-                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
-                }
-                # print("Meta: ",meta)
-                data_items.append({"meta": meta, "filepath": fits_tar_path})
         return data_items
 
     @classmethod
