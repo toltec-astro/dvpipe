@@ -6,8 +6,8 @@ from ..lmtmetadatablock import LmtMetadataBlock
 
 
 class LmtslrDataProd(object):
-    """A class represent LMT SLR data product.
-    """
+    """A class represent LMT SLR data product."""
+
     # TODO
     # integrate with tolteca dpdb framework
 
@@ -22,17 +22,24 @@ class LmtslrDataProd(object):
     def index_table(self):
         return self._index_table
 
-    _glob_srdp_tar = '[0-9]*_SRDP.tar'
-    _glob_lmtmetadata_yaml = 'lmtmetadata.yaml'
+    _glob_srdp_tar = "[0-9]*_SRDP.tar"  # Science Ready Data Products
+    _glob_sdfits_tar = "[0-9]*_SDFITS.tar"  # SDFITS file
+    _glob_fits_tar = "[0-9]*_FITS.tar"  # FITS image
+    _glob_lmtmetadata_yaml = "lmtmetadata.yaml"
+    _glob_dict = {
+        "SRDP": "[0-9]*_SRDP.tar",
+        "SDFITS": "[0-9]*_SDFITS.tar",
+        "FITS": "[0-9]*_FITS.tar",
+    }
 
     @classmethod
     def _get_project_meta(cls, project_dir):
         # collect metadata from project dir
         meta = {
-            'project_dir': project_dir,
-            'project_id': project_dir.name,
-            'archive_rootpath': Path(project_dir.name)
-            }
+            "project_dir": project_dir,
+            "project_id": project_dir.name,
+            "archive_rootpath": Path(project_dir.name),
+        }
         return meta
 
     @classmethod
@@ -40,21 +47,47 @@ class LmtslrDataProd(object):
         # collect data items from data_prod_dir
         # collect obsnums by parsing the tap tar names
         data_items = []
-        # SRDP
         if archive_rootpath is None:
             archive_rootpath = Path("unnamed_project")
-        #print(f"DATAPRODDIR {data_prod_dir}")
-        for srdp_tar_path in data_prod_dir.glob(cls._glob_srdp_tar):
-            meta = {
-                "name": srdp_tar_path.stem,
-                "data_prod_type": 'SRDP',
-                "archive_path": archive_rootpath.joinpath(data_prod_dir)
-            }
-            #print("Meta: ",meta)
-            data_items.append({
-                "meta": meta,
-                "filepath": srdp_tar_path
-            })
+        # print(f"DATAPRODDIR {data_prod_dir}")
+        # @TODO make this a nice loop over a dict of tar_paths
+        # SRDP
+        for key, value in cls._glob_dict.items():
+            for tar_path in data_prod_dir(value):
+                meta = {
+                    "name": tar_path.name,
+                    "data_prod_type": key,
+                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
+                }
+                # print("Meta: ",meta)
+                data_items.append({"meta": meta, "filepath": tar_path})
+        if False:
+            for srdp_tar_path in data_prod_dir.glob(cls._glob_srdp_tar):
+                meta = {
+                    "name": srdp_tar_path.name,
+                    "data_prod_type": "SRDP",
+                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
+                }
+                # print("Meta: ",meta)
+                data_items.append({"meta": meta, "filepath": srdp_tar_path})
+            # SDFITS
+            for sdfits_tar_path in data_prod_dir.glob(cls._glob_sdfits_tar):
+                meta = {
+                    "name": sdfits_tar_path.name,
+                    "data_prod_type": "SDFITS",
+                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
+                }
+                # print("Meta: ",meta)
+                data_items.append({"meta": meta, "filepath": sdfits_tar_path})
+            # FITS
+            for fits_tar_path in data_prod_dir.glob(cls._glob_fits_tar):
+                meta = {
+                    "name": fits_tar_path.stem,
+                    "data_prod_type": "FITS",
+                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
+                }
+                # print("Meta: ",meta)
+                data_items.append({"meta": meta, "filepath": fits_tar_path})
         return data_items
 
     @classmethod
@@ -66,11 +99,11 @@ class LmtslrDataProd(object):
         lmtmetadata_path = lmtmetadata_path[0]
         lmtmetadata_block = LmtMetadataBlock.from_yaml(lmtmetadata_path)
         return {
-            'name': data_prod_dir.name,
+            "name": data_prod_dir.name,
             "path": data_prod_dir,
             "metadata_blocks": [
                 lmtmetadata_block,
-            ]
+            ],
         }
 
     @classmethod
@@ -84,16 +117,15 @@ class LmtslrDataProd(object):
         data_prod_list = []
         for data_prod_dir in project_dir.iterdir():
             data_items = cls._get_data_prod_data_items(
-                data_prod_dir,
-                archive_rootpath=project_meta['archive_rootpath']
+                data_prod_dir, archive_rootpath=project_meta["archive_rootpath"]
             )
             if not data_items:
                 continue
             data_prod_meta = cls._get_data_prod_meta(data_prod_dir)
             n_cols = len(data_items[0])
             index_table = Table(rows=data_items, dtype=[object] * n_cols)
-            index_table.meta['project_meta'] = project_meta
-            index_table.meta['data_prod_meta'] = data_prod_meta
+            index_table.meta["project_meta"] = project_meta
+            index_table.meta["data_prod_meta"] = data_prod_meta
             data_prod_list.append(cls(index_table=index_table))
         return data_prod_list
 
@@ -101,38 +133,37 @@ class LmtslrDataProd(object):
         """Create dataverse dataset index from this data product."""
         meta = self.meta
         # TODO generate these info
-        project_meta = meta['project_meta']
-        data_prod_meta = meta['data_prod_meta']
-        project_id = project_meta['project_id']
-        data_prod_name = data_prod_meta['name']
+        project_meta = meta["project_meta"]
+        data_prod_meta = meta["data_prod_meta"]
+        project_id = project_meta["project_id"]
+        data_prod_name = data_prod_meta["name"]
         data = {
-            'title': f"{project_id}_{data_prod_name}",
-            'dsDescription': [{
-                'dsDescriptionValue': (
-                    f'Data product for project {project_id}')
-                }],
-            'author': [
+            "title": f"{project_id}_{data_prod_name}",
+            "dsDescription": [
+                {"dsDescriptionValue": (f"Data product for project {project_id}")}
+            ],
+            "author": [
                 {
-                    'authorName': 'LMT',
-                    'authorAffiliation': 'Large Millimeter Telescope',
-                    'authorEmail': 'dp@lmtgtm.org',
-                    },
-                ],
-            'datasetContact': [
+                    "authorName": "LMT",
+                    "authorAffiliation": "Large Millimeter Telescope",
+                    "authorEmail": "dp@lmtgtm.org",
+                },
+            ],
+            "datasetContact": [
                 {
-                    'datasetContactName': 'LMT',
-                    'datasetContactAffiliation': 'Large Millimeter Telescope',
-                    'datasetContactEmail': 'dp@lmtgtm.org',
-                    },
-                ],
-            'subject': ['Astronomy and Astrophysics'],
-            }
+                    "datasetContactName": "LMT",
+                    "datasetContactAffiliation": "Large Millimeter Telescope",
+                    "datasetContactEmail": "dp@lmtgtm.org",
+                },
+            ],
+            "subject": ["Astronomy and Astrophysics"],
+        }
         # generate metadatablock fields data
         metadata_blocks = {}
-        for mdb in data_prod_meta['metadata_blocks']:
+        for mdb in data_prod_meta["metadata_blocks"]:
             metadata_blocks.update(mdb.to_dataverse_dataset_fields())
-        data['metadata_blocks'] = metadata_blocks
-        #print(metadata_blocks)
+        data["metadata_blocks"] = metadata_blocks
+        # print(metadata_blocks)
         # create the dataverse dataset
         ds = DVDataset()
         ds.set(data)
@@ -140,30 +171,27 @@ class LmtslrDataProd(object):
         # handle data items
         datafiles = list()
         for data_item in self.index_table:
-            meta = data_item['meta']
+            meta = data_item["meta"]
             description = (
-                f'{meta["data_prod_type"]} data product of '
-                f'{data_prod_name}'
-                )
+                f'{meta["data_prod_type"]} data product of ' f"{data_prod_name}"
+            )
             data = {
                 "description": description,
-                "categories": ['Data'],
+                "categories": ["Data"],
                 "restrict": True,
-                "label": meta['name'],
-                "directoryLabel": meta['archive_path'].parent.as_posix(),
-                "filename": data_item['filepath'].as_posix(),
-                'pid': 'not_yet_set'
-                }
+                "label": meta["name"],
+                "directoryLabel": meta["archive_path"].parent.as_posix(),
+                "filename": data_item["filepath"].as_posix(),
+                "pid": "not_yet_set",
+            }
             df = DVDatafile()
             df.set(data)
             assert df.validate_json()
             datafiles.append(df)
         # dump as dataset_index file
         dataset_index = {
-            'meta': {
-                "project_meta":project_meta
-            },
-            'dataset': ds.get(),
-            'files': [df.get() for df in datafiles]
-            }
+            "meta": {"project_meta": project_meta},
+            "dataset": ds.get(),
+            "files": [df.get() for df in datafiles],
+        }
         return dataset_index
