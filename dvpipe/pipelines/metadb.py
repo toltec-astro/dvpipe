@@ -58,7 +58,8 @@ CREATE TABLE IF NOT EXISTS alma (
     obs_comment         text,
     science_keyword     text,
     scientific_category text,
-    proposal_authors    text
+    proposal_authors    text,
+    public_date         text
 );
 """
 
@@ -119,42 +120,42 @@ CREATE TABLE IF NOT EXISTS sources (
 );
 """
 
-project_abstract    = "We will do something wonderful"
-obs_title           = "The End of the Universe"
-science_keyword     = "molecules, galaxies"
+project_abstract = "We will do something wonderful"
+obs_title = "The End of the Universe"
+science_keyword = "molecules, galaxies"
 scientific_category = "ISM"
-proposal_authors    = "George, Paul, Ringo"
+proposal_authors = "George, Paul, Ringo"
+
 
 class MetaDB(object):
     """
     LMT intermediate search page database.
     Re-uses on the A-W-L-S schema invented for study7
     """
+
     def __init__(self, db_file, create=False):
-        self.db   = db_file
+        self.db = db_file
         self.conn = None
         self._created = False
 
         try:
             if os.path.isfile(db_file):
-               self.conn = sqlite3.connect(db_file)
+                self.conn = sqlite3.connect(db_file)
             else:
-               if create:
-                   # default is to create if it doesn't exists
-                   self.conn = sqlite3.connect(db_file)
-                   self.create_table(header_table)
-                   self.create_table(   alma_table)
-                   self.create_table(    win_table)
-                   self.create_table(  lines_table)
-                   self.create_table(sources_table)
-                   self._created = True
-               else:
-                   msg = f"Cannot create the database connection to {db_file}. Check that the file exists. If not, try create=True"
-                   raise Exception(msg)
+                if create:
+                    # default is to create if it doesn't exists
+                    self.conn = sqlite3.connect(db_file)
+                    self.create_table(header_table)
+                    self.create_table(alma_table)
+                    self.create_table(win_table)
+                    self.create_table(lines_table)
+                    self.create_table(sources_table)
+                    self._created = True
+                else:
+                    msg = f"Cannot create the database connection to {db_file}. Check that the file exists. If not, try create=True"
+                    raise Exception(msg)
         except sqlite3.Error:
-                raise
-
-            
+            raise
 
     def close(self):
         """Close the database connection/file"""
@@ -167,57 +168,56 @@ class MetaDB(object):
         :param create_table_sql: a CREATE TABLE statement
         :return:
         """
-        #try:
+        # try:
         c = self.conn.cursor()
         c.execute(create_table_sql)
 
-
     # @todo deal with multiple key,vals in header.
-    #def insert_into_header(self,keyval):
+    # def insert_into_header(self,keyval):
     #    s = str(list(keyval.keys())).replace("'","").strip("[").strip("]")
     #    v = tuple(list(keyval.values()))
     #    sql = f"INSERT INTO header(key,val) VALUES("
 
-    def insert_into(self,table,keyval):
+    def insert_into(self, table, keyval):
         """insert into a table"""
-    
-        s = str(list(keyval.keys())).replace("'","").strip("[").strip("]")
+
+        s = str(list(keyval.keys())).replace("'", "").strip("[").strip("]")
         v = tuple(list(keyval.values()))
-        #print("S,V ",s,v)
+        # print("S,V ",s,v)
         sql = f"INSERT INTO {table}({s}) VALUES("
         for i in v:
-            sql += '?, '
-        sql+=")"
+            sql += "?, "
+        sql += ")"
         sl = list(sql)
         sl[sql.rindex(",")] = ""
         sql = "".join(sl)
-        #print(sql,":",len(sql))
-        #print(f"cur.execute({sql},{v})")
+        # print(sql,":",len(sql))
+        # print(f"cur.execute({sql},{v})")
         cur = self.conn.cursor()
-        cur.execute(sql,v)
+        cur.execute(sql, v)
         self.conn.commit()
 
-    def replace_into(self,table,key,values):
+    def replace_into(self, table, key, values):
         """replace a column in a table"""
-    
-        #s = str(list(keyval.keys())).replace("'","").strip("[").strip("]")
+
+        # s = str(list(keyval.keys())).replace("'","").strip("[").strip("]")
         v = tuple(values)
-        vx = ''
+        vx = ""
         for i in range(len(v)):
-            vx += f'({i+1}, {v[i]}),'
+            vx += f"({i+1}, {v[i]}),"
             print(f"UPDATE {table} SET {key} = {v[i]} where id = {i+1};")
-        vx = vx[0:-1] # remove the comma
+        vx = vx[0:-1]  # remove the comma
 
         sql = f"REPLACE INTO {table} (id, {key}) VALUES {vx};"
-        #print(sql)
+        # print(sql)
         if False:
             cur = self.conn.cursor()
             cur.execute(sql)
             self.conn.commit()
 
-    def query(self,table,item):
+    def query(self, table, item):
         sql = f"SELECT {item} from {table};"
-        #print("QUERY IS ",sql)
+        # print("QUERY IS ",sql)
         cur = self.conn.cursor()
         cur.execute(sql)
         return cur.fetchall()
@@ -228,8 +228,8 @@ class MetaDB(object):
         :param project:
         :return: project id
         """
-        sql = ''' INSERT INTO header(key,val)
-                              VALUES(?,  ?)'''
+        sql = """ INSERT INTO header(key,val)
+                              VALUES(?,  ?)"""
         cur = self.conn.cursor()
         cur.execute(sql, entry)
         self.conn.commit()
@@ -243,10 +243,10 @@ class MetaDB(object):
         obs_id == member_ous_uid
         """
 
-        sql = ''' INSERT INTO alma(obs_id, target_name, s_ra, s_dec,
+        sql = """ INSERT INTO alma(obs_id, target_name, s_ra, s_dec,
 frequency, project_abstract, obs_title, science_keyword, scientific_category, proposal_authors)
                             VALUES(?,      ?,           ?,    ?,     ?,   ?,
-  ?,  ?, ?, ?) '''
+  ?,  ?, ?, ?) """
         cur = self.conn.cursor()
         cur.execute(sql, e)
         self.conn.commit()
@@ -258,9 +258,9 @@ frequency, project_abstract, obs_title, science_keyword, scientific_category, pr
         :param project:
         :return: project id
         """
-        sql = ''' INSERT INTO win(a_id, spw, nlines, nsources, nchan, rms_w,
+        sql = """ INSERT INTO win(a_id, spw, nlines, nsources, nchan, rms_w,
 bmaj, bmin, bpa)
-                           VALUES(?,       ?,   ?,      ?,        ?,     ?,   ?,   ?,   ?) '''
+                           VALUES(?,       ?,   ?,      ?,        ?,     ?,   ?,   ?,   ?) """
         cur = self.conn.cursor()
         cur.execute(sql, entry)
         self.conn.commit()
@@ -272,13 +272,12 @@ bmaj, bmin, bpa)
         :param project:
         :return: project id
         """
-        sql = ''' INSERT INTO lines(w_id, formula, transition, restfreq, vmin, vmax)
-                             VALUES(?,      ?,          ?,        ?,          ?,     ?) '''
+        sql = """ INSERT INTO lines(w_id, formula, transition, restfreq, vmin, vmax)
+                             VALUES(?,      ?,          ?,        ?,          ?,     ?) """
         cur = self.conn.cursor()
         cur.execute(sql, entry)
         self.conn.commit()
         return cur.lastrowid
-
 
     def create_sources(self, entry):
         """
@@ -286,8 +285,8 @@ bmaj, bmin, bpa)
         :param project:
         :return: project id
         """
-        sql = ''' INSERT INTO sources(w_id, l_id, ra, dec, flux)
-                               VALUES(?,      ?,        ?,  ?,   ?) '''
+        sql = """ INSERT INTO sources(w_id, l_id, ra, dec, flux)
+                               VALUES(?,      ?,        ?,  ?,   ?) """
         cur = self.conn.cursor()
         cur.execute(sql, entry)
         self.conn.commit()
