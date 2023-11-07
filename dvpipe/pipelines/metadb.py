@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS alma (
     t_total_exptime             FLOAT, 
     pol_states                  TEXT,
     is_polarimetry              INTEGER,
-    half_wave_plate             TEXT,
+    half_wave_plate_mode        TEXT,
     pvw                         FLOAT,
     opacity                     FLOAT,
     cont_sensitivity_bandwidth  FLOAT,

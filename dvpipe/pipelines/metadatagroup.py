@@ -122,7 +122,7 @@ def example(dbfile=None, yamlfile=None):
     lmt.add_metadata("projectTitle", "Life, the Universe, and Everything")
     lmt.add_metadata("PIName", "Marc Pound")
     lmt.add_metadata("referenceID", "12345_12346")  # or whatever we agree on
-    lmt.add_metadata("isCombined", True)  # need to convert this to int??
+    lmt.add_metadata("isCombined", True)
     lmt.add_metadata("publicDate", utils.now())
     # example with obsnum range and full obsnum list.
     obsinfo = dict()
@@ -192,6 +192,8 @@ def example(dbfile=None, yamlfile=None):
     lmt.add_metadata("targetName", "NGC 5948")
     # 0 = uncalibrated, 1 = calibration level 1, etc
     lmt.add_metadata("calibrationLevel", 1)
+    lmt.add_metadata("isPolarimetry", False)
+    lmt.add_metadata("halfWavePlateMode", "ABSENT")  # or FIXED or ROTATING
     lmt.add_metadata("pipeVersion", "1.0")
 
     return lmt
