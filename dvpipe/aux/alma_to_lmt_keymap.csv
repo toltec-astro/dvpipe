@@ -47,6 +47,7 @@ subobsnum,Sub-observation number,alma,subObsNum,obsinfo
 scannum,Scan Number,alma,scanNum,obsinfo
 instrument,Instrument,alma,LMTInstrument,
 calibration_level,Calibration Status,alma,calibrationLevel,
+processing_level,Processing Level,alma,processingLevel,
 obs_goal,Observation Goal,alma,obsGoal,obsinfo
 obs_comment,Observation Comment,alma,obsComment,obsinfo
 target_name,Source name (ALMA),alma,targetName,
