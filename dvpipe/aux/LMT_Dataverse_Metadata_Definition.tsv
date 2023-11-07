@@ -64,6 +64,6 @@
 	obsGoal	SCIENCE		0											
 	obsGoal	TEST		1											
 	obsGoal	OTHER		2											
-	halfWavePlateMode	ABSENT													
-	halfWavePlateMode	FIXED													
-	halfWavePlateMode	ROTATING													
+	halfWavePlateMode	ABSENT		0											
+	halfWavePlateMode	FIXED		1											
+	halfWavePlateMode	ROTATING		2											
