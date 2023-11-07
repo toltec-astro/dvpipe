@@ -42,6 +42,8 @@
 	targetName	Target	Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).		text	39		TRUE	FALSE	FALSE	TRUE	TRUE	FALSE		LMTData
 	calibrationLevel	Calibration Level	Integer indicating level of calibration. 0 = no calibration, 1 = first level, 2 = second level, etc		int	40		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
 	publicDate	Public Date	The date at which these data become public (end of proprietary period)		text	41		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	isPolarimetry	Polarimetry Flag	Are the data polarmetric?		int	42		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	halfWavePlateMode	Half-wave Plate Mode	Half-wave Plate Mode		text	43		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
 #controlledVocabulary	DatasetField	Value	identifier	displayOrder											
 	velDef	RADIO		0											
 	velDef	OPTICAL		1											
@@ -61,3 +63,6 @@
 	obsGoal	SCIENCE		0											
 	obsGoal	TEST		1											
 	obsGoal	OTHER		2											
+	halfWavePlateMode	ABSENT													
+	halfWavePlateMode	FIXED													
+	halfWavePlateMode	ROTATING													
