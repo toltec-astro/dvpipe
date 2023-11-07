@@ -168,6 +168,7 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict["typeClass"] = tc
                             child_dict["multiple"] = am
                             rawvalue = md[p][np][c]
+                            # handle boolean types
                             if isinstance(rawvalue, npy.bool_):
                                 child_dict["value"] = bool(rawvalue)
                             elif isinstance(md[p][np][c], str):
