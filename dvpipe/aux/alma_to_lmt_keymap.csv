@@ -47,6 +47,7 @@ subobsnum,Sub-observation number,alma,subObsNum,obsinfo
 scannum,Scan Number,alma,scanNum,obsinfo
 instrument,Instrument,alma,LMTInstrument,
 calibration_level,Calibration Status,alma,calibrationLevel,
+processing_level,Processing Level,alma,processingLevel,
 obs_goal,Observation Goal,alma,obsGoal,obsinfo
 obs_comment,Observation Comment,alma,obsComment,obsinfo
 target_name,Source name (ALMA),alma,targetName,
@@ -68,6 +69,8 @@ t_min,Observation date,alma,obsDate,obsInfo
 t_exptime,Integration time (s),alma,intTime,obsInfo
 t_total_exptime,Total integration time (s),alma,totalIntTime,
 pol_states,"Polarisation type (Single, Dual, Full)",alma,,
+is_polarimetry,Data are polarimetric,alma,isPolarimetry,
+half_wave_plate_mode,Half-wave plate mode,alma,halfWavePlateMode,
 sensitivity_10kms,Line sensitivity (10 km/s) (mJy/beam),alma,,
 cont_sensitivity_bandwidth,Continuum sensitivity (mJy/beam),alma,,
 pvw,Water vapour (mm),alma,,

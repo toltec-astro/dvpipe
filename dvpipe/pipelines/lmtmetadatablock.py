@@ -19,7 +19,7 @@ class LmtMetadataBlock(MetadataBlock):
         self._db = None
         super().__init__("LMTData", self._datacsv, self._vocabcsv)
         self._map_lmt_to_alma()
-        self._version = "1.1.1"
+        self._version = "1.2.1"
         if load_data and yamlfile is not None:
             self.load_from_yaml(yamlfile)
 
@@ -168,6 +168,7 @@ class LmtMetadataBlock(MetadataBlock):
                             child_dict["typeClass"] = tc
                             child_dict["multiple"] = am
                             rawvalue = md[p][np][c]
+                            # handle boolean types
                             if isinstance(rawvalue, npy.bool_):
                                 child_dict["value"] = bool(rawvalue)
                             elif isinstance(md[p][np][c], str):
