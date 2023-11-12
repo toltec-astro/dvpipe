@@ -118,8 +118,11 @@ datasetfieldtype.targetName.title=Target
 datasetfieldtype.targetName.description=Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).
 datasetfieldtype.targetName.watermark=nan
 datasetfieldtype.calibrationLevel.title=Calibration Level
-datasetfieldtype.calibrationLevel.description=Integer indicating level of calibration. 0 = no calibration, 1 = first level, 2 = second level, etc
+datasetfieldtype.calibrationLevel.description=Integer 0 = uncalibrated, 1 = calibrated
 datasetfieldtype.calibrationLevel.watermark=nan
+datasetfieldtype.processingLevel.title=Processing Level
+datasetfieldtype.processingLevel.description=Integer indicating level of processing. Means different things for SLR vs TOLTEC.
+datasetfieldtype.processingLevel.watermark=nan
 datasetfieldtype.publicDate.title=Public Date
 datasetfieldtype.publicDate.description=The date at which these data become public (end of proprietary period)
 datasetfieldtype.publicDate.watermark=nan
