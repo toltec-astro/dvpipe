@@ -19,32 +19,33 @@
 	galLon	l (deg)	Galactic Longitude (degrees)		float	16		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	galLat	b (deg)	Galactic Latitude (degrees)		float	17		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	band	Band	Information about the spectral observing band		none	18		FALSE	FALSE	TRUE	FALSE	TRUE	TRUE		LMTData
-	slBand	SL Band	Spectral line band 		int	19		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
-	formula	Line formula	"expected line(s) identification formula. e.g. ""CO"".  Single ID or comma separated list"		text	20		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
-	transition	Line transition	expected line(s) transition, e.g. “1-0”. Single ID or comma separated list		text	21		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
-	frequencyCenter	Frequency Center (GHz)	Center frequency in GHz		float	22		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
-	velocityCenter	Center Velocity (km/s)	Center velocity in km/s		float	23		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
-	bandwidth	Bandwidth	Bandwidth in GHz		float	24		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
-	nchan	Number of channels	Number of channels		int	25		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
-	beam	Beam Size (deg)	beam size in degrees		float	26		FALSE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
-	winrms	RMS Sensitivity (K)	rms noise in spectral window		float	27		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
-	qaGrade	QA Grade	quality assessment grade		text	28		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE	band	LMTData
-	projectTitle	Project Title	The title of the project as submitted by the PI		text	29		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
-	totalIntTime	Total Integration Time (s)	Total on-source integration time for all obsnums this ObsDataList		float	30		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
-	velocity	Velocity (km/s)	source velocity in km/s		float	31		FALSE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
-	velDef	Velocity Definition	velocity definition e.g. RADIO, OPTICAL		text	32		FALSE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
-	velFrame	Velocity Frame	velocity reference frame, e.g. LSR,SKY,BARY,SRC		text	33		FALSE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
-	velType	Velocity Type	Velocity type of FITS cube axis3, either frequency or velocity		text	34		FALSE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
-	z	Redshift	redshift		float	35		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
-	pipeVersion	Pipeline Version	pipeline version		text	36		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
-	observatory	Observatory	The observatory or facility where the data was obtained.		text	37		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
-	LMTInstrument	Instrument	The instrument used to collect the data.		text	38		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
-	targetName	Target	Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).		text	39		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
-	calibrationLevel	Calibration Level	Integer 0 = uncalibrated, 1 = calibrated		int	40		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
-	processingLevel	Processing Level	Integer indicating level of processing. Means different things for SLR vs TOLTEC.		int	41		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
-	publicDate	Public Date	The date at which these data become public (end of proprietary period)		text	42		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
-	isPolarimetry	Polarimetry Flag	Are the data polarmetric?		int	43		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
-	halfWavePlateMode	Half-wave Plate Mode	Half-wave Plate Mode		text	44		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
+	bandNum	SL/Cont Band	Spectral line or continuum band 		int	19		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	bandName	Band name	A name describing the band		test	20		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	formula	Line formula	"expected line(s) identification formula. e.g. ""CO"".  Single ID or comma separated list"		text	21		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	transition	Line transition	expected line(s) transition, e.g. “1-0”. Single ID or comma separated list		text	22		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	frequencyCenter	Frequency Center (GHz)	Center frequency in GHz		float	23		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
+	velocityCenter	Center Velocity (km/s)	Center velocity in km/s		float	24		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	bandwidth	Bandwidth	Bandwidth in GHz		float	25		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
+	nchan	Number of channels	Number of channels		int	26		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
+	beam	Beam Size (deg)	beam size in degrees		float	27		FALSE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	winrms	RMS Sensitivity (K)	rms noise in spectral window		float	28		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	qaGrade	QA Grade	quality assessment grade		int	29		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	projectTitle	Project Title	The title of the project as submitted by the PI		text	30		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	totalIntTime	Total Integration Time (s)	Total on-source integration time for all obsnums this ObsDataList		float	31		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
+	velocity	Velocity (km/s)	source velocity in km/s		float	32		FALSE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	velDef	Velocity Definition	velocity definition e.g. RADIO, OPTICAL		text	33		FALSE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
+	velFrame	Velocity Frame	velocity reference frame, e.g. LSR,SKY,BARY,SRC		text	34		FALSE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
+	velType	Velocity Type	Velocity type of FITS cube axis3, either frequency or velocity		text	35		FALSE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
+	z	Redshift	redshift		float	36		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
+	pipeVersion	Pipeline Version	pipeline version		text	37		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
+	observatory	Observatory	The observatory or facility where the data was obtained.		text	38		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
+	LMTInstrument	Instrument	The instrument used to collect the data.		text	39		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
+	targetName	Target	Astronomical Objects represented in the data (Given as SIMBAD recognizable names preferred).		text	40		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	calibrationLevel	Calibration Level	Integer 0 = uncalibrated, 1 = calibrated		int	41		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	processingLevel	Processing Level	Integer indicating level of processing. Means different things for SLR vs TOLTEC.		int	42		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	publicDate	Public Date	The date at which these data become public (end of proprietary period)		text	43		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	isPolarimetry	Polarimetry Flag	Are the data polarmetric?		int	44		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
+	halfWavePlateMode	Half-wave Plate Mode	Half-wave Plate Mode		text	45		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
 #controlledVocabulary	DatasetField	Value	identifier	displayOrder											
 	velDef	RADIO		0											
 	velDef	OPTICAL		1											
@@ -67,3 +68,7 @@
 	halfWavePlateMode	ABSENT		0											
 	halfWavePlateMode	FIXED		1											
 	halfWavePlateMode	ROTATING		2											
+	bandName	A1100		0											
+	bandName	A1400		1											
+	bandName	A2000		2											
+	bandName	OTHER		3											

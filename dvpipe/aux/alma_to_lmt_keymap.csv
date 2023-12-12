@@ -1,8 +1,8 @@
 ALMA Keyword,Description,Database Table,LMT Keyword,LMT parent
 alma_id,ALMA ID,win,,
 id,Spectral window ID,win,,
-bandnum,Spectral window band number,win,slBand,band
-spw,Spectral window name,win,,
+bandnum,Spectral window band number,win,bandNum,band
+spw,Spectral window name,win,bandName,band
 nlines,Number of lines,win,,
 nsources,Number of sources,win,,
 nchan,Number of channels,win,nchan,band

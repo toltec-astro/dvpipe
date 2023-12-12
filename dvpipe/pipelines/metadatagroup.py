@@ -156,7 +156,10 @@ def example(dbfile=None, yamlfile=None):
     lmt.add_metadata("galLat", coord.galactic.b.value, coord.galactic.b.unit)
     # add a band
     band = dict()
-    band["slBand"] = 1
+    band["bandNum"] = 1
+    band[
+        "bandName"
+    ] = "OTHER"  # use other for SLBands unless we want specific names for them.
     band["formula"] = "CS"
     band["transition"] = "2-1"
     band["frequencyCenter"] = 97981 * u.Unit("MHz")
@@ -168,7 +171,8 @@ def example(dbfile=None, yamlfile=None):
     band["nchan"] = 1024
     lmt.add_metadata("band", band)
     # add a second band
-    band["slBand"] = 2
+    band["bandNum"] = 2
+    band["bandName"] = "OTHER"
     band["formula"] = "CO"
     band["transition"] = "1-0"
     #   for multiple lines:

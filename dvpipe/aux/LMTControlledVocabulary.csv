@@ -20,3 +20,7 @@ obsGoal,OTHER,,2
 halfWavePlateMode,ABSENT,,0
 halfWavePlateMode,FIXED,,1
 halfWavePlateMode,ROTATING,,2
+bandName,A1100,,0
+bandName,A1400,,1
+bandName,A2000,,2
+bandName,OTHER,,3
