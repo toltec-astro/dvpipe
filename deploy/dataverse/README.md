@@ -17,4 +17,4 @@
 
 * Copy the resource bundle file ".resource_bundle" to glassfish:
 
-    cp lmtdata_metadatablock.resource_bundle /usr/local/payara5/glassfish/domains/domain1/applications/dataverse/WEB-INF/classes/propertyFiles/LMTData.properties 
+    cp lmtdata_metadatablock.resource_bundle /usr/local/payara6/glassfish/domains/domain1/applications/dataverse/WEB-INF/classes/propertyFiles/LMTData.properties 

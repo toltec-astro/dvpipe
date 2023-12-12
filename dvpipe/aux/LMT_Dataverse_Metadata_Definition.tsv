@@ -20,7 +20,7 @@
 	galLat	b (deg)	Galactic Latitude (degrees)		float	17		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	band	Band	Information about the spectral observing band		none	18		FALSE	FALSE	TRUE	FALSE	TRUE	TRUE		LMTData
 	bandNum	SL/Cont Band	Spectral line or continuum band 		int	19		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
-	bandName	Band name	A name describing the band		test	20		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE	band	LMTData
+	bandName	Band name	A name describing the band		text	20		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE	band	LMTData
 	formula	Line formula	"expected line(s) identification formula. e.g. ""CO"".  Single ID or comma separated list"		text	21		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
 	transition	Line transition	expected line(s) transition, e.g. “1-0”. Single ID or comma separated list		text	22		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE	band	LMTData
 	frequencyCenter	Frequency Center (GHz)	Center frequency in GHz		float	23		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE	band	LMTData
