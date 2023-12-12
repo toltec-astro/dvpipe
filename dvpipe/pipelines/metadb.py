@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS win (
     bmaj FLOAT,
     bmin FLOAT,
     bpa FLOAT,
-    qagrade TEXT,
+    qagrade INTEGER,
     fcoverage FLOAT,
     FOREIGN KEY (a_id) REFERENCES alma (id)
 );
