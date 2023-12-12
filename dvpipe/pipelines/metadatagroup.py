@@ -167,7 +167,7 @@ def example(dbfile=None, yamlfile=None):
     band["bandwidth"] = 2.5  # GHz
     band["beam"] = u.Quantity(20.0, "arcsec")
     band["winrms"] = 0.072 * u.K
-    band["qaGrade"] = "A+++"
+    band["qaGrade"] = 1
     band["nchan"] = 1024
     lmt.add_metadata("band", band)
     # add a second band
@@ -180,7 +180,7 @@ def example(dbfile=None, yamlfile=None):
     band["bandwidth"] = 2.5  # GHz
     band["beam"] = (97.981 / 115.2712) * 20.0 / 3600.0
     band["winrms"] = 123 * u.Unit("mK")
-    band["qaGrade"] = "B-"
+    band["qaGrade"] = 4
     band["velocityCenter"] = -25.0  # km/s
     band["nchan"] = 2048
     lmt.add_metadata("band", band)
