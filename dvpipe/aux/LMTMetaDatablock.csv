@@ -20,17 +20,17 @@ band,Band,Information about the spectral observing band,,none,18,,FALSE,FALSE,TR
 bandNum,SL/Cont Band,Spectral line or continuum band ,,int,19,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
 bandName,Band name,A name describing the band,,test,20,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
 formula,Line formula,"expected line(s) identification formula. e.g. ""CO"".  Single ID or comma separated list",,text,21,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
-transition,Line transition,"expected line(s) transition, e.g. “1-0”. Single ID or comma separated list",,text,22,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,GHz
-frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,23,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,km/s
-velocityCenter,Center Velocity (km/s),Center velocity in km/s,,float,24,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,GHz
-bandwidth,Bandwidth,Bandwidth in GHz,,float,25,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,second
-nchan,Number of channels,Number of channels,,int,26,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,degree
-beam,Beam Size (deg),beam size in degrees,,float,27,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
-winrms,RMS Sensitivity (K),rms noise in spectral window,,float,28,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
+transition,Line transition,"expected line(s) transition, e.g. “1-0”. Single ID or comma separated list",,text,22,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
+frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,23,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
+velocityCenter,Center Velocity (km/s),Center velocity in km/s,,float,24,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,km/s
+bandwidth,Bandwidth,Bandwidth in GHz,,float,25,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
+nchan,Number of channels,Number of channels,,int,26,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,second
+beam,Beam Size (deg),beam size in degrees,,float,27,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,degree
+winrms,RMS Sensitivity (K),rms noise in spectral window,,float,28,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
 qaGrade,QA Grade,quality assessment grade,,int,29,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
-projectTitle,Project Title,The title of the project as submitted by the PI,,text,30,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,second
-totalIntTime,Total Integration Time (s),Total on-source integration time for all obsnums this ObsDataList,,float,31,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,km/s
-velocity,Velocity (km/s),source velocity in km/s,,float,32,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+projectTitle,Project Title,The title of the project as submitted by the PI,,text,30,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,
+totalIntTime,Total Integration Time (s),Total on-source integration time for all obsnums this ObsDataList,,float,31,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,,LMTData,second
+velocity,Velocity (km/s),source velocity in km/s,,float,32,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,,LMTData,km/s
 velDef,Velocity Definition,"velocity definition e.g. RADIO, OPTICAL",,text,33,,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,
 velFrame,Velocity Frame,"velocity reference frame, e.g. LSR,SKY,BARY,SRC",,text,34,,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,
 velType,Velocity Type,"Velocity type of FITS cube axis3, either frequency or velocity",,text,35,,FALSE,TRUE,FALSE,FALSE,TRUE,FALSE,,LMTData,
