@@ -19,7 +19,7 @@ class LmtMetadataBlock(MetadataBlock):
         self._db = None
         super().__init__("LMTData", self._datacsv, self._vocabcsv)
         self._map_lmt_to_alma()
-        self._version = "1.2.1"
+        self._version = "1.2.2"
         if load_data and yamlfile is not None:
             self.load_from_yaml(yamlfile)
 
