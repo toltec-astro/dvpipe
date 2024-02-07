@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS alma (
     obsnum              integer,
     subobsnum           integer,
     scannum             integer,
-    ref_id              integer,
+    ref_id              text,
     is_combined         integer,
     instrument          text,
     calibration_level   integer,
