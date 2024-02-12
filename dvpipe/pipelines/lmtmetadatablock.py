@@ -70,7 +70,11 @@ class LmtMetadataBlock(MetadataBlock):
         # loop over the metadata. First do the bands
         for b in self._metadata["band"]:
             insertme = dict()
-            df = self._lmt_keys[(self._lmt_keys["Database Table"] == "win")]
+            # can use df["Database Table"].isin(["win","lines"] ?
+            df = self._lmt_keys[
+                (self._lmt_keys["Database Table"].isin(["win"]))
+                #                | (self._lmt_keys["Database Table"] == "lines")
+            ]
             # there must be a quicker way to do this with pure pandas
             for ak in df["ALMA Keyword"]:
                 x = df.loc[df["ALMA Keyword"] == ak]
@@ -81,6 +85,18 @@ class LmtMetadataBlock(MetadataBlock):
             self._db.insert_into("win", insertme)
             _inserted.update(insertme)
 
+        for b in self._metadata["band"]:
+            insertme = dict()
+            df = self._lmt_keys[(self._lmt_keys["Database Table"].isin(["lines"]))]
+            # there must be a quicker way to do this with pure pandas
+            for ak in df["ALMA Keyword"]:
+                x = df.loc[df["ALMA Keyword"] == ak]
+                if x["LMT Keyword"].array[0] in b:
+                    insertme[ak] = b[x["LMT Keyword"].array[0]]
+            # print("Attempting to insert: band.", insertme)
+            insertme["w_id"] = self._alma_id  # we don't care about the value of w_id
+            self._db.insert_into("lines", insertme)
+            _inserted.update(insertme)
         # don't need to do the rest of the "win" table because they
         # aren't relevant to LMT
 
