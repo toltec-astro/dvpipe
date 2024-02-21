@@ -39,10 +39,15 @@ class LmtMetadataBlock(MetadataBlock):
         if self._db._created:
             self._alma_id = 1
         else:
-            # Get the highest alma_id in the table and add 1 as each metadata is a new entry
-            # This query returns list[tuple], hence the double indices.
-            self._alma_id = self._db.query("alma", "MAX(id)")[0][0] + 1
+            self._alma_id = self._get_next_alma_id()
         # print("ALMA ID is ",self._alma_id)
+
+    def _get_next_alma_id(self):
+        # Get the highest alma_id in the table and add 1 as each metadata is a new entry
+        # This query returns list[tuple], hence the double indices.
+        if self._db.query("alma", "MAX(id)")[0][0] is None:
+            return 1
+        return self._db.query("alma", "MAX(id)")[0][0] + 1
 
     def _write_to_yaml(self):
         if self._yamlfile is None:
@@ -67,55 +72,55 @@ class LmtMetadataBlock(MetadataBlock):
             h["version"] = f"LMT Metadata Version {self._version}"
             self._db.insert_into("header", h)
 
-        # loop over the metadata. First do the bands
-        for b in self._metadata["band"]:
-            insertme = dict()
-            df = self._lmt_keys[(self._lmt_keys["Database Table"] == "win")]
-            # there must be a quicker way to do this with pure pandas
-            for ak in df["ALMA Keyword"]:
-                x = df.loc[df["ALMA Keyword"] == ak]
-                if x["LMT Keyword"].array[0] in b:
-                    insertme[ak] = b[x["LMT Keyword"].array[0]]
-            # print("Attempting to insert: band.", insertme)
-            insertme["a_id"] = self._alma_id
-            self._db.insert_into("win", insertme)
-            _inserted.update(insertme)
-
-        # don't need to do the rest of the "win" table because they
-        # aren't relevant to LMT
-
-        # then do obsInfo
-        for b in self._metadata["obsInfo"]:
-            insertme = dict()
-            df = self._lmt_keys[(self._lmt_keys["Database Table"] == "alma")]
-            # there must be a quicker way to do this with pure pandas
-            for ak in df["ALMA Keyword"]:
-                x = df.loc[df["ALMA Keyword"] == ak]
+        for obsinfo in self._metadata["obsInfo"]:
+            self._alma_id = self._get_next_alma_id()
+            for band in self._metadata["band"]:
+                insertalma = dict()
+                insertwin = dict()
+                insertlines = dict()
+                dfalma = self._lmt_keys[
+                    (self._lmt_keys["Database Table"].isin(["alma"]))
+                ]
+                dfwin = self._lmt_keys[(self._lmt_keys["Database Table"].isin(["win"]))]
+                dflines = self._lmt_keys[
+                    (self._lmt_keys["Database Table"].isin(["lines"]))
+                ]
+                for ak in dfwin["ALMA Keyword"]:
+                    x = dfwin.loc[dfwin["ALMA Keyword"] == ak]
+                    # print("doing  ",x['LMT Keyword'].array[0])
+                    if x["LMT Keyword"].array[0] in band:
+                        insertwin[ak] = band[x["LMT Keyword"].array[0]]
+                    else:
+                        insertwin[ak] = self._metadata[x["LMT Keyword"].array[0]]
+                insertwin["a_id"] = self._alma_id
+                self._db.insert_into("win", insertwin)
+                for ak in dflines["ALMA Keyword"]:
+                    x = dflines.loc[dflines["ALMA Keyword"] == ak]
+                    if x["LMT Keyword"].array[0] in band:
+                        insertlines[ak] = band[x["LMT Keyword"].array[0]]
+                insertlines["w_id"] = insertwin["a_id"]
+                self._db.insert_into("lines", insertlines)
+            for ak in dfalma["ALMA Keyword"]:
+                x = dfalma.loc[dfalma["ALMA Keyword"] == ak]
                 # print("doing  ",x['LMT Keyword'].array[0])
-                if x["LMT Keyword"].array[0] in b:
-                    insertme[ak] = b[x["LMT Keyword"].array[0]]
+                if x["LMT Keyword"].array[0] in obsinfo:
+                    insertalma[ak] = obsinfo[x["LMT Keyword"].array[0]]
                 else:
-                    insertme[ak] = self._metadata[x["LMT Keyword"].array[0]]
-            # print("Attempting to insert obsInfo: ", insertme)
-            self._db.insert_into("alma", insertme)
-            _inserted.update(insertme)
+                    insertalma[ak] = self._metadata[x["LMT Keyword"].array[0]]
+            self._db.insert_into("alma", insertalma)
 
-        # dolist = self._lmt_keys[(self._lmt_keys['Database Table'] != "win")]['Database Table']
         dolist = self._lmt_keys["Database Table"]
-        # print("DOLIST", set(dolist))
+        # dolist= self._lmt_keys[(self._lmt_keys["Database Table"].isin(["header", "sources"]))]
         for name in set(dolist):
-            # Q: we already did 'win' too should we skip that??
-            if name == "alma":
-                continue  # we already did alma with obsInfo
-            insertme = dict()
-            for k, v in self._lmt_map[name].items():
-                # print(f"{name}.{v}={k}")
-                if k in self._metadata and k not in _inserted:
-                    insertme[v] = self._metadata[k]
-            # print("I:", insertme, len(insertme), not insertme)
-            if insertme:  # don't insert empty dict
-                self._db.insert_into(name, insertme)
-        self._alma_id += 1
+            if name == "header":
+                insertme = dict()
+                for k, v in self._lmt_map[name].items():
+                    print(f"{name}.{v}={k}")
+                    if k in self._metadata and k not in _inserted:
+                        insertme[v] = self._metadata[k]
+                # print("I:", insertme, len(insertme), not insertme)
+                if insertme:  # don't insert empty dict
+                    self._db.insert_into(name, insertme)
 
     @property
     def dbfile(self):

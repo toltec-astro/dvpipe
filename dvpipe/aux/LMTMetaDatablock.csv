@@ -24,7 +24,7 @@ transition,Line transition,"expected line(s) transition, e.g. “1-0”. Single 
 frequencyCenter,Frequency Center (GHz),Center frequency in GHz,,float,23,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
 velocityCenter,Center Velocity (km/s),Center velocity in km/s,,float,24,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,km/s
 bandwidth,Bandwidth,Bandwidth in GHz,,float,25,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,GHz
-nchan,Number of channels,Number of channels,,int,26,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,second
+nchan,Number of channels,Number of channels,,int,26,,TRUE,FALSE,FALSE,FALSE,TRUE,TRUE,band,LMTData,
 beam,Beam Size (deg),beam size in degrees,,float,27,,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,degree
 winrms,RMS Sensitivity (K),rms noise in spectral window,,float,28,,TRUE,FALSE,FALSE,FALSE,TRUE,FALSE,band,LMTData,K
 qaGrade,QA Grade,quality assessment grade,,int,29,,TRUE,TRUE,FALSE,FALSE,TRUE,FALSE,band,LMTData,
