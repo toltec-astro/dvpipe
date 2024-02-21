@@ -48,22 +48,29 @@ def cmd_dataset_list(ctxobj, parent):
 @click.option(
     '--action_on_exist', '-a',
     type=click.Choice(
-        ['none', 'delete'],
+        ['none', 'delete', 'destroy'],
         case_sensitive=False),
     default='none',
     help='The action to take for returned datasets',
+    )
+@click.option(
+    '--recursive_subtree', '-r',
+    is_flag=True,
+    default=False,
+    help='If set, datasets will be recursively search in subtree.',
     )
 @click.argument(
     'options', nargs=-1,
     metavar='OPT',
     )
 @click.pass_obj
-def cmd_dataset_search(ctxobj, action_on_exist, options):
+def cmd_dataset_search(ctxobj, action_on_exist, recursive_subtree, options):
     """Search the dataverse."""
     # build the options dict
     kwargs = {
         'q_str': '*',
         'data_type': 'dataset',
+        'per_page': 1000,
         }
     # TODO the pydataverse current does not support
     # query repeatable fields.
@@ -78,6 +85,8 @@ def cmd_dataset_search(ctxobj, action_on_exist, options):
             kwargs[k].extend(v)
         else:
             kwargs[k] = v
+    # extract subtree args to filter on the returned items
+    subtrees = kwargs['subtree']
     result = search_dataverse(ctxobj.dvpipe.dataverse, **kwargs)
     if result:
         print(result)
@@ -89,12 +98,25 @@ def cmd_dataset_search(ctxobj, action_on_exist, options):
     # handle action
     if action_on_exist == "none":
         return
-    if action_on_exist == "delete":
+    if action_on_exist in ["delete", "destroy"]:
         api = ctxobj.dvpipe.dataverse.native_api
         for item in result:
             item_str = pformat_yaml(dict(item))
-            if click.confirm(f'Deleting dataset\n{item_str}\nDo you want to continue?'):
-                api.delete_dataset(item['global_id'], is_pid=True, auth=True)
+            item_subtree = item['identifier_of_dataverse']
+            if item_subtree not in subtrees and not recursive_subtree:
+                logger.debug(f"Skipped recursive in {item_subtree} item={item['global_id']} title={item['name']}")
+                continue
+            verb = {
+                    "delete": "DELETED",
+                    "destroy": "DESTROYED",
+                    }[action_on_exist]
+            if click.confirm(f'Dataset\n{item_str}\n-- is being {verb}. Do you want to continue?'):
+                if action_on_exist == "delete":
+                    api.delete_dataset(item['global_id'], is_pid=True, auth=True)
+                elif action_on_exist == "destroy":
+                    api.destroy_dataset(item['global_id'], is_pid=True, auth=True)
+                else:
+                    raise # should not happen
         
 
 

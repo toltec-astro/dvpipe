@@ -70,7 +70,7 @@ def search_dataverse(dv_config, **kwargs):
         # we return an empty table to hold the metadata anyway
         tbl = Table()
     else:
-        tbl = Table(rows=items, dtype=[object] * max(len(item) for item in items))
+        tbl = Table(rows=items)#, dtype=[object] * max(len(item) for item in items))
     tbl.meta['response_data'] = data
     return tbl
 
