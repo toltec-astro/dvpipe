@@ -212,7 +212,7 @@ def upload_dataset(
                 # raise NotImplementedError()
                 logger.warning("metadata update is not implemented yet, skipped.")
             else:
-                raise ValueError("invalid action.")
+                raise ValueError(f"invalid action: {action_on_exist}")
 
     # if we reach here, we need to handle the datafiles
     logger.info(f"upload datafiles to dataset pid: {pid}; {file_action=}")
