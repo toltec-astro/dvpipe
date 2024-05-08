@@ -24,12 +24,17 @@ class LmtslrDataProd(object):
 
     _glob_lmtmetadata_yaml = "lmtmetadata.yaml"
     _glob_data_product_types = {
+        # Tar versions
         # Science Ready Data Products
         "SRDP": "[0-9]*_SRDP.tar",
         # SDFITS file
         "SDFITS": "[0-9]*_SDFITS.tar",
         # FITS image
         "FITS": "[0-9]*_FITS.tar",
+        # Zip versions, e.g. whatever.zip or whatever_partial.z01,z02,z03 etc
+        "SRDP": "[0-9]*_SRDP*.z*",
+        "SDFITS": "[0-9]*_SDFITS*.z*",
+        "FITS": "[0-9]*_FITS*.z*",
     }
 
     @classmethod
