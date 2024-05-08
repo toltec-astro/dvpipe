@@ -22,7 +22,8 @@ class LmtslrDataProd(object):
     def index_table(self):
         return self._index_table
 
-    _glob_lmtmetadata_yaml = "lmtmetadata.yaml"
+    #_glob_lmtmetadata_yaml = "lmtmetadata.yaml"
+    _glob_lmtmetadata_yaml = "[0-9]*_lmtmetadata.yaml"
     _glob_data_product_types = {
         # Tar versions
         # Science Ready Data Products
