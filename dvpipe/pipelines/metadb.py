@@ -15,26 +15,26 @@ import os
 header_table = """
 CREATE TABLE IF NOT EXISTS header (
     id integer PRIMARY KEY,
-    key text ,
-    val text ,
-    version text
+    key TEXT COLLATE NOCASE,
+    val TEXT COLLATE NOCASE,
+    version TEXT COLLATE NOCASE
 );
 """
 
 alma_table = """
 CREATE TABLE IF NOT EXISTS alma (
     id integer PRIMARY KEY,
-    obs_id              text,
-    observatory         text,
+    obs_id              TEXT COLLATE NOCASE,
+    observatory         TEXT COLLATE NOCASE,
     obsnum              integer,
     subobsnum           integer,
     scannum             integer,
-    ref_id              text,
+    ref_id              TEXT COLLATE NOCASE,
     is_combined         integer,
-    instrument          text,
+    instrument          TEXT COLLATE NOCASE,
     calibration_level   integer,
     processing_level    integer,
-    target_name         text,
+    target_name         TEXT COLLATE NOCASE,
     s_ra                        FLOAT,
     s_dec                       FLOAT,
     gal_longitude               FLOAT,
@@ -45,24 +45,24 @@ CREATE TABLE IF NOT EXISTS alma (
     t_min                       FLOAT, 
     t_exptime                   FLOAT, 
     t_total_exptime             FLOAT, 
-    pol_states                  TEXT,
+    pol_states                  TEXT COLLATE NOCASE,
     is_polarimetry              INTEGER,
-    half_wave_plate_mode        TEXT,
+    half_wave_plate_mode        TEXT COLLATE NOCASE,
     pvw                         FLOAT,
     opacity                     FLOAT,
     cont_sensitivity_bandwidth  FLOAT,
     sensitivity_10kms           FLOAT,
-    project_abstract    text,
-    project_title       text,
-    proposal_id         text,
-    obs_title           text,
-    obs_creator_name    text,
-    obs_goal            text,
-    obs_comment         text,
-    science_keyword     text,
-    scientific_category text,
-    proposal_authors    text,
-    public_date         text
+    project_abstract    TEXT COLLATE NOCASE,
+    project_title       TEXT COLLATE NOCASE,
+    proposal_id         TEXT COLLATE NOCASE,
+    obs_title           TEXT COLLATE NOCASE,
+    obs_creator_name    TEXT COLLATE NOCASE,
+    obs_goal            TEXT COLLATE NOCASE,
+    obs_comment         TEXT COLLATE NOCASE,
+    science_keyword     TEXT COLLATE NOCASE,
+    scientific_category TEXT COLLATE NOCASE,
+    proposal_authors    TEXT COLLATE NOCASE,
+    public_date         TEXT COLLATE NOCASE
 );
 """
 
@@ -70,7 +70,7 @@ win_table = """
 CREATE TABLE IF NOT EXISTS win (
     id integer PRIMARY KEY,
     a_id INTEGER NOT NULL,
-    spw TEXT,
+    spw TEXT COLLATE NOCASE,
     bandnum INTEGER,
     freqc FLOAT,
     freqw FLOAT,
@@ -93,8 +93,8 @@ lines_table = """
 CREATE TABLE IF NOT EXISTS lines (
     id integer PRIMARY KEY,
     w_id          INTEGER NOT NULL,
-    formula       text NOT NULL,
-    transition    text NOT NULL,
+    formula       TEXT NOT NULL COLLATE NOCASE,
+    transition    TEXT NOT NULL COLLATE NOCASE,
     restfreq      FLOAT, 
     vmin          FLOAT,
     vmax          FLOAT,
