@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'Click>=7.0', 'loguru', 'pyyaml', 'pyaml',
     'pydantic<2.0', 'python-dotenv', 'pydantic-yaml<1.0',
-    'pyDataverse @ git+https://github.com/Jerry-Ma/pyDataverse.git@dvpipe',
+    'pyDataverse @ git+https://github.com/toltec-astro/pyDataverse.git@dv514',
     'pandas',
     'dagster', 'dagit',
     'astropy',
@@ -49,6 +49,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/toltec-astro/dvpipe',
-    version='0.1.0',
+    version='0.2.0',
     zip_safe=False,
 )

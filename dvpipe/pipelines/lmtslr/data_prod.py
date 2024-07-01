@@ -1,6 +1,7 @@
 import re
 from astropy.table import Table
 from pathlib import Path
+import datetime
 from ...dataverse import DVDataset, DVDatafile
 from ..lmtmetadatablock import LmtMetadataBlock
 
@@ -80,6 +81,7 @@ class LmtslrDataProd(object):
             "metadata_blocks": [
                 lmtmetadata_block,
             ],
+            "date_public": lmtmetadata_block.metadata["publicDate"],
         }
 
     @classmethod
@@ -145,6 +147,11 @@ class LmtslrDataProd(object):
         ds.set(data)
         assert ds.validate_json()
         # handle data items
+        date_current = datetime.datetime.now()
+        date_public = datetime.datetime.fromisoformat(data_prod_meta["date_public"])
+
+        file_is_restricted = date_current < date_public
+
         datafiles = list()
         for data_item in self.index_table:
             meta = data_item["meta"]
@@ -154,7 +161,7 @@ class LmtslrDataProd(object):
             data = {
                 "description": description,
                 "categories": ["Data"],
-                "restrict": True,
+                "restrict": file_is_restricted,
                 "label": meta["name"],
                 "directoryLabel": meta["archive_path"].parent.as_posix(),
                 "filename": data_item["filepath"].as_posix(),
