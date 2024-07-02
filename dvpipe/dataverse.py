@@ -204,18 +204,19 @@ def upload_dataset(
                 logger.debug(
                     f"action_on_exist is none and dataset exists pid={pid},"
                     f" nothing to do.")
-                return pid
-            if action_on_exist == 'update':
+                # return pid
+            elif action_on_exist == 'update':
                 logger.debug("update dataset with metadata")
                 # TODO implement this
                 # update dataset with pid
                 # raise NotImplementedError()
                 logger.warning("metadata update is not implemented yet, skipped.")
             else:
-                raise ValueError("invalid action.")
+                pass
+                # raise ValueError("invalid action.")
 
     # if we reach here, we need to handle the datafiles
-    logger.info(f"upload datafiles to dataset pid: {pid}; {file_action=}")
+    logger.info(f"handle datafiles for dataset pid: {pid}; {file_action=}")
     data_files = list()
     # we retrieve the list of data files in the dataset
     # if action is to update.
@@ -250,8 +251,13 @@ def upload_dataset(
                 #     file_pid, df.filename, df.json(), is_filepid=False)
                 # logger.info(
                 #     f"update existing datafile:\n{pformat_resp(resp)}")
+                logger.warning(
+                    f"overwrite existing datafile label={df.label}")
+                file_pid = m[0]['dataFile']['id']
+                resp = api.replace_datafile(
+                    file_pid, df.filename, df_json, is_filepid=False)
                 logger.info(
-                    f"skip existing datafile label={df.label}")
+                    f"overwrite existing datafile:\n{pformat_resp(resp)}")
             else:
                 # not exist yet, create
                 resp = api.upload_datafile(df.pid, df.filename, df_json)
