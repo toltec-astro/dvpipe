@@ -62,7 +62,7 @@ class LmtslrDataProd(object):
                 meta = {
                     "name": tar_path.name,
                     "data_prod_type": key,
-                    "archive_path": archive_rootpath.joinpath(data_prod_dir),
+                    "archive_path": data_prod_dir,
                 }
                 data_items.append({"meta": meta, "filepath": tar_path})
         return data_items
