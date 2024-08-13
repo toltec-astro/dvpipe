@@ -7,8 +7,14 @@ import click
 from loguru import logger
 import yaml
 
+import collections
+import sys
+if sys.version_info.major == 3 and sys.version_info.minor >= 10:
+    from collections.abc import MutableSet
+    collections.MutableSet = collections.abc.MutableSet
+
 from dagster.cli import cli as dagster_cli
-from dagit.cli import cli as dagit_cli
+from dagster_webserver.cli import cli as dagit_cli
 from ..dagster.resources import _make_resources_config_dict
 
 
