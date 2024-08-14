@@ -18,7 +18,7 @@ __all__ = ['yaml', 'pformat_yaml', 'pformat_resp']
 
 def pformat_yaml(obj):
     """Return pretty-formatted YAML string representation for `obj`."""
-    return f"\n{pyaml.dump(obj,safe=True)}"
+    return f"\n{pyaml.dump(obj)}"
 
 def pformat_resp(resp):
     # TODO fix this. maybe in our own fork of pydataverse?

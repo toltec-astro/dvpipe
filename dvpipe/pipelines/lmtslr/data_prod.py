@@ -4,6 +4,8 @@ from pathlib import Path
 import datetime
 from ...dataverse import DVDataset, DVDatafile
 from ..lmtmetadatablock import LmtMetadataBlock
+from loguru import logger
+from ...utils import pformat_yaml
 
 
 class LmtslrDataProd(object):
@@ -27,16 +29,13 @@ class LmtslrDataProd(object):
     _glob_lmtmetadata_yaml = "[0-9]*_lmtmetadata.yaml"
     _glob_data_product_types = {
         # Tar versions
-        # Science Ready Data Products
-        "SRDP": "[0-9]*_SRDP.tar",
-        # SDFITS file
-        "SDFITS": "[0-9]*_SDFITS.tar",
-        # FITS image
-        "FITS": "[0-9]*_FITS.tar",
         # Zip versions, e.g. whatever.zip or whatever_partial.z01,z02,z03 etc
-        "SRDP": "[0-9]*_SRDP*.z*",
-        "SDFITS": "[0-9]*_SDFITS*.z*",
-        "FITS": "[0-9]*_FITS*.z*",
+        # Science Ready Data Products
+        "SRDP": ["[0-9]*_SRDP.tar", "[0-9]*_SRDP*.z*"],
+        # SDFITS file
+        "SDFITS": ["[0-9]*_SDFITS.tar", "[0-9]*_SDFITS*.z*"],
+        # FITS image
+        "FITS": ["[0-9]*_FITS.tar", "[0-9]*_FITS*.z*"],
     }
 
     @classmethod
@@ -47,6 +46,7 @@ class LmtslrDataProd(object):
             "project_id": project_dir.name,
             "archive_rootpath": Path(project_dir.name),
         }
+        logger.debug(f"project meta:\n{pformat_yaml(meta)}")
         return meta
 
     @classmethod
@@ -54,17 +54,18 @@ class LmtslrDataProd(object):
         # collect data items from data_prod_dir
         # collect obsnums by parsing the tap tar names
         data_items = []
-        if archive_rootpath is None:
-            archive_rootpath = Path("unnamed_project")
+        # if archive_rootpath is None:
+        #     archive_rootpath = Path("unnamed_project")
         # loop over all the data prodcut types
-        for key, value in cls._glob_data_product_types.items():
-            for tar_path in data_prod_dir.glob(value):
-                meta = {
-                    "name": tar_path.name,
-                    "data_prod_type": key,
-                    "archive_path": data_prod_dir,
-                }
-                data_items.append({"meta": meta, "filepath": tar_path})
+        for key, patterns in cls._glob_data_product_types.items():
+            for p in patterns:
+                for tar_path in data_prod_dir.glob(p):
+                    meta = {
+                        "name": tar_path.name,
+                        "data_prod_type": key,
+                        "archive_path": data_prod_dir,
+                    }
+                    data_items.append({"meta": meta, "filepath": tar_path})
         return data_items
 
     @classmethod

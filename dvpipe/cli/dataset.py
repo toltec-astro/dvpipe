@@ -6,6 +6,7 @@ from loguru import logger
 
 from ..dataverse import search_dataverse, upload_dataset
 from ..utils import pformat_resp, pformat_yaml, yaml
+from pathlib import Path
 
 
 @click.group(
@@ -148,17 +149,25 @@ def cmd_dataset_search(ctxobj, action_on_exist, recursive_subtree, options):
 @click.option(
     '--publish_type', '-b',
     type=click.Choice(
-        ['none', 'major', 'minor'],
+        ['none', 'major', 'minor', 'updatecurrent'],
         case_sensitive=False),
     default='none',
     help='Specify how the dataset is published ("none" for not publish).',
     )
+@click.option(
+    '--metadata_only', '-m',
+    is_flag=True,
+    default=False,
+    help='If set, only metadata is handled and files are ignored.',
+    )
 @click.pass_obj
 def cmd_dataset_upload(
-        ctxobj, parent, index_file, action_on_exist, publish_type):
+        ctxobj, parent, index_file, action_on_exist, publish_type, metadata_only):
     """Create dataset in `parent` according to the content of `index_file`."""
+    index_file = Path(index_file)
     with open(index_file, 'r') as fo:
         dataset_index = yaml.load(fo)
+    output_index_file = index_file.parent.joinpath(index_file.stem + "_output.yaml")
     dataset_meta = dataset_index['meta']
     logger.info(f"upload dataset:\n{pformat_yaml(dataset_meta)}")
     upload_dataset(
@@ -166,4 +175,6 @@ def cmd_dataset_upload(
         parent_id=parent,
         dataset_index=dataset_index,
         action_on_exist=action_on_exist,
-        publish_type=publish_type)
+        publish_type=publish_type,
+        metadata_only=metadata_only,
+        output=output_index_file)
