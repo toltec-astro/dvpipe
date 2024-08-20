@@ -3,13 +3,14 @@
 from loguru import logger
 
 from astropy.table import Table
+from copy import deepcopy
 
 from pyDataverse.models import Dataset as _DVDataset
 from pyDataverse.models import Datafile as _DVDatafile
 
 import json
 import numpy as np
-from .utils import pformat_resp, pformat_yaml
+from .utils import pformat_resp, pformat_yaml, yaml
 
 # replace numpy.bool_ with bool
 # see https://stackoverflow.com/questions/58408054/typeerror-object-of-type-bool-is-not-json-serializable
@@ -111,10 +112,51 @@ def get_datafiles(dv_config, dataset_id, version=':latest'):
     return tbl
 
 
+def get_versions(dv_config, dataset_id, include_files=False, include_metadata=False):
+    """Return the files in dataset.
+
+    Parameters
+    ----------
+    dv_config : dvpipe.core.DataverseConfig
+        The dataverse connection config.
+    dataset_id : str
+        The persistent id of the dataset.
+    Returns
+    -------
+    df : The data frame containing the result.
+    """
+    logger.debug(f'get version list of dataset pid={dataset_id}')
+
+    api = dv_config.native_api
+    url = (
+        f'{api.base_url_api}/datasets/:persistentId/versions'
+        f'?persistentId={dataset_id}'
+        )
+    resp = api.get_request(url, auth=True)
+    logger.debug(f'dataset version query:\n{pformat_resp(resp)}')
+    data = resp.json()
+    items = data.pop('data')
+    for item in items:
+        if not include_files:
+            del item["files"]
+        if not include_metadata:
+            del item["metadataBlocks"]
+    logger.debug(f'metadata:\n{data}')
+    if not items:
+        # we return an empty table to hold the metadata anyway
+        tbl = Table()
+    else:
+        tbl = Table(rows=items, dtype=[object] * len(items[0]))
+    tbl.meta['response_data'] = data
+    return tbl
+
+
 def upload_dataset(
         dv_config, parent_id, dataset_index,
         action_on_exist='none',
-        publish_type='none'):
+        metadata_only=False,
+        publish_type='none',
+        output=None):
     """Upload dataset to dataverse.
 
     Parameters
@@ -130,7 +172,9 @@ def upload_dataset(
         * 'none': no action.
         * 'update': update existing dataset.
         * 'create': create new dataset.
-    publish_type : {'none', 'major', 'minor'}
+    metadata_only : bool
+        If True, files are skipped.
+    publish_type : {'none', 'major', 'minor', 'updatecurrent'}
         How the dataset is published:
         * 'none': do not publish.
         * 'major': publish with major version bump.
@@ -149,14 +193,16 @@ def upload_dataset(
     ds = DVDataset()
     ds.set(dataset_index['dataset'])
     ds_json = ds.json()
-    print("VALIDATING...")
-    print(ds_json)
+    logger.info("VALIDATING...")
+    logger.info(ds_json)
     assert ds.validate_json()
-    print("OK")
-    print(f"action_on_exist : {action_on_exist}")
-    print(f"DATASET INDEX FILES: {dataset_index['files']}, len={len(dataset_index['files'])}")
+    logger.info("OK")
+    logger.info(f"action_on_exist : {action_on_exist}")
+    logger.info(f"DATASET INDEX FILES: {dataset_index['files']}, len={len(dataset_index['files'])}")
 
     file_action = action_on_exist
+    if metadata_only:
+        file_action = "none"
 
     def _create():
         logger.debug(f"create dataset json:\n{ds_json}")
@@ -169,7 +215,7 @@ def upload_dataset(
         nonlocal file_action
         file_action = 'create'
         # get pid
-        return resp.json()["data"]["persistentId"]
+        return str(resp.json()["data"]["persistentId"])
 
     if action_on_exist == 'create':
         # just create
@@ -198,7 +244,7 @@ def upload_dataset(
                     f"use the latest entry:\n{pformat_yaml(entry_info)}"
                     )
             # get the latest dataset pid
-            pid = results[0]['global_id']
+            pid = str(results[0]['global_id'])
             if action_on_exist == 'none':
                 # nothing need to be done
                 logger.debug(
@@ -210,7 +256,18 @@ def upload_dataset(
                 # TODO implement this
                 # update dataset with pid
                 # raise NotImplementedError()
-                logger.warning("metadata update is not implemented yet, skipped.")
+                # logger.warning("metadata update is not implemented yet, skipped.")
+                ds_dict = json.loads(ds_json)
+                ds_json_new = json.dumps(ds_dict["datasetVersion"], indent=2)
+                logger.debug(f"update dataset metadata json:\n{ds_json_new}")
+                url = "{0}/datasets/:persistentId/versions/:draft?persistentId={1}".format(
+                    api.base_url_api_native, pid 
+                    )
+                resp = api.put_request(url, ds_json_new, auth=True)
+                # resp = api.edit_dataset_metadata(pid, ds_json_new, replace=True, auth=True)
+                logger.info(f"update dataset metadata response:\n{pformat_resp(resp)}")
+                if not resp.ok:
+                    raise ValueError(f"Failed update dataset metadata:\n{pformat_resp(resp)}")
             else:
                 pass
                 # raise ValueError("invalid action.")
@@ -239,8 +296,11 @@ def upload_dataset(
             logger.info(f"create datafile:\n{pformat_resp(resp)}")
         elif file_action == 'update':
             # check if the file is in the list of existing files
-            m = files_remote[files_remote['label'] == df.label]
-            if len(m) > 0:
+            if len(files_remote) == 0:
+                m = None
+            else:
+                m = files_remote[files_remote['label'] == df.label]
+            if m is not None and len(m) > 0:
                 if len(m) > 1:
                     logger.warning(
                         f"multiple files found with label={df.label}"
@@ -266,7 +326,24 @@ def upload_dataset(
         else:
             logger.debug("no action specified for file uploading, skipped.")
     # finally, publish the dataset if requested
-    if publish_type in ['major', 'minor']:
+    if publish_type not in ['none']:
         resp = api.publish_dataset(pid, publish_type)
         logger.info(f'publish dataset pid={pid}: {pformat_resp(resp)}')
+    # print out version info
+    v = get_versions(dv_config, dataset_id=pid)
+    vv = v[["id", "datasetId", "datasetPersistentId", "versionNumber", "versionMinorNumber", "versionState", "lastUpdateTime"]]
+    logger.info(f"current versions:\n{vv}")
+    
+    # generate output index file
+    index_out = deepcopy(dataset_index)
+    index_out["meta"].update({
+        "dataset": {
+            "pid": pid,
+            "versions": v.to_pandas().to_dict(orient='records')
+        }
+    })
+    if output is not None:
+        with open(output, 'w') as fo:
+            yaml.dump(index_out, fo)
+        logger.info(f"output yaml written to: {output}")
     return pid

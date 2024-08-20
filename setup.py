@@ -15,7 +15,7 @@ requirements = [
     'pydantic<2.0', 'python-dotenv', 'pydantic-yaml<1.0',
     'pyDataverse @ git+https://github.com/toltec-astro/pyDataverse.git@dv514',
     'pandas',
-    'dagster', 'dagit',
+    'dagster', 'dagster-webserver',
     'astropy',
     ]
 
