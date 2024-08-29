@@ -121,7 +121,7 @@ def example(dbfile=None, yamlfile=None):
     lmt.add_metadata("projectID", "2021-S1-US-3")
     lmt.add_metadata("projectTitle", "Life, the Universe, and Everything")
     lmt.add_metadata("PIName", "Marc Pound")
-    lmt.add_metadata("referenceID", "12345_12346")  # or whatever we agree on
+    lmt.add_metadata("referenceID", "12345_12346_abced")  # or whatever we agree on
     lmt.add_metadata("isCombined", True)
     lmt.add_metadata("publicDate", utils.now())
     # example with obsnum range and full obsnum list.
@@ -220,3 +220,7 @@ if __name__ == "__main__":
     # Can't write if yaml is none
     lmtdata.yamlfile(None)
     lmtdata.write_to_yaml()
+    lmt2 = LmtMetadataBlock(
+        dbfile="example_lmt.db", yamlfile="combinedrsr.yaml", load_data=True
+    )
+    lmt2._write_to_db()

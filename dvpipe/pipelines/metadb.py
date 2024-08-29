@@ -62,7 +62,11 @@ CREATE TABLE IF NOT EXISTS alma (
     science_keyword     TEXT COLLATE NOCASE,
     scientific_category TEXT COLLATE NOCASE,
     proposal_authors    TEXT COLLATE NOCASE,
-    public_date         TEXT COLLATE NOCASE
+    public_date         TEXT COLLATE NOCASE,
+    persistent_id       TEXT COLLATE NOCASE,
+    file_id              integer,
+    version_number       integer,
+    version_minor_number integer
 );
 """
 

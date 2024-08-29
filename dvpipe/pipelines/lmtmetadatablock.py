@@ -10,28 +10,47 @@ import os
 
 
 class LmtMetadataBlock(MetadataBlock):
-    def __init__(self, dbfile=None, yamlfile=None, load_data=False):
+    def __init__(
+        self, dbfile=None, yamlfile=None, load_data=False, from_output=False
+    ):
         self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
         self._vocabcsv = utils.aux_file("LMTControlledVocabulary.csv")
         self._almakeyscsv = utils.aux_file("alma_to_lmt_keymap.csv")
         self._dbfile = dbfile
         self._yamlfile = yamlfile
+        # updated metadata that is output by the
+        # script that uploads data to the dataverse.
+        # This meta is necessary to get Persistent ID, File ID, and Version numbers
+        self._output_meta = None
         self._db = None
         super().__init__("LMTData", self._datacsv, self._vocabcsv)
         self._map_lmt_to_alma()
-        self._version = "1.2.2"
+        self._version = "1.3.0"
         if load_data and yamlfile is not None:
-            self.load_from_yaml(yamlfile)
+            if from_output:
+                self.load_from_output_yaml(yamlfile)
+            else:
+                self.load_from_yaml(yamlfile)
+
+    def load_from_output_yaml(self, yamlfile):
+        with open(yamlfile, "r") as fo:
+            d = utils.yaml.load(fo)
+        self._output_meta = d
+        self.from_dataverse_dict()
 
     def _map_lmt_to_alma(self):
         self._lmt_map = dict()
         # TODO trim trailing spaces will will get us into trouble possibly later
         self._alma_keys = pd.read_csv(self._almakeyscsv, skipinitialspace=True)
-        self._lmt_keys = self._alma_keys[self._alma_keys["LMT Keyword"].notna()]
+        self._lmt_keys = self._alma_keys[
+            self._alma_keys["LMT Keyword"].notna()
+        ]
         tablenames = set(self._alma_keys["Database Table"])
         for name in tablenames:
             kv = self._lmt_keys[(self._lmt_keys["Database Table"] == name)]
-            self._lmt_map[name] = dict(zip(kv["LMT Keyword"], kv["ALMA Keyword"]))
+            self._lmt_map[name] = dict(
+                zip(kv["LMT Keyword"], kv["ALMA Keyword"])
+            )
 
     def _open_db(self, create=True):
         # True: will create if not exists
@@ -51,7 +70,7 @@ class LmtMetadataBlock(MetadataBlock):
 
     def _write_to_yaml(self):
         if self._yamlfile is None:
-            print(f"yamlfile is not set, can't write")
+            print("yamlfile is not set, can't write")
             return
         print(f"Writing to YML file: {self._yamlfile}")
         f = open(self._yamlfile, "w")
@@ -60,7 +79,7 @@ class LmtMetadataBlock(MetadataBlock):
 
     def _write_to_db(self):
         if self.dbfile is None:
-            print(f"dbfile is not set, can't write")
+            print("dbfile is not set, can't write")
             return
 
         print(f"Writing to sqlite file: {self.dbfile}")
@@ -81,7 +100,9 @@ class LmtMetadataBlock(MetadataBlock):
                 dfalma = self._lmt_keys[
                     (self._lmt_keys["Database Table"].isin(["alma"]))
                 ]
-                dfwin = self._lmt_keys[(self._lmt_keys["Database Table"].isin(["win"]))]
+                dfwin = self._lmt_keys[
+                    (self._lmt_keys["Database Table"].isin(["win"]))
+                ]
                 dflines = self._lmt_keys[
                     (self._lmt_keys["Database Table"].isin(["lines"]))
                 ]
@@ -91,7 +112,9 @@ class LmtMetadataBlock(MetadataBlock):
                     if x["LMT Keyword"].array[0] in band:
                         insertwin[ak] = band[x["LMT Keyword"].array[0]]
                     else:
-                        insertwin[ak] = self._metadata[x["LMT Keyword"].array[0]]
+                        insertwin[ak] = self._metadata[
+                            x["LMT Keyword"].array[0]
+                        ]
                 insertwin["a_id"] = self._alma_id
                 self._db.insert_into("win", insertwin)
                 for ak in dflines["ALMA Keyword"]:
@@ -132,7 +155,42 @@ class LmtMetadataBlock(MetadataBlock):
 
     @classmethod
     def from_yaml(cls, yamlfile):
-        return cls(yamlfile=yamlfile, load_data=True)
+        return cls(yamlfile=yamlfile, load_data=True, from_output=False)
+
+    @classmethod
+    def from_output_yaml(cls, yamlfile):
+        return cls(yamlfile=yamlfile, load_data=True, from_output=True)
+
+    def _unpack_dict(self, d):
+        """method to unpack a dataverse dictionary. to be used recursively"""
+        out = {}
+        for f in d:
+            # grpmh - nested dataverse dictionaries are not homologous!
+            # inner ones use typeName as key instead of 'value'
+            if "value" not in f:
+                for k in f:
+                    out[k] = f[k]["value"]
+            elif isinstance(f["value"], list):
+                out[f["typeName"]] = []
+                inner = self._unpack_dict(f["value"])
+                out[f["typeName"]].append(inner)
+            else:
+                out[f["typeName"]] = f["value"]
+        return out
+
+    def from_dataverse_dict(self):
+        """Read the output JSON format from dataverse to populate local metadata attribute"""
+        dvmeta = self._output_meta["dataset"]["metadata_blocks"]["LMTData"]
+        if len(dvmeta) != 1:
+            raise Exception(
+                f"Unexpected length of dataverse LMTData array: {len(dvmeta)}. Should be 1"
+            )
+        self._metadata = self._unpack_dict(dvmeta["fields"])
+        # now add PID, FID, VID
+        self._metadata["persistent_id"] = self._output_meta["meta"]["dataset"][
+            "pid"
+        ]
+        version_meta = self._output_meta["meta"]["dataset"]
 
     def to_dataverse_dict(self):
         """output in the particular upload format that dataverse wants

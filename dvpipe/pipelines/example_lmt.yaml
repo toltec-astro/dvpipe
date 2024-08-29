@@ -1,59 +1,90 @@
-# LMTData metadata block version 1.1.1
+# LMTData metadata block version 1.2.2
 DEC: -43.21
+
 LMTInstrument: SEQUOIA
+
 PIName: Marc Pound
+
 RA: 14.01
+
 band:
-- bandwidth: 2.5
-  beam: 0.005555555555555556
-  formula: CS
-  frequencyCenter: 97.98100000000001
-  nchan: 1024.0
-  qaGrade: A+++
-  slBand: 1
-  transition: 2-1
-  velocityCenter: 300.0
-  winrms: 0.072
-- bandwidth: 2.5
-  beam: 0.004722245356072365
-  formula: CO
-  frequencyCenter: 115.2712
-  nchan: 2048.0
-  qaGrade: B-
-  slBand: 2
-  transition: 1-0
-  velocityCenter: -25.0
-  winrms: 0.123
+  - bandName: OTHER
+    bandNum: 1
+    bandwidth: 2.5
+    beam: 0.005555555555555556
+    formula: CS
+    frequencyCenter: 97.98100000000001
+    nchan: 1024
+    qaGrade: 1
+    transition: 2-1
+    velocityCenter: 300.0
+    winrms: 0.072
+  - bandName: OTHER
+    bandNum: 2
+    bandwidth: 2.5
+    beam: 0.004722245356072365
+    formula: CO
+    frequencyCenter: 115.2712
+    nchan: 2048
+    qaGrade: 4
+    transition: 1-0
+    velocityCenter: -25.0
+    winrms: 0.123
+
 calibrationLevel: 1.0
-galLat: -73.89122551720361
-galLon: 299.9084820157049
+
+galLat: -73.89122551720358
+
+galLon: 299.90848201570486
+
+halfWavePlateMode: ABSENT
+
 isCombined: 1.0
+
+isPolarimetry: 0.0
+
 obsInfo:
-- intTime: 1800.0
-  obsComment: This is an observation comment
-  obsDate: '2023-10-31T20:18:47.912130'
-  obsGoal: SCIENCE
-  obsNum: 12345
-  opacity225: 0.05
-  scanNum: 9999
-  subObsNum: 88
-- intTime: 1200.0
-  obsComment: This is another observation comment
-  obsDate: '2023-10-31T20:18:47.923203'
-  obsGoal: SCIENCE
-  obsNum: 12346
-  opacity225: 0.053
-  scanNum: 1111
-  subObsNum: 89
+  - intTime: 1800.0
+    obsComment: This is an observation comment
+    obsDate: '2024-02-15T11:48:57.475668'
+    obsGoal: SCIENCE
+    obsNum: 12345
+    opacity225: 0.05
+    scanNum: 9999
+    subObsNum: 88
+  - intTime: 1200.0
+    obsComment: This is another observation comment
+    obsDate: '2024-02-15T11:48:57.481304'
+    obsGoal: SCIENCE
+    obsNum: 12346
+    opacity225: 0.053
+    scanNum: 1111
+    subObsNum: 89
+
 observatory: LMT
+
 pipeVersion: '1.0'
+
+processingLevel: 1.0
+
 projectID: 2021-S1-US-3
+
 projectTitle: Life, the Universe, and Everything
-referenceID: '12345_12346'
+
+publicDate: '2024-02-15T11:48:57.474396'
+
+referenceID: 12345_12346_abced
+
 targetName: NGC 5948
+
 totalIntTime: 3000.0
+
 velDef: RADIO
+
 velFrame: LSR
+
 velType: FREQUENCY
+
 velocity: 0.321
+
 z: 0.001071
