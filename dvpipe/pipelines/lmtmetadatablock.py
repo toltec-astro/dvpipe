@@ -183,7 +183,7 @@ class LmtMetadataBlock(MetadataBlock):
         v = version_meta[0]
         self._metadata["file_id"] = v["id"]
         self._metadata["version_number"] = v["versionNumber"]
-        self._metadata["version_number_minor"] = v["versionMinorNumber"]
+        self._metadata["version_minor_number"] = v["versionMinorNumber"]
 
     @property
     def data_version(self):
