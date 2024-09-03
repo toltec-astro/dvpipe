@@ -10,9 +10,7 @@ import os
 
 
 class LmtMetadataBlock(MetadataBlock):
-    def __init__(
-        self, dbfile=None, yamlfile=None, load_data=False, from_output=False
-    ):
+    def __init__(self, dbfile=None, yamlfile=None, load_data=False, from_output=False):
         self._datacsv = utils.aux_file("LMTMetaDatablock.csv")
         self._vocabcsv = utils.aux_file("LMTControlledVocabulary.csv")
         self._almakeyscsv = utils.aux_file("alma_to_lmt_keymap.csv")
@@ -42,15 +40,11 @@ class LmtMetadataBlock(MetadataBlock):
         self._lmt_map = dict()
         # TODO trim trailing spaces will will get us into trouble possibly later
         self._alma_keys = pd.read_csv(self._almakeyscsv, skipinitialspace=True)
-        self._lmt_keys = self._alma_keys[
-            self._alma_keys["LMT Keyword"].notna()
-        ]
+        self._lmt_keys = self._alma_keys[self._alma_keys["LMT Keyword"].notna()]
         tablenames = set(self._alma_keys["Database Table"])
         for name in tablenames:
             kv = self._lmt_keys[(self._lmt_keys["Database Table"] == name)]
-            self._lmt_map[name] = dict(
-                zip(kv["LMT Keyword"], kv["ALMA Keyword"])
-            )
+            self._lmt_map[name] = dict(zip(kv["LMT Keyword"], kv["ALMA Keyword"]))
 
     def _open_db(self, create=True):
         # True: will create if not exists
@@ -100,9 +94,7 @@ class LmtMetadataBlock(MetadataBlock):
                 dfalma = self._lmt_keys[
                     (self._lmt_keys["Database Table"].isin(["alma"]))
                 ]
-                dfwin = self._lmt_keys[
-                    (self._lmt_keys["Database Table"].isin(["win"]))
-                ]
+                dfwin = self._lmt_keys[(self._lmt_keys["Database Table"].isin(["win"]))]
                 dflines = self._lmt_keys[
                     (self._lmt_keys["Database Table"].isin(["lines"]))
                 ]
@@ -112,9 +104,7 @@ class LmtMetadataBlock(MetadataBlock):
                     if x["LMT Keyword"].array[0] in band:
                         insertwin[ak] = band[x["LMT Keyword"].array[0]]
                     else:
-                        insertwin[ak] = self._metadata[
-                            x["LMT Keyword"].array[0]
-                        ]
+                        insertwin[ak] = self._metadata[x["LMT Keyword"].array[0]]
                 insertwin["a_id"] = self._alma_id
                 self._db.insert_into("win", insertwin)
                 for ak in dflines["ALMA Keyword"]:
@@ -187,10 +177,24 @@ class LmtMetadataBlock(MetadataBlock):
             )
         self._metadata = self._unpack_dict(dvmeta["fields"])
         # now add PID, FID, VID
-        self._metadata["persistent_id"] = self._output_meta["meta"]["dataset"][
-            "pid"
-        ]
-        version_meta = self._output_meta["meta"]["dataset"]
+        self._metadata["persistent_id"] = self._output_meta["meta"]["dataset"]["pid"]
+        # first index is the most recent version
+        version_meta = self._output_meta["meta"]["dataset"]["versions"]
+        v = version_meta[0]
+        self._metadata["file_id"] = v["id"]
+        self._metadata["version_number"] = v["versionNumber"]
+        self._metadata["version_number_minor"] = v["versionMinorNumber"]
+
+    @property
+    def data_version(self):
+        """The version of the data stored in the dataverse"""
+        try:
+            return (
+                self._metadata["version_number"]
+                + self._metadata["version_number_minor"] / 10.0
+            )
+        except Exception:
+            return -1
 
     def to_dataverse_dict(self):
         """output in the particular upload format that dataverse wants
