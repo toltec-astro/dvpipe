@@ -45,10 +45,12 @@ class DVDataset(_DVDataset):
                     "name": "CC0 1.0",
                     "uri": "http://creativecommons.org/publicdomain/zero/1.0",
                     "iconUri": "https://licensebuttons.net/p/zero/1.0/88x31.png",
-                }
+                },
+                "termsOfAccess": "You need to request for access.",
+                "fileAccessRequest": True,
             }
         )
-        for key, item in self.get().get("metadata_blocks", {}).items():
+        for key, item in self.get().get('metadata_blocks', {}).items():
             logger.debug(f"generate json for custom metadata block {key}")
             data["datasetVersion"]["metadataBlocks"][key] = item
         return json.dumps(
@@ -337,9 +339,16 @@ def upload_dataset(
                 logger.warning(f"overwrite existing datafile label={df.label}")
                 file_pid = m[0]["dataFile"]["id"]
                 resp = api.replace_datafile(
-                    file_pid, df.filename, df_json, is_filepid=False
-                )
-                logger.info(f"overwrite existing datafile:\n{pformat_resp(resp)}")
+                    file_pid, df.filename, df_json, is_filepid=False)
+                logger.info(
+                    f"overwrite existing datafile:\n{pformat_resp(resp)}")
+                # update the restricted flag
+                # this had to be done separately because the file replace
+                # may fail
+                url = f"{api.base_url_api_native}/files/{file_pid}/restrict"
+                resp = api.put_request(url, auth=True, data=json.dumps(df.restrict))
+                logger.info(
+                    f"update file restrict state:\n{pformat_resp(resp)}")
             else:
                 # not exist yet, create
                 resp = api.upload_datafile(df.pid, df.filename, df_json)
