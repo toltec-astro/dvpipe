@@ -162,8 +162,15 @@ class LmtMetadataBlock(MetadataBlock):
                     out[k] = f[k]["value"]
             elif isinstance(f["value"], list):
                 out[f["typeName"]] = []
-                inner = self._unpack_dict(f["value"])
-                out[f["typeName"]].append(inner)
+                for v in f["value"]:
+                    #print(f"{v=}")
+                    #inner = self._unpack_dict(v)
+                    inner = {}
+                    # Why did the recursive call not work?
+                    # It's the same as this...
+                    for kw in v:
+                        inner[kw] = v[kw]['value']
+                    out[f["typeName"]].append(inner)
             else:
                 out[f["typeName"]] = f["value"]
         return out
