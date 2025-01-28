@@ -188,6 +188,8 @@ class LmtMetadataBlock(MetadataBlock):
         # first index is the most recent version
         version_meta = self._output_meta["meta"]["dataset"]["versions"]
         v = version_meta[0]
+        # Note: the "id" does not match the fileId in dataverse, even
+        # though we have the correct metadata. :-(
         self._metadata["file_id"] = v["id"]
         self._metadata["version_number"] = v["versionNumber"]
         self._metadata["version_minor_number"] = v["versionMinorNumber"]
