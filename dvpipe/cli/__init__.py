@@ -134,9 +134,9 @@ from .user import cmd_user  # noqa: E402
 main.add_command(cmd_user)
 from .dataset import cmd_dataset  # noqa: E402
 main.add_command(cmd_dataset)
-from .dagster import make_dagit_command, make_dagster_command  # noqa: E402
-main.add_command(make_dagit_command())
-main.add_command(make_dagster_command())
+# from .dagster import make_dagit_command, make_dagster_command  # noqa: E402
+# main.add_command(make_dagit_command())
+# main.add_command(make_dagster_command())
 
 # pipeline modules
 # TODO enable plug-in style import
