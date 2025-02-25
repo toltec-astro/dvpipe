@@ -36,7 +36,7 @@
 	velDef	Velocity Definition	velocity definition e.g. RADIO, OPTICAL		text	33		FALSE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
 	velFrame	Velocity Frame	velocity reference frame, e.g. LSR,SKY,BARY,SRC		text	34		FALSE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
 	velType	Velocity Type	Velocity type of FITS cube axis3, either frequency or velocity		text	35		FALSE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
-	z	Redshift	redshift		float	36		TRUE	TRUE	FALSE	FALSE	TRUE	FALSE		LMTData
+	z	Redshift	redshift		float	36		TRUE	FALSE	FALSE	FALSE	TRUE	FALSE		LMTData
 	pipeVersion	Pipeline Version	pipeline version		text	37		TRUE	FALSE	FALSE	FALSE	TRUE	TRUE		LMTData
 	observatory	Observatory	The observatory or facility where the data was obtained.		text	38		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
 	LMTInstrument	Instrument	The instrument used to collect the data.		text	39		TRUE	TRUE	FALSE	FALSE	TRUE	TRUE		LMTData
