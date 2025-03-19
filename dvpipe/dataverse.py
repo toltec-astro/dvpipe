@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 
+import os
+import zipfile
 from loguru import logger
 
 from astropy.table import Table
 from copy import deepcopy
+from dataclasses import dataclass
 
 from pyDataverse.models import Dataset as _DVDataset
 from pyDataverse.models import Datafile as _DVDatafile
+from typing import Literal
 
 import json
 import numpy as np
 from .utils import pformat_resp, pformat_yaml, yaml
+from .core import DataverseConfig
 
 
 # replace numpy.bool_ with bool
@@ -169,6 +174,85 @@ def get_versions(dv_config, dataset_id, include_files=False, include_metadata=Fa
     return tbl
 
 
+@dataclass
+class FileUploader:
+    """A base class for file uploader."""
+    dv_config: DataverseConfig 
+
+       
+@dataclass
+class FileUploaderNative(FileUploader):
+    """The file uploader that uses the native api."""
+
+    def create(self, df):
+        df = self._normalize_file(df)
+        api = self.dv_config.native_api
+        df_json = df.json()
+        logger.debug(f"create file json:\n{df_json}")
+        resp = api.upload_datafile(df.pid, df.filename, df_json)
+        logger.info(f"create datafile:\n{pformat_resp(resp)}")
+        return resp
+       
+    def replace(self, file_pid, df):
+        df = self._normalize_file(df)
+        api = self.dv_config.native_api
+        df_json = df.json()
+        logger.debug(f"replace file json:\n{df_json}")
+        resp = api.replace_datafile(
+            file_pid, df.filename, df_json, is_filepid=False)
+        logger.info(
+            f"overwrite existing datafile:\n{pformat_resp(resp)}")
+        # update the restricted flag
+        # this had to be done separately because the file replace
+        # may fail
+        url = f"{api.base_url_api_native}/files/{file_pid}/restrict"
+        resp = api.put_request(url, auth=True, data=json.dumps(df.restrict))
+        logger.info(
+            f"update file restrict state:\n{pformat_resp(resp)}")
+
+    @classmethod
+    def _normalize_file(cls, df):
+        filename = df.filename
+        if filename.endswith(".zip"):
+            df.filename = cls._zip_zip(filename)
+        return df
+       
+    @staticmethod
+    def _zip_zip(zip_path):
+        if not zip_path.lower().endswith('.zip') or not os.path.isfile(zip_path):
+            raise ValueError("Provided path is not a valid zip file")
+        
+        parent_dir = os.path.dirname(zip_path)
+        zip_filename = os.path.basename(zip_path)
+        
+        temp_dir = os.path.join(parent_dir, "_zip_zip")
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Define the new zip file path
+        new_zip_path = os.path.join(temp_dir, f"{zip_filename}")
+        
+        # Zip the original zip file
+        with zipfile.ZipFile(new_zip_path, 'w', zipfile.ZIP_DEFLATED) as new_zip:
+            new_zip.write(zip_path, arcname=zip_filename)
+        return new_zip_path
+
+
+@dataclass
+class DvUploaderWrapper(FileUploader):
+    """A wrapper that invokes DVUploader to upload files."""
+
+    def __post_init__(self):
+        self._dv_uploader_path = self._ensuere_dv_uploader()
+    
+    def _ensure_dv_uploader():
+        return
+
+    def create(self, df):
+        return NotImplemented
+       
+    def replace(self, file_pid, df):
+        return NotImplemented
+
 def upload_dataset(
     dv_config,
     parent_id,
@@ -177,6 +261,7 @@ def upload_dataset(
     metadata_only=False,
     publish_type="none",
     output=None,
+    direct_upload=False,
 ):
     """Upload dataset to dataverse.
 
@@ -200,6 +285,8 @@ def upload_dataset(
         * 'none': do not publish.
         * 'major': publish with major version bump.
         * 'minor': publish with minor version bump.
+    file_upload_method: {"native", "dvuploader"}
+        If provided, the callable is used to upload files.
     """
     api = dv_config.native_api
     # parent info
@@ -225,7 +312,7 @@ def upload_dataset(
     file_action = action_on_exist
     if metadata_only:
         file_action = "none"
-
+        
     def _create():
         logger.debug(f"create dataset json:\n{ds_json}")
         resp = api.create_dataset(
@@ -308,6 +395,12 @@ def upload_dataset(
         files_remote = get_datafiles(dv_config, dataset_id=pid)
         logger.debug(f"existing files:\n{files_remote}")
 
+    # file uploader
+    if direct_upload:
+        file_uploader = DVUploaderWrapper(dv_config)
+    else:
+        file_uploader = FileUploaderNative(dv_config)
+   
     for data in dataset_index["files"]:
         # update pid to point to the dataset.
         data["pid"] = pid
@@ -315,12 +408,9 @@ def upload_dataset(
         df.set(data)
         assert df.validate_json()
         data_files.append(df)
-        df_json = df.json()
-        logger.debug(f"create file json:\n{df_json}")
         # upload file if needed
         if file_action == "create":
-            resp = api.upload_datafile(df.pid, df.filename, df_json)
-            logger.info(f"create datafile:\n{pformat_resp(resp)}")
+            file_uploader.create(df) 
         elif file_action == "update":
             # check if the file is in the list of existing files
             if len(files_remote) == 0:
@@ -338,21 +428,10 @@ def upload_dataset(
                 #     f"update existing datafile:\n{pformat_resp(resp)}")
                 logger.warning(f"overwrite existing datafile label={df.label}")
                 file_pid = m[0]["dataFile"]["id"]
-                resp = api.replace_datafile(
-                    file_pid, df.filename, df_json, is_filepid=False)
-                logger.info(
-                    f"overwrite existing datafile:\n{pformat_resp(resp)}")
-                # update the restricted flag
-                # this had to be done separately because the file replace
-                # may fail
-                url = f"{api.base_url_api_native}/files/{file_pid}/restrict"
-                resp = api.put_request(url, auth=True, data=json.dumps(df.restrict))
-                logger.info(
-                    f"update file restrict state:\n{pformat_resp(resp)}")
+                file_uploader.replace(file_pid, df)
             else:
                 # not exist yet, create
-                resp = api.upload_datafile(df.pid, df.filename, df_json)
-                logger.info(f"create non-existing datafile:\n{pformat_resp(resp)}")
+                file_uploader.create(df)
         else:
             logger.debug("no action specified for file uploading, skipped.")
     # finally, publish the dataset if requested
