@@ -19,7 +19,7 @@ ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio
 ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.upload-redirect=true"
 ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.profile=default"
 ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.download-redirect=true"
-${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.ingestsizelimit=1000000000"
+${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.ingestsizelimit=0"
 ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.url-expiration-minutes=120"
 ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.path-style-access=true"
 ${PAYARA}/asadmin $ASADMIN_OPTS create-jvm-options "-Ddataverse.files.nese_minio.custom-endpoint-region=${DV_MINIO_ENDPOINT_REGION}"
