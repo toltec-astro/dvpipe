@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from typing import List, Any
 from dagster import op, Out, Output, MetadataEntry, MetadataValue
 

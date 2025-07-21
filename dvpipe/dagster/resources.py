@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from dagster import resource
 from ..core import DataverseConfig
 
