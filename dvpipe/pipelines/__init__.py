@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from .lmtslr.cli import cmd_lmtslr
 
 
