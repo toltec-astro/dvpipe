@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import zipfile
 from loguru import logger

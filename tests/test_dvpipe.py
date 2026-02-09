@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Tests for `dvpipe` package."""
 
 import pytest

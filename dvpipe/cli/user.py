@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from loguru import logger
 import click
 import pandas as pd

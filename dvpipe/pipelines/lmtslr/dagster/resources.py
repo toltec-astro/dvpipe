@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-
 from pathlib import Path
 from dagster import (
     make_values_resource, Field,

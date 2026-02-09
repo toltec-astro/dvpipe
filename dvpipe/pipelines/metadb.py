@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 #  stolen from study/mockdata.py
 #  Warning:  there isn't a lot of sanity checking if that data is properly structured
 

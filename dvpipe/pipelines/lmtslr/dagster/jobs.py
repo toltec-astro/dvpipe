@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 r"""
 Dataverse collector flow for LMT SLR TAPs.
 

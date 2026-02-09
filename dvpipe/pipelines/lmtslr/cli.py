@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import click
 from loguru import logger
 from pathlib import Path
