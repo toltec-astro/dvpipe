@@ -41,7 +41,7 @@ def search_datasets_by_project_id(base_url: str, project_id: str, api_key: str, 
 
 def assign_group_permission(dataset_pid: str, group_alias: str, role: str, base_url: str, api_key: str) -> bool:
     url = f"{base_url}/api/datasets/:persistentId/assignments"
-    url = url.replace(":persistentId", dataset_pid)
+    params = {"persistentId": dataset_pid}
     payload = {
         "assignee": group_alias,
         "role": role
@@ -51,12 +51,16 @@ def assign_group_permission(dataset_pid: str, group_alias: str, role: str, base_
         "X-Dataverse-key": api_key
     }
 
-    response = requests.post(url, json=payload, headers=headers)
+    response = requests.post(url, params=params, json=payload, headers=headers)
     if response.status_code in [200, 201]:
         print(f"✅ Assigned role '{role}' to group '{group_alias}' on dataset '{dataset_pid}'")
         return True
     else:
-        print(f"❌ Failed to assign role to group '{group_alias}' on dataset '{dataset_pid}': {response.text}")
+        resp_text = response.text
+        if "already has this role" in resp_text:
+            print(f"⏭️  '{group_alias}' already has role '{role}' on dataset '{dataset_pid}', skipping.")
+            return True
+        print(f"❌ Failed to assign role to group '{group_alias}' on dataset '{dataset_pid}': {resp_text}")
         return False
 
 def main():
